@@ -1,0 +1,10 @@
+\alpha,\beta,\gamma,\delta,\epsilon,\zeta,\eta,\theta,\vartheta,\iota,
+\kappa,\lambda,\mu,\nu,\xi,\pi,\rho,\sigma,\varsigma,\tau,
+\equiv,\Im,\otimes,\cap,\supset,\int,\rfloor,\lfloor,\perp,\wedge,
+\rceil,\vee,\langle,\upsilon,\phi,\chi,\psi,\omega,\Gamma,\Delta,
+\Theta,\Lambda,\Xi,\Pi,\Sigma,\Upsilon,\Phi,\Psi,\Omega,\forall,
+\exists,\ni,\cong,\approx,\Re,\oplus,\cup,\subseteq,\in,\lceil,
+\cdot,\neg,\times,\surd,\varpi,\rangle,\sim,\leq,\infty,\clubsuit,
+\diamondsuit,\heartsuit,\spadesuit,\leftrightarrow,\leftarrow,\uparrow,\rightarrow,
+\downarrow,\circ,\pm,\geq,\propto,\partial,\bullet,\div,\neq,\aleph,\wp,
+\oslash,\supseteq,\subset,\o,\nabla,\ldots,\prime,\0,\mid,\copyright

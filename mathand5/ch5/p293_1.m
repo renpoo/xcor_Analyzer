@@ -1,0 +1,1 @@
+ui1=uicontrol('style','frame','position',[40 20 400 20]);

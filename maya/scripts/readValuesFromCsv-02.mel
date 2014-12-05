@@ -1,0 +1,63 @@
+global proc readValuesFromCsv()
+{
+  // Opening phase for source data
+  string $SourceFileName = `fileDialog -m 0 -t "Read nACF/ICCF data file (.csv)"`;
+  
+
+  int $fileId = fopen($SourceFileName, "r");
+  string $v[];
+
+
+  // Skin 2 Index lines
+  string $nextLine = `fgetline $fileId`;
+
+
+  float $data[];
+
+  //eval("matrix $mat1[" + $x][241];
+  //matrix $mat1[$x][$y];
+
+
+  int $i = 0;
+  int $j = 0;
+  int $sizeV = 0;
+
+  while (size( $nextLine ) > 0) {
+
+    //print ($nextLine + "\n");
+
+    tokenize($nextLine, ",\n", $v);
+        //print ("%%%" + size($v) + "\n");
+
+    for ($i = 0; $i < size($v); $i++) {
+        $data[ $j * size($v) + $i ] = (float)$v[$i];
+    }
+
+    $j++;
+    $sizeV = size($v);
+    $nextLine = `fgetline $fileId`;
+  }
+  fclose $fileId;
+
+
+  string $pln1[] = `polyPlane -ch on -o on -w 1.0 -h 1.0 -sw 1 -sh 1 -cuv 2` ;
+  select -addFirst $pln1 ;
+  $pln1[0] = "polyPlane1";
+  setAttr ($pln1[0] + ".width") 1;
+  setAttr ($pln1[0] + ".height") 1;
+  setAttr ($pln1[0] + ".subdivisionsWidth") $sizeV;
+  setAttr ($pln1[0] + ".subdivisionsHeight") $j;
+  //setAttr "pPlane1.translateX" 0;
+  //setAttr "pPlane1.translateZ" 0;
+
+
+  for ($s = 0; $s < $j; $s++ ) {
+    for ($t = 0; $t < $sizeV; $t++) {
+        setAttr ("pPlaneShape1.pnts[" + ( $s * $sizeV + $t ) + "].pnty") ($data[ $s * $sizeV + $t ]);
+    }
+  }
+  return;
+}
+
+
+readValuesFromCsv();

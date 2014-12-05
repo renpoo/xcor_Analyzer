@@ -1,0 +1,12 @@
+clear;
+[s0,fs,bits]=wavread('drum.wav');
+length_of_s=length(s0);
+ap=0.25;
+as=0.4;
+dp=round(0.100*fs);
+ds=round(0.050*fs);
+rs=10;
+a=Function01_(ap,as,rs);
+d=Function02_(dp,ds,rs);
+s1=Function03_(s0,length_of_s,a,d,rs);
+sound(s1,fs);
