@@ -7,11 +7,10 @@ pkg load io;
 
 
 ccfFlag        = 0;
-nacfFlag       = 0;
+nacfFlag       = 1;
 nacfAndoFlag   = 0;
 nacfSingleFlag = 1;
 
-iccfFlag       = 0;
 iccfFlag       = !nacfFlag;
 phiFlag        = 1;
 
@@ -22,6 +21,8 @@ plotFlag       = 1;
 plot3dFlag     = 1;
 fileDlgFlag    = 0;
 castSignalFlag = 0;
+windowFlag     = 0;
+CyclicFlag     = 1;
 
 
 numberOfHeaders = 4;
@@ -96,18 +97,18 @@ for i = 1+numberOfHeaders:length(ch),
 
     if (nacfFlag),
       xLabel = ch{i};
-      xCsvFilename = csvFileNames{i};
+      xCsvFilename = strcat( pname, '/', csvFileNames{i} );
       yLabel = ch{i};
-      yCsvFilename = csvFileNames{i};
+      yCsvFilename = strcat( pname, '/', csvFileNames{i} );
 
       funcStr = 'nACF';
       labelStr = xLabel;
       strTitleBase = strcat( '[', xLabel, ']' );
     else
       xLabel = ch{i};
-      xCsvFilename = csvFileNames{i};
+      xCsvFilename = strcat( pname, '/', csvFileNames{i} );
       yLabel = ch{j};
-      yCsvFilename = csvFileNames{j};
+      yCsvFilename = strcat( pname, '/', csvFileNames{j} );
 
       funcStr = 'ICCF';
       labelStr = strcat( yLabel, ',', xLabel );
@@ -171,9 +172,12 @@ for i = 1+numberOfHeaders:length(ch),
     #  x(n) = x(n) * w(n);
     #  y(n) = y(n) * w(n);
     #endfor;
-    x = x .* w';
-    y = y .* w';    
     
+    if (windowFlag),
+      x = x .* w';
+      y = y .* w';    
+    endif;
+
     
     #for (k = 1 : nStepIdx + 1 ),
     for (k = 1 : nStepIdx + 1 ),
@@ -232,9 +236,12 @@ for i = 1+numberOfHeaders:length(ch),
       #  x(n) = x(n) * w(n);
       #  y(n) = y(n) * w(n);
       #endfor;
-      x = x .* w';
-      y = y .* w';    
 
+      if (windowFlag),
+        x = x .* w';
+        y = y .* w';    
+      endif;
+        
     endfor;
 
 
