@@ -1,11 +1,11 @@
-function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs, ICCC, tauICCC, Wiccc, PHI_ll_0, PHI_rr_0, PHI_lr, phi_lr ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dumpFlag, debugFlag, plotFlag, ccfFlag, nacfFlag, nacfAndoFlag, iccfFlag, phiFlag, fileDlgFlag, castSignalFlag, dateTime)
+function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs, ICCC, tauICCC, Wiccc, PHI_ll_0, PHI_rr_0, PHI_lr, phi_lr ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
-pkg load signal;
-pkg load io;
+#pkg load signal;
+#pkg load io;
 
 #tauEnd = 1.0 / 1000; # [s] : End of calcuration interval for nACF
 
-if (castSignalFlag),
+if (flags.castSignalFlag),
   x = x - mean(x);
   y = y - mean(y);
 endif;
@@ -35,10 +35,10 @@ resultData2 = [];
 Wiccc = 0.0;
 
 
-if (iccfFlag),
+if (flags.iccfFlag),
   funcStr = "ICCF";
   limitSize = convTime2Index_( (tStop - tStart), x, fs );
-  if (phiFlag),
+  if (flags.phiFlag),
     PHI_ll_0 = PHI_xy_( 0, duration, x, x );
     PHI_rr_0 = PHI_xy_( 0, duration, y, y );
     #PHI_lr   = arraySubstitute_( PHI_xy_( tauEnd, duration, x, y ), limitSize );
@@ -72,7 +72,7 @@ if (iccfFlag),
 
 
   if (1),  
-    [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, !iccfFlag);
+    [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, !flags.iccfFlag);
     maxIdxs = maxIdxs( 1 : length(maxIdxs) );
     maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
     
@@ -133,7 +133,7 @@ endif;
 toc();
 
 
-if (plotFlag),
+if (flags.plotFlag),
   plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS, tE );
 endif;
 
@@ -149,7 +149,7 @@ if (0),
   dump_data_( tS,         'tS',         funcStr, saveImageName, graphTitle, dateTime );
   dump_data_( tE,         'tE',         funcStr, saveImageName, graphTitle, dateTime );
 
-  if (phiFlag),
+  if (flags.phiFlag),
     dump_data_( PHI_ll_0,   'PHI_ll_0',   funcStr, saveImageName, graphTitle, dateTime );
     dump_data_( PHI_rr_0,   'PHI_rr_0',   funcStr, saveImageName, graphTitle, dateTime );
     dump_data_( PHI_lr,     'PHI_lr',     funcStr, saveImageName, graphTitle, dateTime );

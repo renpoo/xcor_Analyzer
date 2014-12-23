@@ -8,7 +8,7 @@ pkg load io;
 
 if (0),
 ccfFlag        = 0;
-nacfFlag       = 1;
+nacfFlag       = 0;
 nacfAndoFlag   = 0;
 nacfSingleFlag = 1;
 
@@ -27,12 +27,12 @@ cyclicFlag     = 1;
 endif;
 
 
-args = struct(            ...
+flags = struct(            ...
     'ccfFlag',        0,  ...  % arg 1
-    'nacfFlag',       1,  ...  % arg 2
+    'nacfFlag',       0,  ...  % arg 2
     'nacfAndoFlag',   0,  ...  % arg 3
     'nacfSingleFlag', 1,  ...  % arg 4
-    'iccfFlag',       0,  ...  % arg 5
+    'iccfFlag',       1,  ...  % arg 5
     'phiFlag',        1,  ...  % arg 6
     'dumpFlag',       1,  ...  % arg 7
     'debugFlag',      1,  ...  % arg 8
@@ -43,10 +43,10 @@ args = struct(            ...
     'castSignalFlag', 0,  ...  % arg 13
     'windowFlag',     0,  ...  % arg 14
     'cyclicFlag',     1);      % arg 15
-fields = fieldnames(args);
+fields = fieldnames(flags);
 nargin = 15;
 for i = 1:nargin,
-  args.( fields{i} ) = eval( num2str( args.(fields{i}) ) );
+  flags.( fields{i} ) = eval( num2str( flags.(fields{i}) ) );
 endfor;
 
 
@@ -112,15 +112,15 @@ firstTaSize = 0;
 for i = 1+numberOfHeaders:length(ch),
   for j = i+1:length(ch)+1,
 
-    if ( args.nacfFlag && (j>i+1) ) break; endif; # FORCE to break the inner loop for when nACF
-    if ( args.nacfFlag && (i==1+numberOfHeaders) && args.nacfSingleFlag ) break; endif; # FORCE to break the inner loop for when nACF
-    if ( args.iccfFlag && (j==length(ch)+1) ) break; endif; # FORCE to break the inner loop for when nACF
+    if ( flags.nacfFlag && (j>i+1) ) break; endif; # FORCE to break the inner loop for when nACF
+    if ( flags.nacfFlag && (i==1+numberOfHeaders) && flags.nacfSingleFlag ) break; endif; # FORCE to break the inner loop for when nACF
+    if ( flags.iccfFlag && (j==length(ch)+1) ) break; endif; # FORCE to break the inner loop for when nACF
 
     #[temp dateTime] = system("date +%y%m%d%H%M%S");
     #dateTime = dateTime( 1 : length(dateTime)-1 );
 
 
-    if (args.nacfFlag),
+    if (flags.nacfFlag),
       xLabel = ch{i};
       xCsvFilename = strcat( pname, '/', csvFileNames{i} );
       yLabel = ch{i};
@@ -164,7 +164,7 @@ for i = 1+numberOfHeaders:length(ch),
     x = x0( tS_Idx : tE_Idx );
     y = y0( tS_Idx : tE_Idx );
 
-    if (args.debugFlag) sound( x, fs ); endif;
+    if (flags.debugFlag) sound( x, fs ); endif;
     
     lenX = length(x);
     lenY = length(y);
@@ -179,26 +179,16 @@ for i = 1+numberOfHeaders:length(ch),
     x = x0( tS_Idx : tE_Idx );
     y = y0( tS_Idx : tE_Idx );
 
-    if (args.debugStepFlag) sound( x, fs ); endif;
+    if (flags.debugStepFlag) sound( x, fs ); endif;
     
     windowSizeIdx = convTime2Index_( windowSize, x, fs );
-
-    #w = HanningWindow_( windowSizeIdx );
-    #w = HammingWindow_( windowSizeIdx );
-    #w = BlackmanWindow_( windowSizeIdx );
-    #w = RectangularWindow_( windowSizeIdx );
 
     #w = HanningWindow_(     length( x ) );
     w = HammingWindow_(     length( x ) );
     #w = BlackmanWindow_(    length( x ) );
     #w = RectangularWindow_( length( x ) );
 
-    #for n = 1 : windowSizeIdx,
-    #  x(n) = x(n) * w(n);
-    #  y(n) = y(n) * w(n);
-    #endfor;
-    
-    if (args.windowFlag),
+    if (flags.windowFlag),
       x = x .* w';
       y = y .* w';    
     endif;
@@ -209,10 +199,10 @@ for i = 1+numberOfHeaders:length(ch),
       saveImageName = strcat( funcStr, ',', labelStr, ',' , num2str(tS0, "%04.2f"), ',', num2str(tE0, "%04.2f"), ',' , num2str(tS, "%04.2f"), ',', num2str(tE, "%04.2f"), ',', num2str(tStart, "%04.2f"), ',', num2str(tStop, "%04.2f"), ',', num2str(nStepIdx, "%d"), ',', graphTitle );    
 
 
-      if (args.nacfFlag),
-        [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, args.dumpFlag, args.debugFlag, args.plotFlag, args.ccfFlag, args.nacfFlag, args.nacfAndoFlag, args.iccfFlag, args.phiFlag, args.fileDlgFlag, args.castSignalFlag, dateTime);
+      if (flags.nacfFlag),
+        [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags );
       else
-        [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs, ICCC, tauICCC, Wiccc, PHI_ll_0, PHI_rr_0, PHI_lr, phi_lr ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, args.dumpFlag, args.debugFlag, args.plotFlag, args.ccfFlag, args.nacfFlag, args.nacfAndoFlag, args.iccfFlag, args.phiFlag, args.fileDlgFlag, args.castSignalFlag, dateTime);
+        [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs, ICCC, tauICCC, Wiccc, PHI_ll_0, PHI_rr_0, PHI_lr, phi_lr ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags );
       endif;
 
 
@@ -230,7 +220,7 @@ for i = 1+numberOfHeaders:length(ch),
       maxTimesMat( k, : )   = arraySubstitute_( maxTimes,  bufSize );
       tSMat( k, : )         = tS;
       tEMat( k, : )         = tE;
-      if (args.phiFlag),
+      if (flags.phiFlag),
         PHI_ll_0Mat( k, : ) = PHI_ll_0;
         PHI_rr_0Mat( k, : ) = PHI_rr_0;
         PHI_lrMat( k, : )   = arraySubstitute_( PHI_lr,   firstRdSize( 1,2 ) );
@@ -249,7 +239,7 @@ for i = 1+numberOfHeaders:length(ch),
       x = x0( tS_Idx : tE_Idx );
       y = y0( tS_Idx : tE_Idx );
 
-      if (args.debugStepFlag) sound( x, fs ); endif;
+      if (flags.debugStepFlag) sound( x, fs ); endif;
 
   
       #w = HanningWindow_(     length( x ) );
@@ -257,12 +247,7 @@ for i = 1+numberOfHeaders:length(ch),
       #w = BlackmanWindow_(    length( x ) );
       #w = RectangularWindow_( length( x ) );
 
-      #for n = 1 : windowSizeIdx,
-      #  x(n) = x(n) * w(n);
-      #  y(n) = y(n) * w(n);
-      #endfor;
-
-      if (args.windowFlag),
+      if (flags.windowFlag),
         x = x .* w';
         y = y .* w';    
       endif;
@@ -271,7 +256,7 @@ for i = 1+numberOfHeaders:length(ch),
 
 
     
-    if (args.plot3dFlag),
+    if (flags.plot3dFlag),
       #for (k = 1 : nStepIdx + 1 ),
       #  resultDataMat( k, : ) = arraySubstitute_(resultDataMat( k, : ), length( timeAxis ));
       #endfor;
@@ -297,7 +282,7 @@ for i = 1+numberOfHeaders:length(ch),
     endif;
 
     
-    if (args.dumpFlag),
+    if (flags.dumpFlag),
       dump_data_( resultDataMat, 'resultDataMat', funcStr, saveImageName, graphTitle, dateTime );
       dump_data_( timeAxis,      'timeAxis',      funcStr, saveImageName, graphTitle, dateTime );
       #dump_data_( timeAxisMat,   'timeAxisMat',   funcStr, saveImageName, graphTitle, dateTime );
@@ -308,7 +293,7 @@ for i = 1+numberOfHeaders:length(ch),
       dump_data_( tSMat,         'tSMat',         funcStr, saveImageName, graphTitle, dateTime );
       dump_data_( tEMat,         'tEMat',         funcStr, saveImageName, graphTitle, dateTime );
 
-      if (args.phiFlag),
+      if (flags.phiFlag),
         dump_data_( PHI_ll_0Mat,   'PHI_ll_0Mat',   funcStr, saveImageName, graphTitle, dateTime );
         dump_data_( PHI_rr_0Mat,   'PHI_rr_0Mat',   funcStr, saveImageName, graphTitle, dateTime );
         dump_data_( PHI_lrMat,     'PHI_lrMat',     funcStr, saveImageName, graphTitle, dateTime );

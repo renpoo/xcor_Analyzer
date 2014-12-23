@@ -1,12 +1,11 @@
-function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dumpFlag, debugFlag, plotFlag, ccfFlag, nacfFlag, nacfAndoFlag, iacfFlag, phiFlag, fileDlgFlag, castSignalFlag, dateTime)
+function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
-pkg load signal;
-pkg load io;
-
+#pkg load signal;
+#pkg load io;
 
 tauEnd = 1.0 / 1000; # [s] : End of calcuration interval for nACF
 
-if (castSignalFlag),
+if (flags.castSignalFlag),
   x = x - mean(x);
   y = y - mean(y);
 endif;
@@ -26,11 +25,11 @@ strTitle = "";
 strTitleBase = "";
 
 tic();
-if (nacfFlag),
+if (flags.nacfFlag),
   funcStr = "nACF";
   tStart  = 0.0;  ### CAUTION!!! ###
   limitSize = convTime2Index_( (tStop - tStart), x, fs );
-  if (nacfAndoFlag),
+  if (flags.nacfAndoFlag),
     phi_p = nACF_ANDO_( (tStop - tStart), duration, x, x );
     #phi_p = arraySubstitute_( nACF_ANDO_( (tStop - tStart), duration, x, x ), limitSize );
   else 
@@ -46,7 +45,7 @@ if (nacfFlag),
   #resultData = arraySubstitute_( tmpResultData, windowSizeIdx );
 
   
-  [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData, 0, nacfFlag);
+  [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData, 0, flags.nacfFlag);
   maxValues = maxValues( 2 : length(maxValues) );
   maxIdxs = maxIdxs( 2 : length(maxIdxs) );
   maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
@@ -75,7 +74,7 @@ endif;
 toc();
 
 
-if (plotFlag),
+if (flags.plotFlag),
   plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS, tE );
 endif;
 

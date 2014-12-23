@@ -10,4 +10,4 @@ normY = sqrt( y' * y );
 detXY = normX * normY;
 
 #Rxy = CCF_( x, y ) / detXY;
-Rxy = cyclicCCF_( x, y ) / detXY;
+Rxy = CCF_( x, y ) / detXY;
