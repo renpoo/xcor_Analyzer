@@ -1,4 +1,4 @@
-function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs, ICCC, tauICCC, Wiccc, PHI_ll_0, PHI_rr_0, PHI_lr, phi_lr ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
 #pkg load signal;
 #pkg load io;
@@ -41,34 +41,20 @@ if (flags.iccfFlag),
   if (flags.phiFlag),
     PHI_ll_0 = PHI_xy_( 0, duration, x, x );
     PHI_rr_0 = PHI_xy_( 0, duration, y, y );
-    #PHI_lr   = arraySubstitute_( PHI_xy_( tauEnd, duration, x, y ), limitSize );
     PHI_lr   = PHI_xy_( tStop, duration, x, y );
     phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
-    #PHI_lr   = arraySubstitute_( PHI_xy_( tStop, duration, x, y ), limitSize );
-    #phi_lr   = arraySubstitute_( PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 ), limitSize );
   else 
     phi_lr   = aIACF_( tStop, duration, x, y );
-    #phi_lr   = arraySubstitute_( IACF_( tStop, duration, x, y ), limitSize );
   endif;
-  #tmpResultData = phi_lr; # iccf
+
   resultData = phi_lr; # iccf
-  #timeAxis = create_timeAxis_( tStart, tStop, length(tmpResultData), duration );
   timeAxis = create_timeAxis_( tStart, tStop, length(resultData), duration );
-  #timeAxis = create_timeAxis_( tStart, tStop, windowSizeIdx, duration );
 
   [ICCC, pointiccc] = max( resultData(:) );
   tauICCC = timeAxis( pointiccc );
 
   
-  #resultData = arraySubstitute_( tmpResultData, windowSizeIdx );
-
-
-  #resultData2 = abs( resultData(:) - 0.9*ICCC );
   resultData2 = resultData(:) - 0.9*ICCC;
-  #for n = 1 : windowSizeIdx,
-  #for n = 1 : length(resultData),
-  #  resultData2(n) = resultData(n) - (0.9*ICCC);
-  #endfor;
 
 
   if (1),  
@@ -79,14 +65,9 @@ if (flags.iccfFlag),
     tauAlphaIdx = zeroIdxs(1);
     tauBetaIdx  = zeroIdxs(2);
   
-    #[tauAlphaIdx, Alpha] = min( resultData2( Alpha:pointiccc ) );
-    #[tauBetaIdx,  Beta ] = min( resultData2( pointiccc:Beta ) );
-    #Beta = Beta + pointiccc - 1;
     tauAlpha = timeAxis( tauAlphaIdx );
     tauBeta  = timeAxis( tauBetaIdx  );
   
-    #WicccIdx = Beta - Alpha;
-    #Wiccc = duration * WicccIdx / lenX;
     Wiccc = tauBeta - tauAlpha;
 
   
@@ -138,27 +119,16 @@ if (flags.plotFlag),
 endif;
 
 
-#if (dumpFlag),
-if (0),
-  dump_data_( resultData, 'resultData', funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( timeAxis,   'timeAxis',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxValues,  'maxValues',  funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxIdxs,    'maxIdxs',    funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( zeroIdxs,   'zeroIdxs',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxTimes,   'maxTimes',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( tS,         'tS',         funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( tE,         'tE',         funcStr, saveImageName, graphTitle, dateTime );
-
-  if (flags.phiFlag),
-    dump_data_( PHI_ll_0,   'PHI_ll_0',   funcStr, saveImageName, graphTitle, dateTime );
-    dump_data_( PHI_rr_0,   'PHI_rr_0',   funcStr, saveImageName, graphTitle, dateTime );
-    dump_data_( PHI_lr,     'PHI_lr',     funcStr, saveImageName, graphTitle, dateTime );
-    dump_data_( phi_lr,     'phi_lr',     funcStr, saveImageName, graphTitle, dateTime );
-  endif;
-  dump_data_( ICCC,       'ICCC',       funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( tauICCC,    'tauICCC',    funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( Wiccc,      'Wiccc',      funcStr, saveImageName, graphTitle, dateTime );
-
-  #dump_outputData_( resultData, funcStr );
-endif;
-
+results.resultData = resultData;
+results.timeAxis   = timeAxis;
+results.maxValues  = maxValues;
+results.maxIdxs    = maxIdxs;
+results.maxTimes   = maxTimes;
+results.zeroIdxs   = zeroIdxs;
+results.ICCC       = ICCC;
+results.tauICCC    = tauICCC;
+results.Wiccc      = Wiccc;
+results.PHI_ll_0   = PHI_ll_0;
+results.PHI_rr_0   = PHI_rr_0;
+results.PHI_lr     = PHI_lr;
+results.phi_lr     = phi_lr;

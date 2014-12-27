@@ -1,4 +1,4 @@
-function [ resultData, timeAxis, maxValues, maxIdxs, maxTimes, zeroIdxs ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
 #pkg load signal;
 #pkg load io;
@@ -79,18 +79,10 @@ if (flags.plotFlag),
 endif;
 
 
-#if (dumpFlag),
-if (0),
-  dump_data_( resultData, 'resultData', funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( timeAxis,   'timeAxis',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxValues,  'maxValues',  funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxIdxs,    'maxIdxs',    funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( zeroIdxs,   'zeroIdxs',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( maxTimes,   'maxTimes',   funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( tS,         'tS',         funcStr, saveImageName, graphTitle, dateTime );
-  dump_data_( tE,         'tE',         funcStr, saveImageName, graphTitle, dateTime );
-
-                 
-  #dump_outputData_( resultData, funcStr );
-endif;
+results.resultData = resultData;
+results.timeAxis   = timeAxis;
+results.maxValues  = maxValues;
+results.maxIdxs    = maxIdxs;
+results.maxTimes   = maxTimes;
+results.zeroIdxs   = zeroIdxs;
 

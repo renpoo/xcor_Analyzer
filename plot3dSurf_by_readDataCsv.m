@@ -18,6 +18,7 @@ disp(tokens);
 
 if ( strcmp( tokens{1,1}, 'nACF' ) == 1 ),
   xLabel = tokens{2,1}; 
+  yLabel = tokens{2,1}; 
 
   labelStr = xLabel;
   strTitleBase = strcat( '[', xLabel, ']' );
@@ -28,7 +29,13 @@ else
   labelStr = strcat( yLabel, ',', xLabel );
   strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
 endif;
-    
+
+
+graphTitle = tokens{10,1};
+tS0 = tokens{4,1}; 
+tE0 = tokens{5,1};
+
+  
 xLabelStr = ( strcat( labelStr, ': tau [ms]') );
 yLabelStr = ( 'time [s]');
 zLabelStr = ( tokens{1,1} );
@@ -59,5 +66,5 @@ ylabel( yLabelStr );
 zlabel( zLabelStr );
 
 
-strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, "%04.2f"), '-', num2str(tE0, "%04.2f"), '), ', graphTitle);
+strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, "%04.2f"), '-', num2str(tE0, "%04.2f"), '), ', graphTitle);
 title( strTitle );
