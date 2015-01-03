@@ -22,16 +22,19 @@ if ( strcmp( tokens{1,1}, 'nACF' ) == 1 ),
 
   labelStr = xLabel;
   strTitleBase = strcat( '[', xLabel, ']' );
+
+  graphTitle = tokens{10,1};
 else
   xLabel = tokens{3,1}; 
   yLabel = tokens{2,1}
 
   labelStr = strcat( yLabel, ',', xLabel );
   strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
+
+  graphTitle = tokens{11,1};
 endif;
 
 
-graphTitle = tokens{10,1};
 tS0 = tokens{4,1}; 
 tE0 = tokens{5,1};
 
