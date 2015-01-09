@@ -6,6 +6,10 @@ clear;
 fs=8000;
 fc=2000;
 
+
+avg = 0.0;
+
+
 lpc_order=10;
 window_size=256;
 shift_size=128;
@@ -64,17 +68,42 @@ end
 
 
 
+#return;
+
+
 for frame=1:number_of_frame,
    offset=shift_size*(frame-1);
    for n=1:window_size,
-      s(n)=s1(offset+n)*w(n);
+      #s(n)=s1(offset+n)*w(n);
+      #s(n)=s0(offset+n)*w(n);
    end
 
+   
+   avg = 0.0;
+   
+   for n=1:window_size,
+     Len = 16;
+     if (0<mod(n,Len) && mod(n,Len)<=Len),
+        avg = avg + s0(offset+n);
+        avgResult(offset+n) = avg/Len;  
+     endif;
+
+
+  end;   
+   
+   
+
+   
+
+   continue;
+
+   
   if(0),
    X_real = real( fft(s, dft_size/2+1) );
    #plot( frequency, X_real );
    for n=2:window_size,
-      X_real(n) = X_real(n) - 0.98 * x(n-1);
+      #X_real(n) = X_real(n) - 0.98 * x(n-1);
+      #X_real(n) = 
    end
    #X_real = X_real + 1000.0;
    
@@ -87,10 +116,13 @@ for frame=1:number_of_frame,
    #plot( window_size, x );
    #hold on;
 
+   #sound( x, fs );
+   
    continue;
   endif;
    
    
+   if (0),
    [lpc,parcor]=LevinsonDurbin_(s,lpc_order);
    for n=1:lpc_order+1,
       x(n)=lpc(n);
@@ -112,14 +144,16 @@ for frame=1:number_of_frame,
    freqOnAmax(frame) = frequency( maxPoint );
    #result = soundGeneratedSinusoid_(freqOnAmax(frame), fs, duration/number_of_frame, 0);
    result = soundGeneratedSinusoid_(freqOnAmax(frame), fs, 0.2, 0);
-   sound( result, fs);
+   #sound( result, fs);
    
    #break;
    
-   #[x_real, x_imag] = IFFT_(frequency, zeros(1,dft_size/2+1), dft_size);
+   #[x_real, x_imag] = ifft(frequency, zeros(1,dft_size/2+1), dft_size);
    #x_real = ifft(frequency, dft_size);
    #sound( x_real, fs );
    #plot( (1:dft_size), x_real );
+   
+   #break;
    
    
    e=LpcInverseFiltering_(s,parcor,lpc_order);
@@ -132,11 +166,18 @@ for frame=1:number_of_frame,
       lpc0(offset+m)=lpc(m);
       parcor0(offset+m)=parcor(m);
    end
+   
+   
+   end;
 end
 
 
-spl = interp1 ([1:number_of_frame], freqOnAmax, [1:0.01:number_of_frame], "spline");
-plot( spl );
+sound( x, fs );
+
+
+
+#spl = interp1 ([1:number_of_frame], freqOnAmax, [1:0.01:number_of_frame], "spline");
+#plot( spl );
 #sound( spl, fs );
 
 #sound( soundGeneratedSinusoid_(spl', fs, 0.5, 0), fs );
