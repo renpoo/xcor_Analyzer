@@ -12,7 +12,7 @@ shift_size=128;
 dft_size=1024;
 #s0=wavread('ai.wav');
 #s0=wavread('../../Sounds/Akan00.wav');
-[ s0, fs, bits ] = wavread('../../Sounds/Akan00.wav');
+[ s0, fs, bits ] = wavread('Sounds/Akan00.wav');
 #[ s0, fs, bits ] = wavread('141011_01.WAV');
 
 sound( s0, fs );

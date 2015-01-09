@@ -1,4 +1,4 @@
-#close all; 
+close all; 
 clear;
 
 
@@ -29,7 +29,7 @@ nStepIdx = str2num( ch{4} );          # FORCE to get windowSize to calculate Rea
 dateTime = dateTime( 1 : length(dateTime)-1 );
 
 
-xCsvFilename = csvFileNames{ numberOfHeaders + 1 };
+xCsvFilename = strcat( pname, '/', csvFileNames{ numberOfHeaders + 1 } );
 
 
 [ x0, fsX, bitsX ] = wavread( xCsvFilename );

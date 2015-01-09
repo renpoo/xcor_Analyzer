@@ -44,7 +44,7 @@ if (flags.iccfFlag),
     PHI_lr   = PHI_xy_( tStop, duration, x, y );
     phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
   else 
-    phi_lr   = aIACF_( tStop, duration, x, y );
+    phi_lr   = IACF_( tStop, duration, x, y );
   endif;
 
   resultData = phi_lr; # iccf

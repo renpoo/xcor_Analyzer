@@ -15,7 +15,7 @@ flags = struct(            ...
     'phiFlag',        1,  ...  % arg 6
     'dumpFlag',       0,  ...  % arg 7
     'debugFlag',      1,  ...  % arg 8
-    'debugStepFlag',  0,  ...  % arg 9
+    'debugStepFlag',  1,  ...  % arg 9
     'plotFlag',       1,  ...  % arg 10
     'plot3dFlag',     1,  ...  % arg 11
     'fileDlgFlag',    0,  ...  % arg 12
