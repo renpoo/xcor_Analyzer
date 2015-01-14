@@ -13,7 +13,7 @@ length_of_s0=length(s0);
 duration = length_of_s0 / fs;  %duration (of input signal)
 
 window_size=256;
-shift_size=2;
+shift_size=4;
 dft_size=256;
 
 Len = shift_size;
@@ -38,7 +38,7 @@ sound(x, fs);
 
 #return;
 
-TopRanks = 4;
+TopRanks = 16;
 shift_size = 256;
 number_of_frame=floor((length_of_s0-(window_size-shift_size))/shift_size)-1;
 
@@ -75,15 +75,15 @@ for frame=1:number_of_frame,
   end;
   end;
   
-  #Xmodified = X;
+#  Xmodified = X;
 
-  #for k=1:dft_size,
-  #  Xmodified(k) = 1/10^(Xmodified(k)/20);
-  #end;
+#  for k=1:dft_size,
+#    Xmodified(k) = 1/10^(Xmodified(k)/20);
+#  end;
 
   
   
-if(1),  
+if(0),  
   clf ();
   figure(1);
   plot(real(Xmodified));  
@@ -105,9 +105,9 @@ end;
 
 
 
-#for k=1:length(result_x),
-#  result_x(k) = (1/10^(result_x(k)/20)-1)*2500;
-#end;
+for k=1:length(result_x),
+  result_x(k) = (1/10^(result_x(k)/20)-1)*2500;
+end;
 
 
 sound(result_x, fs);
@@ -119,7 +119,7 @@ sound(result_x, fs);
 
 
 
-
+if(0),
 shift_size = 1;
 window_size = 1;
 number_of_frame=floor((length(result_x)-(window_size-shift_size))/shift_size)-1;
@@ -133,7 +133,6 @@ for frame=1:number_of_frame,
      avg = 0.0;
    end;
 end;
-
 
 #for k=1:length(finalResult),
 #  finalResult(k) = (1/10^(finalResult(k)/20)-1)*2500;
@@ -149,4 +148,5 @@ sound(finalResult, fs);
 
 
 
+end;
 

@@ -8,5 +8,3 @@ t = (1:N)'/fs;        % time vector
 s = sin( 2*pi*f*t + theta );   % sinusoid
 #wavwrite(s, fs, outputWavFileName);
 
-
-
