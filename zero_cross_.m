@@ -1,18 +1,21 @@
 function [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( x, wholeFlag, skipFlag )
 
 zeroIdxs = find( abs( diff( sign(x) ) ) == 2 )';
+maxValues = zeros( 1, 1 );
+maxIdxs   = zeros( 1, 1 );
+
 
 [ maxV, maxI ]  = max( x );
 small = 1;
 big   = length(x);
 
 
-if (0),
-disp("zeroIdxs");
+if (1),
+disp('zeroIdxs');
 disp(zeroIdxs);
-disp("length(zeroIdxs)");
+disp('length(zeroIdxs)');
 disp(length(zeroIdxs));
-endif;
+end;
 
 
 if length( zeroIdxs ) > 1,
@@ -20,7 +23,7 @@ if length( zeroIdxs ) > 1,
   maxIdxs   = zeros( floor( length(zeroIdxs)/2 ), 1 );
   for i = 1 : length(zeroIdxs)-1 ,
     [ maxVal, maxIdx ]  = max( x( zeroIdxs(i) : zeroIdxs(i+1) ) );
-    if ( mod( i, 2 ) == 1 && skipFlag) continue; endif;
+    if ( mod( i, 2 ) == 1 && skipFlag) continue; end;
     maxValues(i) = maxVal;
     maxIdxs(i)   = maxIdx + zeroIdxs(i) - 1 ;
     if ( maxV <= maxValues(i) ),
@@ -28,9 +31,9 @@ if length( zeroIdxs ) > 1,
       maxI  = maxIdxs(i);
       small = zeroIdxs(i) ;
       big   = zeroIdxs(i+1) ;
-    endif;
-  endfor;
-endif;  
+    end;
+  end;
+end;  
 
 
 if (wholeFlag),
@@ -40,4 +43,4 @@ if (wholeFlag),
   maxValues(1) = maxV;
   maxIdxs(1)   = maxI;
   zeroIdxs = [small, big];
-endif;
+end;

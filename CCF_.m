@@ -7,4 +7,4 @@ lenX = length(x);
 
 for k = 1 : lenX,
   R( k ) = CC_( x( k:lenX ), y( 1:(lenX-k+1) ) );
-endfor;
+end;

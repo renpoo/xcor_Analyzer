@@ -1,5 +1,5 @@
-pkg load io;
-pkg load signal;
+%pkg load io;
+%pkg load signal;
 
 close all; 
 clear;
@@ -14,10 +14,10 @@ lpc_order=10;
 window_size=256;
 shift_size=128;
 dft_size=1024;
-#s0=wavread('ai.wav');
-#s0=wavread('../../Sounds/Akan00.wav');
+%'s0=wavread('ai.wav');
+%'s0=wavread('../../Sounds/Akan00.wav');
 [ s0, fs, bits ] = wavread('Sounds/Akan00.wav');
-#[ s0, fs, bits ] = wavread('141011_01.WAV');
+%'[ s0, fs, bits ] = wavread('141011_01.WAV');
 
 sound( s0, fs );
 
@@ -44,9 +44,9 @@ length_of_parcor0=(lpc_order+1)*number_of_frame;
 parcor0=zeros(1,length_of_parcor0);
 s=zeros(1,window_size);
 
-#w=HanningWindow_(window_size);
-#w=HammingWindow_(window_size);
-#w=BlackmanWindow_(window_size);
+%'w=HanningWindow_(window_size);
+%'w=HammingWindow_(window_size);
+%'w=BlackmanWindow_(window_size);
 w=RectangularWindow_(window_size);
 
 x=zeros(1,dft_size);
@@ -59,23 +59,23 @@ for k=1:dft_size/2+1,
 end
 
 
-#X_real = fft(s0, 513);
-#plot( frequency, X_real );
-#x_real = ifft(X_real, 513);
-#plot( 1:513, x_real );
-#sound( x_real, fs );
-#return;
+%'X_real = fft(s0, 513);
+%'plot( frequency, X_real );
+%'x_real = ifft(X_real, 513);
+%'plot( 1:513, x_real );
+%'sound( x_real, fs );
+%'return;
 
 
 
-#return;
+%'return;
 
 
 for frame=1:number_of_frame,
    offset=shift_size*(frame-1);
    for n=1:window_size,
-      #s(n)=s1(offset+n)*w(n);
-      #s(n)=s0(offset+n)*w(n);
+      %'s(n)=s1(offset+n)*w(n);
+      %'s(n)=s0(offset+n)*w(n);
    end
 
    
@@ -86,11 +86,10 @@ for frame=1:number_of_frame,
      if (0<mod(n,Len) && mod(n,Len)<=Len),
         avg = avg + s0(offset+n);
         avgResult(offset+n) = avg/Len;  
-     endif;
-
+     end;
 
   end;   
-   
+end; 
    
 
    
@@ -100,23 +99,23 @@ for frame=1:number_of_frame,
    
   if(0),
    X_real = real( fft(s, dft_size/2+1) );
-   #plot( frequency, X_real );
+   %'plot( frequency, X_real );
    for n=2:window_size,
-      #X_real(n) = X_real(n) - 0.98 * x(n-1);
-      #X_real(n) = 
+      %'X_real(n) = X_real(n) - 0.98 * x(n-1);
+      %'X_real(n) = 
    end
-   #X_real = X_real + 1000.0;
+   %'X_real = X_real + 1000.0;
    
    x_real = real( ifft(X_real, dft_size/2+1) );
 
    for n=1:window_size,
-      x(offset+n) = x_real(n); #*w(n);
+      x(offset+n) = x_real(n); %'*w(n);
    end
 
-   #plot( window_size, x );
-   #hold on;
+   %'plot( window_size, x );
+   %'hold on;
 
-   #sound( x, fs );
+   %'sound( x, fs );
    
    continue;
   endif;
@@ -137,23 +136,23 @@ for frame=1:number_of_frame,
    for k=1:dft_size/2+1,
       A(k)=-0.1*A(k)+offset+frame;
    end
-   #plot(A,frequency);
-   #plot(frequency, A);
-   #hold on;
+   %'plot(A,frequency);
+   %'plot(frequency, A);
+   %'hold on;
    [maxVal, maxPoint] = max( A(:) );
    freqOnAmax(frame) = frequency( maxPoint );
-   #result = soundGeneratedSinusoid_(freqOnAmax(frame), fs, duration/number_of_frame, 0);
+   %'result = soundGeneratedSinusoid_(freqOnAmax(frame), fs, duration/number_of_frame, 0);
    result = soundGeneratedSinusoid_(freqOnAmax(frame), fs, 0.2, 0);
-   #sound( result, fs);
+   %'sound( result, fs);
    
-   #break;
+   %'break;
    
-   #[x_real, x_imag] = ifft(frequency, zeros(1,dft_size/2+1), dft_size);
-   #x_real = ifft(frequency, dft_size);
-   #sound( x_real, fs );
-   #plot( (1:dft_size), x_real );
+   %'[x_real, x_imag] = ifft(frequency, zeros(1,dft_size/2+1), dft_size);
+   %'x_real = ifft(frequency, dft_size);
+   %'sound( x_real, fs );
+   %'plot( (1:dft_size), x_real );
    
-   #break;
+   %'break;
    
    
    e=LpcInverseFiltering_(s,parcor,lpc_order);
@@ -176,17 +175,17 @@ sound( x, fs );
 
 
 
-#spl = interp1 ([1:number_of_frame], freqOnAmax, [1:0.01:number_of_frame], "spline");
-#plot( spl );
-#sound( spl, fs );
+%'spl = interp1 ([1:number_of_frame], freqOnAmax, [1:0.01:number_of_frame], 'spline');
+%'plot( spl );
+%'sound( spl, fs );
 
-#sound( soundGeneratedSinusoid_(spl', fs, 0.5, 0), fs );
+%'sound( soundGeneratedSinusoid_(spl', fs, 0.5, 0), fs );
 
-#plot( 1:length(x), x );
-#sound( x, fs );
-#wavwrite (x, fs, 'tmp.wav');
+%'plot( 1:length(x), x );
+%'sound( x, fs );
+%'wavwrite (x, fs, 'tmp.wav');
 
-#sound( e0, fs );
+%'sound( e0, fs );
 
 
 
@@ -200,4 +199,4 @@ fclose(fid);
 fid=fopen('ai[parcor].txt','wt');
 fprintf(fid,'%f\n',parcor0);
 fclose(fid);
-endif;
+end;

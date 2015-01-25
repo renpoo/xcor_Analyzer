@@ -9,5 +9,5 @@ normX = sqrt( x' * x );
 normY = sqrt( y' * y );
 detXY = normX * normY;
 
-#Rxy = CCF_( x, y ) / detXY;
+%Rxy = CCF_( x, y ) / detXY;
 Rxy = CCF_( x, y ) / detXY;

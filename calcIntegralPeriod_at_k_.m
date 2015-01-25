@@ -7,11 +7,11 @@ if (k < 0),
   ySubS = -k+1;
   ySubE = T_Idx;
   ySubSize = ySubE - ySubS;
-else # when (0 <= k)
+else % when (0 <= k)
   xSubS = k+1;
   xSubE = T_Idx;
   xSubSize = xSubE - xSubS;
   ySubS = 1;
   ySubE = T_Idx-k;
   ySubSize = ySubE - ySubS;
-endif;
+end;

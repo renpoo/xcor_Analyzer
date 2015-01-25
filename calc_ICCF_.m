@@ -1,14 +1,14 @@
 function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
-#pkg load signal;
-#pkg load io;
+%pkg load signal;
+%pkg load io;
 
-#tauEnd = 1.0 / 1000; # [s] : End of calcuration interval for nACF
+%tauEnd = 1.0 / 1000; % [s] : End of calcuration interval for nACF
 
 if (flags.castSignalFlag),
   x = x - mean(x);
   y = y - mean(y);
-endif;
+end;
 
 lenX = length(x);
 lenY = length(y);
@@ -36,7 +36,7 @@ Wiccc = 0.0;
 
 
 if (flags.iccfFlag),
-  funcStr = "ICCF";
+  funcStr = 'ICCF';
   limitSize = convTime2Index_( (tStop - tStart), x, fs );
   if (flags.phiFlag),
     PHI_ll_0 = PHI_xy_( 0, duration, x, x );
@@ -45,9 +45,9 @@ if (flags.iccfFlag),
     phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
   else 
     phi_lr   = IACF_( tStop, duration, x, y );
-  endif;
+  end;
 
-  resultData = phi_lr; # iccf
+  resultData = phi_lr; % iccf
   timeAxis = create_timeAxis_( tStart, tStop, length(resultData), duration );
 
   [ICCC, pointiccc] = max( resultData(:) );
@@ -58,7 +58,7 @@ if (flags.iccfFlag),
 
 
   if (1),  
-    [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, !flags.iccfFlag);
+    [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, ~flags.iccfFlag);
     maxIdxs = maxIdxs( 1 : length(maxIdxs) );
     maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
     
@@ -106,17 +106,17 @@ if (flags.iccfFlag),
     params( 4, 7 ) = 0;
 
                    
-    strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, "%5.2f"), '-', num2str(tE, "%5.2f"), ')' );
+    strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%5.2f'), '-', num2str(tE, '%5.2f'), ')' );
     strTitle = strcat( strTitleBase, ', ICCC= ', num2str(ICCC), ', tauICCC= ', num2str(tauICCC), ', Wiccc= ', num2str(Wiccc) );
 
-    endif;
-endif;
+    end;
+end;
 toc();
 
 
 if (flags.plotFlag),
   plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS, tE );
-endif;
+end;
 
 
 results.resultData = resultData;

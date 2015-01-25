@@ -1,20 +1,20 @@
 function [ resultArray ] = arraySubstitute_( inputArray, bufSize )
 
 resultArray = zeros(bufSize, 1);
-#resultArray = {0};
+%resultArray = {0};
 
-if ( length(inputArray) == 0 ) return; endif;
+if ( length(inputArray) == 0 ) return; end;
 
 
 if (length(inputArray) > bufSize),
   n = bufSize;
 else
   n = length(inputArray);
-endif;
+end;
 
 
 for (i = 1 : n ),
   resultArray( i ) = inputArray( i );
-endfor;
+end;
 
-#resultArray = inputArray( 1 : n )';
+%resultArray = inputArray( 1 : n )';

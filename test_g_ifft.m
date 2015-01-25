@@ -2,18 +2,18 @@ close all;
 clear;
 
 L = 2^15;
-%L = 2^8;
 A = 2^12;
-%A = 2^0;
 fs = 44100;
 
 R = zeros(1,1);
+zArray = zeros( 1, L );
 
-%for k = 2^9:2^10,
-for k = 2^0:2^10,
+
+for k = 2^0:2^4,
   z = G( L, k, A );
   S = ifft( z, L/2 );
 
+  zArray( k, : ) = z;
   %plot(imag(S));
   
   T = 1;
