@@ -4,8 +4,8 @@
 close all; 
 clear;
 
-%[ s0, fs, bits ] = wavread('Sounds/Akan00.wav');
-[ s0, fs, bits ] = wavread('Sounds/140823TiturelAmfortas.WAV');
+[ s0, fs, bits ] = wavread('Sounds/Akan00.wav');
+%[ s0, fs, bits ] = wavread('Sounds/140823TiturelAmfortas.WAV');
 
 sound( s0, fs );
 
@@ -25,9 +25,9 @@ number_of_frame=floor((length_of_s0-(window_size-shift_size))/shift_size)-1;
 for frame=1:number_of_frame,
    offset=shift_size*(frame-1);
    for n=1:Len:window_size,
-     subS0 = s0(offset+n:offset+n+Len-1);
+     subS0 = s0( offset+n : offset+n+Len-1 );
      avg = mean(subS0);
-     x(offset+n:offset+n+Len-1) = avg;
+     x( offset+n : offset+n+Len-1 ) = avg;
      avg = 0.0;
    end;
 end;
