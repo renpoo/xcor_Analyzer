@@ -296,17 +296,16 @@ for i = 1+numberOfHeaders:length(ch),
       dump_data_( tEMat,            'tEMat',              funcStr, saveImageName, graphTitle, dateTime );
 
       if (flags.iccfFlag),
-          if (flags.phiFlag),
-              dump_data_( PHI_ll_0Mat,   'PHI_ll_0Mat',     funcStr, saveImageName, graphTitle, dateTime );
-              dump_data_( PHI_rr_0Mat,  'PHI_rr_0Mat',    funcStr, saveImageName, graphTitle, dateTime );
-              dump_data_( PHI_lrMat,     'PHI_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
-              dump_data_( phi_lrMat,      'phi_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
-          end;
-          dump_data_( ICCCMat,       'ICCCMat',       funcStr, saveImageName, graphTitle, dateTime );
-          dump_data_( tauICCCMat,   'tauICCCMat',  funcStr, saveImageName, graphTitle, dateTime );
-          dump_data_( WicccMat,      'WicccMat',      funcStr, saveImageName, graphTitle, dateTime );
+        if (flags.iccfFlag && flags.phiFlag),
+        dump_data_( PHI_ll_0Mat,   'PHI_ll_0Mat',     funcStr, saveImageName, graphTitle, dateTime );
+        dump_data_( PHI_rr_0Mat,  'PHI_rr_0Mat',    funcStr, saveImageName, graphTitle, dateTime );
+        dump_data_( PHI_lrMat,     'PHI_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
+        dump_data_( phi_lrMat,      'phi_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
       end;
 
+      dump_data_( ICCCMat,       'ICCCMat',       funcStr, saveImageName, graphTitle, dateTime );
+      dump_data_( tauICCCMat,   'tauICCCMat',  funcStr, saveImageName, graphTitle, dateTime );
+      dump_data_( WicccMat,      'WicccMat',      funcStr, saveImageName, graphTitle, dateTime );
 
       dump_data_( timeVec,        'timeVec',        funcStr, saveImageName, graphTitle, dateTime );
   end;

@@ -1,5 +1,5 @@
-pkg load signal;
-pkg load io;
+%pkg load signal;
+%pkg load io;
 
 resultDataMat = [];
 timeAxis = [];
@@ -7,13 +7,13 @@ timeVec = [];
 
 
 [ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (resultDataMat) FILE' );
-dataFileName = strcat( pname, "/", fname );
+dataFileName = strcat( pname, '/', fname );
 resultDataMat = dlmread( dataFileName );
 
 
 tokens = strsplit(fname, ',')';
 disp(tokens);
-#return;
+%return;
 
 
 if ( strcmp( tokens{1,1}, 'nACF' ) == 1 ),
@@ -32,7 +32,7 @@ else
   strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
 
   graphTitle = tokens{11,1};
-endif;
+end;
 
 
 tS0 = tokens{4,1}; 
@@ -45,29 +45,29 @@ zLabelStr = ( tokens{1,1} );
 
 
 
-#[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeAxis) FILE' );
-timeAxisFileName = strcat( pname, "/", strrep(fname, "resultDataMat", "timeAxis" ) );
+%[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeAxis) FILE' );
+timeAxisFileName = strcat( pname, '/', strrep(fname, 'resultDataMat', 'timeAxis' ) );
 timeAxis = dlmread( timeAxisFileName );
 
 
-#[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeVec) FILE' );
-timeVecFileName = strcat( pname, "/", strrep(fname, "resultDataMat", "timeVec" ) );
+%[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeVec) FILE' );
+timeVecFileName = strcat( pname, '/', strrep(fname, 'resultDataMat', 'timeVec' ) );
 timeVec = dlmread( timeVecFileName );
 
 
-XYZ = surf( timeAxis, timeVec, resultDataMat );
+XYZ = surf( timeAxis, timeVec, resultDataMat, 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
 grid on;
 
 
-#shading interp;
-#shading faceted;
+%shading interp;
+%shading faceted;
 
 
-#set( XYZ, 'edgecolor', [0 0 0], 'edgealpha', 0.3 );
+%set( XYZ, 'edgecolor', [0 0 0], 'edgealpha', 0.3 );
 xlabel( xLabelStr );
 ylabel( yLabelStr );
 zlabel( zLabelStr );
 
 
-strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, "%04.2f"), '-', num2str(tE0, "%04.2f"), '), ', graphTitle);
+strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), ', graphTitle);
 title( strTitle );
