@@ -48,7 +48,9 @@ title( strTitle );
 %pname = strcat( 'Output\ Images', '/', graphTitle, '_', funcStr , '_', dateTime );
 pname = strcat( 'Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
 %pname = strcat( 'Output\ Images', '/', saveImageName, '_', funcStr , '_', dateTime );
-mkdir( pname );
+if ( exist( pname, 'dir' ) == 0 ),
+  mkdir( pname );
+end;
 fname = strcat( saveImageName, '.jpg');
 outputDataFileName = strcat( pname, '/', fname );
 saveas( 1, strcat( outputDataFileName ) );

@@ -1,64 +1,71 @@
-close all; 
-clear;
+function launcher_nACF_ICCF( handles )
 
+%close all; 
+%clear;
 
 %pkg load signal;
 %pkg load io;
 
 
+%disp( handles );
+%return;
+%pause;
+
+
 flags = struct(            ...
-    'ccfFlag',        0,  ...  % arg 1
-    'nacfFlag',       1,  ...  % arg 2
+    'ccfFlag',            0,  ...  % arg 1
+    'nacfFlag',          0,  ...  % arg 2
     'nacfAndoFlag',   0,  ...  % arg 3
     'nacfSingleFlag', 1,  ...  % arg 4
-    'iccfFlag',       0,  ...  % arg 5
-    'phiFlag',        1,  ...  % arg 6
-    'dumpFlag',       1,  ...  % arg 7
-    'debugFlag',      1,  ...  % arg 8
-    'debugStepFlag',  0,  ...  % arg 9
-    'plotFlag',       1,  ...  % arg 10
-    'plot3dFlag',     1,  ...  % arg 11
-    'fileDlgFlag',    0,  ...  % arg 12
+    'iccfFlag',          0,  ...  % arg 5
+    'phiFlag',           0,  ...  % arg 6
+    'dumpFlag',        0,  ...  % arg 7
+    'debugFlag',       0,  ...  % arg 8
+    'debugStepFlag', 0,  ...  % arg 9
+    'plotFlag',          0,  ...  % arg 10
+    'plot3dFlag',       0,  ...  % arg 11
+    'fileDlgFlag',       0,  ...  % arg 12
     'castSignalFlag', 0,  ...  % arg 13
-    'windowFlag',     0,  ...  % arg 14
-    'cyclicFlag',     0);      % arg 15
-
-if (0),
-flags_fields = fieldnames(flags);
-nargin = 15;
-for i = 1:nargin,
-  flags.( flags_fields{i} ) = eval( num2str( flags.( flags_fields{i} ) ) );
-end;
-end;
+    'windowFlag',      0,  ...  % arg 14
+    'cyclicFlag',       0 );      % arg 15
         
-
 results = struct(            ...
-    'resultData', [],  ... % result 1
-    'timeAxis',   [],  ... % result 2
-    'maxValues',  [],  ... % result 3
-    'maxIdxs',    [],  ... % result 4
-    'maxTimes',   [],  ... % result 5
-    'zeroIdxs',   [],  ... % result 6
-    'ICCC',        0,  ... % result 7
-    'tauICCC',     0,  ... % result 8
-    'Wiccc',       0,  ... % result 9
-    'PHI_ll_0',    0,  ... % result 10
-    'PHI_rr_0',    0,  ... % result 11
-    'PHI_lr',     [],  ... % result 12
-    'phi_lr',     []);     % result 13
+    'resultData',   [],  ... % result 1
+    'timeAxis',      [],  ... % result 2
+    'maxValues',   [],  ... % result 3
+    'maxIdxs',       [],  ... % result 4
+    'maxTimes',    [],  ... % result 5
+    'zeroIdxs',       [],  ... % result 6
+    'ICCC',           0,  ... % result 7
+    'tauICCC',      0,  ... % result 8
+    'Wiccc',         0,  ... % result 9
+    'PHI_ll_0',       0,  ... % result 10
+    'PHI_rr_0',      0,  ... % result 11
+    'PHI_lr',         [],  ... % result 12
+    'phi_lr',          []  );     % result 13
 
-if (0),
-results_fields = fieldnames(results);
-nargin = 13;
-for i = 1:nargin,
-  if ( isnumeric( results.( results_fields{i} ) ) ),
-    results.( results_fields{i} ) = eval( num2str( results.( results_fields{i} ) ) );
-  else,
-    results.( results_fields{i} ) = eval( results.( results_fields{i} ) );
-  end;
-end;
-end;
 
+%handles = GUI_nACF_ICCF;
+
+
+if ( handles.flagsdata.funcFlag == 2 ),
+    flags.nacfFlag = 1 ;
+    flags.iccfFlag = 0 ;
+else
+    flags.nacfFlag = 0 ;
+    flags.iccfFlag = 1 ;
+end;
+flags.nacfAndoFlag  = handles.flagsdata.nacfAndoFlag ;
+flags.phiFlag           = handles.flagsdata.phiFlag ;
+flags.dumpFlag        = handles.flagsdata.dumpFlag ;
+flags.debugFlag       = handles.flagsdata.debugFlag ;
+flags.debugStepFlag = handles.flagsdata.debugStepFlag ;
+flags.plotFlag          = handles.flagsdata.plotFlag ;
+flags.plot3dFlag      = handles.flagsdata.plot3dFlag ;
+
+
+disp( flags );
+%return;
 
 numberOfHeaders = 4;
 windowScale = 1;
@@ -68,21 +75,20 @@ bufSize = 30;
 
 
 [ fname, pname ] = uigetfile( '*.csv', 'CSV DEFINITION FILE' );
-%defFileName = strcat( pname, '/', fname );
 defFileName = strcat( pname, fname );
-[ch, csvFileNames] = textread(defFileName, '%s %s','delimiter',',');
+[ ch, csvFileNames ] = textread( defFileName, '%s %s', 'delimiter', ',' );
 
 
-graphTitle = ch{1};                   % FORCE to get TITLE name to treat
-tS0 = str2num( ch{2} );               % FORCE to get tS (Start) to cut the whole music signals
-tE0 = str2num( csvFileNames{2} );     % FORCE to get tE (End)   to cut the whole music signals
-tStart = str2num( ch{3} );            % FORCE to get tStart to calculate CCF
+graphTitle = ch{1};                        % FORCE to get TITLE name to treat
+tS0 = str2num( ch{2} );                 % FORCE to get tS (Start) to cut the whole music signals
+tE0 = str2num( csvFileNames{2} );  % FORCE to get tE (End)   to cut the whole music signals
+tStart = str2num( ch{3} );              % FORCE to get tStart to calculate CCF
 tStop  = str2num( csvFileNames{3} );  % FORCE to get tStop  to calculate CCF
-%windowSize = str2num( ch{4} );       % FORCE to get windowSize to calculate Realtime CCF
+%windowSize = str2num( ch{4} );     % FORCE to get windowSize to calculate Realtime CCF
 nStepIdx = str2num( ch{4} );          % FORCE to get windowSize to calculate Realtime CCF
 
 
-[temp dateTime] = system('date +%y%m%d%H%M%S');
+[ temp, dateTime ] = system('date +%y%m%d%H%M%S');
 dateTime = dateTime( 1 : length(dateTime)-1 );
 
 
@@ -95,21 +101,21 @@ tauICCC  = 0.0;
 Wiccc    = 0.0;
 
 
-resultDataMat = [];
+resultDataMat  = [];
 maxValuesMat  = [];
-maxIdxsMat    = [];
-zeroIdxsMat   = [];
+maxIdxsMat      = [];
+zeroIdxsMat     = [];
 maxTimesMat   = [];
-tSMat         = [];
-tEMat         = [];
-PHI_ll_0Mat   = [];
-PHI_rr_0Mat   = [];
-PHI_lrMat     = [];
-phi_lrMat     = [];
-ICCCMat       = [];
-tauICCCMat    = [];
-WicccMat      = [];
-timeVec       = [];
+tSMat             = [];
+tEMat             = [];
+PHI_ll_0Mat      = [];
+PHI_rr_0Mat     = [];
+PHI_lrMat        = [];
+phi_lrMat         = [];
+ICCCMat        = [];
+tauICCCMat   = [];
+WicccMat       = [];
+timeVec         = [];
 
 
 w = [];
@@ -147,8 +153,8 @@ for i = 1+numberOfHeaders:length(ch),
       strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
     end;
     
-    xLabelStr = ( strcat( labelStr, ': tau [ms]') );
-    yLabelStr = ( 'time [s]');
+    xLabelStr = ( strcat( labelStr, ': tau [ms]' ) );
+    yLabelStr = ( 'time [s]' );
     zLabelStr = ( funcStr );
 
 
@@ -171,7 +177,7 @@ for i = 1+numberOfHeaders:length(ch),
     x = x0( tS_Idx : tE_Idx );
     y = y0( tS_Idx : tE_Idx );
 
-    if (flags.debugFlag) sound( x, fs ); end;
+    if ( flags.debugFlag ) sound( x, fs ); end;
     
     lenX = length(x);
     lenY = length(y);
@@ -186,7 +192,7 @@ for i = 1+numberOfHeaders:length(ch),
     x = x0( tS_Idx : tE_Idx );
     y = y0( tS_Idx : tE_Idx );
 
-    if (flags.debugStepFlag) sound( x, fs ); end;
+    if ( flags.debugStepFlag ) sound( x, fs ); end;
     
     windowSizeIdx = convTime2Index_( windowSize, x, fs );
 
@@ -205,11 +211,6 @@ for i = 1+numberOfHeaders:length(ch),
       saveImageName = strcat( funcStr, ',', labelStr, ',' , num2str(tS0, '%04.2f'), ',', num2str(tE0, '%04.2f'), ',' , num2str(tS, '%04.2f'), ',', num2str(tE, '%04.2f'), ',', num2str(tStart, '%04.2f'), ',', num2str(tStop, '%04.2f'), ',', num2str(nStepIdx, '%d'), ',', graphTitle );    
 
 
-      %if (flags.nacfFlag),
-      %  [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags );
-      %else
-      %  [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags );
-      %end;
       [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )' ) );
 
 
@@ -223,10 +224,8 @@ for i = 1+numberOfHeaders:length(ch),
 
       maxValuesMat( k, : )  = arraySubstitute_( results.maxValues, bufSize );
       maxIdxsMat( k, : )    = arraySubstitute_( results.maxIdxs,   bufSize );
-      %maxIdxsMat( k, : )    = results.maxIdxs;
       zeroIdxsMat( k, : )   = arraySubstitute_( results.zeroIdxs,  bufSize );
       maxTimesMat( k, : )   = arraySubstitute_( results.maxTimes,  bufSize );
-      %maxTimesMat( k, : )   = results.maxTimes;
       tSMat( k, : )         = tS;
       tEMat( k, : )         = tE;
       if (flags.iccfFlag && flags.phiFlag),
@@ -249,7 +248,7 @@ for i = 1+numberOfHeaders:length(ch),
       x = x0( tS_Idx : tE_Idx );
       y = y0( tS_Idx : tE_Idx );
 
-      if (flags.debugStepFlag) sound( x, fs ); end;
+      if ( flags.debugStepFlag ) sound( x, fs ); end;
 
   
       %w = HanningWindow_(     length( x ) );
@@ -257,7 +256,7 @@ for i = 1+numberOfHeaders:length(ch),
       %w = BlackmanWindow_(    length( x ) );
       %w = RectangularWindow_( length( x ) );
 
-      if (flags.windowFlag),
+      if ( flags.windowFlag ),
         x = x .* w';
         y = y .* w';    
       end;
@@ -285,7 +284,7 @@ for i = 1+numberOfHeaders:length(ch),
     end;
 
     
-    if (flags.dumpFlag),
+    if ( flags.dumpFlag ),
       dump_data_( resultDataMat, 'resultDataMat',  funcStr, saveImageName, graphTitle, dateTime );
       dump_data_( timeAxisMat,    'timeAxis',         funcStr, saveImageName, graphTitle, dateTime );
       dump_data_( maxValuesMat, 'maxValuesMat', funcStr, saveImageName, graphTitle, dateTime );
@@ -295,7 +294,7 @@ for i = 1+numberOfHeaders:length(ch),
       dump_data_( tSMat,            'tSMat',             funcStr, saveImageName, graphTitle, dateTime );
       dump_data_( tEMat,            'tEMat',              funcStr, saveImageName, graphTitle, dateTime );
 
-      if (flags.iccfFlag),
+      if ( flags.iccfFlag ),
           if (flags.phiFlag),
               dump_data_( PHI_ll_0Mat,   'PHI_ll_0Mat',     funcStr, saveImageName, graphTitle, dateTime );
               dump_data_( PHI_rr_0Mat,  'PHI_rr_0Mat',    funcStr, saveImageName, graphTitle, dateTime );
@@ -314,3 +313,6 @@ for i = 1+numberOfHeaders:length(ch),
         
   end;
 end;
+
+
+return;

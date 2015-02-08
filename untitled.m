@@ -22,7 +22,7 @@ function varargout = untitled(varargin)
 
 % Edit the above text to modify the response to help untitled
 
-% Last Modified by GUIDE v2.5 04-Feb-2015 20:59:59
+% Last Modified by GUIDE v2.5 08-Feb-2015 10:10:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -193,18 +193,3 @@ set(handles.text6, 'String', 'lb');
 
 % Update handles structure
 guidata(handles.figure1, handles);
-
-
-% --- Executes during object creation, after setting all properties.
-function mass_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to mass (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-
-% --- If Enable == 'on', executes on mouse press in 5 pixel border.
-% --- Otherwise, executes on mouse press in 5 pixel border or over mass.
-function mass_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to mass (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)

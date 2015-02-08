@@ -10,11 +10,11 @@ small = 1;
 big   = length(x);
 
 
-if (1),
-disp('zeroIdxs');
-disp(zeroIdxs);
-disp('length(zeroIdxs)');
-disp(length(zeroIdxs));
+if ( 0 ),
+    disp('zeroIdxs');
+    disp(zeroIdxs);
+    disp('length(zeroIdxs)');
+    disp(length(zeroIdxs));
 end;
 
 

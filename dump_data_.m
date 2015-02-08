@@ -8,7 +8,9 @@ function dump_data_(x, varName, funcStr, saveImageName, graphTitle, dateTime)
 %pname = strcat( 'Output\ Data', '/', graphTitle, '_', funcStr , '_', dateTime );
 pname = strcat( 'Output Data', '/', graphTitle, '_', funcStr , '_', dateTime );
 %pname = strcat( 'Output\ Data', '/', saveImageName, '_', funcStr , '_', dateTime );
-mkdir( pname );
+if ( exist( pname, 'dir' ) == 0 ),
+  mkdir( pname );
+end;
 fname = strcat( saveImageName, ',', varName, '.csv');
 outputDataFileName = strcat( pname, '/', fname );
 
