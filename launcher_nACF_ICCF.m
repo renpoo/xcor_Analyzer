@@ -29,7 +29,7 @@ flags = struct(            ...
     'castSignalFlag', 0,  ...  % arg 13
     'windowFlag',      0,  ...  % arg 14
     'cyclicFlag',       0, ...   % arg 15
-    'endFlag' );                 % arg 16
+    'exitFlag',          0  );    % arg 16
 
 results = struct(            ...
     'resultData',   [],  ... % result 1
@@ -47,30 +47,52 @@ results = struct(            ...
     'phi_lr',          []  );     % result 13
 
 
+args = [];  % input args for GUI_nACF_ICCF() for repeating calc.
+
 
 while (1),
     
-    handles = GUI_nACF_ICCF();
-
+    %disp( args );
+    %pause;
     
-    if ( handles.endFlag == 1 ) break; % Exit from infinite loop of this main procedure
-    
+    handles = GUI_nACF_ICCF( args );    
+        
     
     if ( 1 ),
-        if ( handles.funcFlag == 2 ),
+        if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
+
+        if ( handles.flagsdata.funcFlag == 2 ),
             flags.nacfFlag = 1 ;
             flags.iccfFlag = 0 ;
-        else
+        elseif ( handles.flagsdata.funcFlag == 3 ),
             flags.nacfFlag = 0 ;
             flags.iccfFlag = 1 ;
+        else
+            continue;
         end;
-        flags.nacfAndoFlag  = handles.nacfAndoFlag ;
-        flags.phiFlag           = handles.phiFlag ;
-        flags.dumpFlag        = handles.dumpFlag ;
-        flags.debugFlag       = handles.debugFlag ;
-        flags.debugStepFlag = handles.debugStepFlag ;
-        flags.plotFlag          = handles.plotFlag ;
-        flags.plot3dFlag      = handles.plot3dFlag ;
+        flags.nacfAndoFlag  = handles.flagsdata.nacfAndoFlag ;
+        flags.phiFlag           = handles.flagsdata.phiFlag ;
+        flags.dumpFlag        = handles.flagsdata.dumpFlag ;
+        flags.debugFlag       = handles.flagsdata.debugFlag ;
+        flags.debugStepFlag = handles.flagsdata.debugStepFlag ;
+        flags.plotFlag          = handles.flagsdata.plotFlag ;
+        flags.plot3dFlag      = handles.flagsdata.plot3dFlag ;
+        
+        
+        graphTitle = handles.flagsdata.graphTitle;                        % FORCE to get TITLE name to treat
+        tS0 = handles.flagsdata.tS0;                 % FORCE to get tS (Start) to cut the whole music signals
+        tE0 = handles.flagsdata.tE0;  % FORCE to get tE (End)   to cut the whole music signals
+        tStart = handles.flagsdata.tStart;              % FORCE to get tStart to calculate CCF
+        tStop  = handles.flagsdata.tStop;  % FORCE to get tStop  to calculate CCF
+        nStepIdx = handles.flagsdata.nStepIdx;          % FORCE to get windowSize to calculate Realtime CCF
+
+        pname = handles.flagsdata.pname;
+    
+        ch = handles.flagsdata.ch;
+        csvFileNames = handles.flagsdata.csvFileNames;    
+        
+        args = handles;
+
     end;
     
     
@@ -84,18 +106,20 @@ while (1),
     bufSize = 30;
     
     
-    [ fname, pname ] = uigetfile( '*.csv', 'CSV DEFINITION FILE' );
-    defFileName = strcat( pname, fname );
-    [ ch, csvFileNames ] = textread( defFileName, '%s %s', 'delimiter', ',' );
-    
-    
-    graphTitle = ch{1};                        % FORCE to get TITLE name to treat
-    tS0 = str2num( ch{2} );                 % FORCE to get tS (Start) to cut the whole music signals
-    tE0 = str2num( csvFileNames{2} );  % FORCE to get tE (End)   to cut the whole music signals
-    tStart = str2num( ch{3} );              % FORCE to get tStart to calculate CCF
-    tStop  = str2num( csvFileNames{3} );  % FORCE to get tStop  to calculate CCF
-    %windowSize = str2num( ch{4} );     % FORCE to get windowSize to calculate Realtime CCF
-    nStepIdx = str2num( ch{4} );          % FORCE to get windowSize to calculate Realtime CCF
+    if ( 0 ),
+        [ fname, pname ] = uigetfile( '*.csv', 'CSV DEFINITION FILE' );
+        defFileName = strcat( pname, fname );
+        [ ch, csvFileNames ] = textread( defFileName, '%s %s', 'delimiter', ',' );
+        
+        
+        graphTitle = ch{1};                        % FORCE to get TITLE name to treat
+        tS0 = str2num( ch{2} );                 % FORCE to get tS (Start) to cut the whole music signals
+        tE0 = str2num( csvFileNames{2} );  % FORCE to get tE (End)   to cut the whole music signals
+        tStart = str2num( ch{3} );              % FORCE to get tStart to calculate CCF
+        tStop  = str2num( csvFileNames{3} );  % FORCE to get tStop  to calculate CCF
+        %windowSize = str2num( ch{4} );     % FORCE to get windowSize to calculate Realtime CCF
+        nStepIdx = str2num( ch{4} );          % FORCE to get windowSize to calculate Realtime CCF
+    end;
     
     
     [ temp, dateTime ] = system('date +%y%m%d%H%M%S');
@@ -278,7 +302,8 @@ while (1),
             
             if (flags.plot3dFlag),
                 timeVec = (0:nStepIdx) * (tE0 - tS0) / nStepIdx + tS0;
-                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
+                %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
+                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
                 grid on;
                 
                 
@@ -320,6 +345,7 @@ while (1),
             
         end;
     end;
+    
     
 end;
 
