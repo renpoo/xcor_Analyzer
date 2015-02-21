@@ -474,7 +474,8 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 defFileName = strcat( pname, fname );
 
 
-[ s, fs, bits ] = wavread( defFileName );
+%[ s, fs, bits ] = wavread( defFileName );
+[ s, fs ] = audioread( defFileName );
 handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0  = length(s) / fs;
 

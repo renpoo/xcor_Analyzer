@@ -2,19 +2,19 @@ close all;
 clear;
 
 
-% --- WAV?t?@?C?????I??
+% --- WAVƒtƒ@ƒCƒ‹‚Ì‘I‘ğ
 [ fname, pname ] = uigetfile( '*.wav', 'SELECT WAV FILE' );
 audFileName = strcat( pname, '/', fname );
 
-% --- WAV???????????????Fsamples???J?n???I???i?b??*Fs?Ainf???S?????j
+% --- WAV‚Ì•”•ª“Ç‚İ‚İFsamples‚ÍŠJn‚ÆI—¹i•b”*FsAinf‚Å‘SŠÔj
 samples = [1,inf];
 [s0,Fs] = audioread(audFileName,samples);
 
-% --- ????????
+% --- ‰Šúİ’è
 t0 = (1:length(s0))/Fs; % Time vector
 s0R = s0(1:length(s0),1); % R channel
 %s0L = s0(1:length(s0),2); % L channel
-s = s0R; % s??1?`???l????????
+s = s0R; % s‚ğ1ƒ`ƒƒƒlƒ‹‚Åˆµ‚¤
 
 
 
@@ -22,17 +22,17 @@ s = s0R; % s??1?`???l????????
 
 
 
-% --- Matlab?g??Low-Pass Filter????
+% --- Matlab‘gLow-Pass Filterˆ—
 if(1),
     cutf = 4000; % Cut-off frequency
     cutfnorm = cutf/(Fs/2); % Normalized frequency
     df = designfilt('lowpassfir','FilterOrder',100,'CutoffFrequency',cutfnorm);
-    % --- Filter???????x?????m?F
-    %grpdelay(df,2048,Fs); % Group delay?????l?????P?????????V?t?g??????????
+    % --- Filter‚É‚æ‚é’x‰„‚ÌŠm”F
+    %grpdelay(df,2048,Fs); % Group delay‚ªˆê—l‚È‚ç’Pƒ‚ÈŠÔƒVƒtƒg‚É‚æ‚è•â³
     D = mean(grpdelay(df)); % Average delay
-    % --- Filter + ?x??????????
+    % --- Filter + ’x‰„•â³ˆ—
     slength = length(s);
-    %s = filter(df, s); % ?x????????????Filter????
+    %s = filter(df, s); % ’x‰„ˆ—‚µ‚È‚¢Filterˆ—
     s = filter(df, [s;zeros(D,1)]);
     s = s(D+1:slength+D);
     %sound(s, Fs);
@@ -42,13 +42,13 @@ end;
 
 
 
-% --- Matlab?g??FFT????
+% --- Matlab‘gFFTˆ—
 dftsize = 512;
 nframe = floor(length(s0)/dftsize);
-clear sCplx; % fft???????f???i?[?z??
-clear sFreq; % fft???????g???i?[?z??
-clear sMagn; % fft???????x?i?U???j?i?[?z??
-clear sPhas; % fft?????????i?[?z??
+clear sCplx; % fftŒã‚Ì•¡‘f”Ši”[”z—ñ
+clear sFreq; % fftŒã‚Ìü”g”Ši”[”z—ñ
+clear sMagn; % fftŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+clear sPhas; % fftŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
 for k=1:nframe,
     tmpshift=dftsize*(k-1);
     fftS=fft(s(tmpshift+1:tmpshift+dftsize),dftsize);
@@ -68,7 +68,7 @@ end;
 
 
 
-% --- ???g???????????????????r????3D Graph plot
+% --- ü”g”—Ìˆæ‚Ì‘ÎÆ•”•ª‚Ì”rœ‚Æ3D Graph plot
 for tempk=1:nframe,
     t3D(tempk) = (dftsize/Fs)*(tempk);
 end;
@@ -82,23 +82,21 @@ for tempk=1:nframe,
         x3D(templ,tempk) = sCplx(templ,tempk);
     end;
 end;
-if (0),
-    surf(t3D,f3D,db3D,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
-    %mesh(t3D,f3D,db3D);
-    xlabel('Time [sec]');
-    ylabel('Frequency [Hz]');
-    zlabel('Magnitude [dB]');
-    return;
-end;
+%surf(t3D,f3D,db3D,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
+%mesh(t3D,f3D,db3D);
+%xlabel('Time [sec]');
+%ylabel('Frequency [Hz]');
+%zlabel('Magnitude [dB]');
 
 
-% --- Magnitude??????Sort??Select
+
+% --- Magnitude‚É‚æ‚éSort‚ÆSelect
 if(0),
     sortTop(1:nframe) = 8;
-    clear sScplx; % Select???????f???i?[?z??
-    clear sSfreq; % Select???????g???i?[?z??
-    clear sSmagn; % Select???????x?i?U???j?i?[?z??
-    clear sSphas; % Select?????????i?[?z??
+    clear sScplx; % SelectŒã‚Ì•¡‘f”Ši”[”z—ñ
+    clear sSfreq; % SelectŒã‚Ìü”g”Ši”[”z—ñ
+    clear sSmagn; % SelectŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+    clear sSphas; % SelectŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
     for tempk=1:nframe,
         [ sSmagntemp, sortIdx ] = sortrows( m3D, -1*tempk );
         for templ=1:sortTop(tempk),
@@ -124,9 +122,9 @@ if(0),
         axis([0,3.5,0,4000]);
     end;
 % --- 3D Graph plot
-    if(1),
-        for templ=1:sortTop,  % ???g????
-            for tempk=1:nframe,  % ??????
+    if(0),
+        for templ=1:sortTop,  % ü”g”²
+            for tempk=1:nframe,  % ŠÔ²
                 t3D2(tempk) = (dftsize/Fs)*(tempk);
                 f3D2(templ,tempk) = sSfreq(templ,tempk);
                 m3D2(templ,tempk) = sSmagn(templ,tempk);
@@ -143,16 +141,12 @@ if(0),
             end;
         end;
         hold off;
-    surf(t3D2,f3D2,db3D2,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
+    %surf(t3D2,f3D2,db3D2,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
     %surf(t3D2,f3D2,db3D2);
     %mesh(t3D2,f3D2,db3D2);
     %scatter3(t3D2,f3D2,db3D2);
-    return;
     end;
-    
-    
-    
-% --- Magnitude??Sort&Select????????????????IFFT
+% --- Magnitude‚ÅSort&Select‚µ‚½‚¾‚¯‚Ìó‘Ô‚ÅIFFT
     if(0),
         ifftS = zeros(1,dftsize);
         for tempk=1:nframe,
@@ -160,17 +154,17 @@ if(0),
                 Xp(templ) = sScplx(templ,tempk);
                 Xp(dftsize-templ) = sScplx(templ,tempk);
             end;
-            ifftS = horzcat( ifftS, real( ifft( Xp, dftsize )*5.5 ) ); %real??????
+            ifftS = horzcat( ifftS, real( ifft( Xp, dftsize )*5.5 ) ); %real‚ğ‘•
         end;
         sound( ifftS, Fs ); 
         plot(ifftS);
         %axis([8190,12288,-0.8,0.8]);
     end;
-% --- Frequency??????Sort
-    clear sFcplx; % Frquency Sort???????f???i?[?z??
-    clear sFfreq; % Frquency Sort???????g???i?[?z??
-    clear sFmagn; % Frquency Sort???????x?i?U???j?i?[?z??
-    clear sFphas; % Frquency Sort?????????i?[?z??
+% --- Frequency‚É‚æ‚éSort
+    clear sFcplx; % Frquency SortŒã‚Ì•¡‘f”Ši”[”z—ñ
+    clear sFfreq; % Frquency SortŒã‚Ìü”g”Ši”[”z—ñ
+    clear sFmagn; % Frquency SortŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+    clear sFphas; % Frquency SortŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
     for tempk=1:nframe,
         [ sCfreqtemp, sortIdx ] = sortrows( sSfreq, tempk );
         for templ=1:sortTop(tempk),
@@ -180,7 +174,7 @@ if(0),
             sFphas(templ,tempk) = sSphas(sortIdx(templ),tempk);
         end;
     end;
-% --- Frequency??Sort????????????????IFFT
+% --- Frequency‚ÅSort‚µ‚½‚¾‚¯‚Ìó‘Ô‚ÅIFFT
     if(0),
         for tempk=1:nframe,
             for templ=1:sortTop,
@@ -202,14 +196,14 @@ end;
 
 
 
-% --- Peak???o??????Select
+% --- PeakŒŸo‚É‚æ‚éSelect
 if(1),
     sortTop(1:nframe) = 0;
     tempStop = 0;
-    clear sFcplx; % Select???????f???i?[?z??
-    clear sFfreq; % Select???????g???i?[?z??
-    clear sFmagn; % Select???????x?i?U???j?i?[?z??
-    clear sFphas; % Select?????????i?[?z??
+    clear sFcplx; % SelectŒã‚Ì•¡‘f”Ši”[”z—ñ
+    clear sFfreq; % SelectŒã‚Ìü”g”Ši”[”z—ñ
+    clear sFmagn; % SelectŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+    clear sFphas; % SelectŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
     for tempk=1:nframe,
         tempStop = 0;
         if(sMagn(1,tempk) > 0.1),
@@ -261,7 +255,7 @@ if(1),
 end;
 % --- 2D Graph plot
 if(0),
-    for tempk=1:nframe,  % ??????
+    for tempk=1:nframe,  % ŠÔ²
         t3D2(tempk) = (dftsize/Fs)*(tempk);
     end;
     scatter(t3D2,sFfreq(1,:),30,'+');
@@ -279,16 +273,16 @@ end;
 
 
 
-% --- Frequency??????Connect????
+% --- Frequency‚É‚æ‚éConnect”»’è
 delta = 2^(1/12);
 strcnt = 0;
-clear sFstno; % ?RConnect?????????R?????i?[?z??
+clear sFstno; % •RConnect”»’èŒã‚Ì•R”Ô†Ši”[”z—ñ
 sFstno = zeros(max(sortTop),nframe);
-clear sCcplx; % ?RConnect???????f???i?[?z??
-clear sCfreq; % ?RConnect???????g???i?[?z??
-sCfreq = zeros(max(sortTop),nframe); % ?RConnect???????g???i?[?z??
-clear sCmagn; % ?RConnect???????x?i?U???j?i?[?z??
-clear sCphas; % ?RConnect?????????i?[?z??
+clear sCcplx; % •RConnectŒã‚Ì•¡‘f”Ši”[”z—ñ
+clear sCfreq; % •RConnectŒã‚Ìü”g”Ši”[”z—ñ
+sCfreq = zeros(max(sortTop),nframe); % •RConnectŒã‚Ìü”g”Ši”[”z—ñ
+clear sCmagn; % •RConnectŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+clear sCphas; % •RConnectŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
 if(1),
 for tempk=1:nframe-1,
     for templ=1:sortTop(tempk),
@@ -432,7 +426,7 @@ end;
 
 % --- 2D Graph plot
 if(0),
-    for tempk=1:nframe,  % ??????
+    for tempk=1:nframe,  % ŠÔ²
         t3D2(tempk) = (dftsize/Fs)*(tempk);
     end;
     scatter(t3D2,sCfreq(1,:),30,'+');
@@ -451,12 +445,12 @@ end;
 
 
 
-% --- ?R????????Sort&Select????
-clear sCstln; % ?RConnect?????R??
-clear sLcplx; % ?R??Select???????f???i?[?z??
-clear sLfreq; % ?R??Select???????g???i?[?z??
-clear sLmagn; % ?R??Select???????x?i?U???j?i?[?z??
-clear sLphas; % ?R??Select?????????i?[?z??
+% --- •R’·‚É‚æ‚éSort&Select”»’è
+clear sCstln; % •RConnectŒã‚Ì•R’·
+clear sLcplx; % •R’·SelectŒã‚Ì•¡‘f”Ši”[”z—ñ
+clear sLfreq; % •R’·SelectŒã‚Ìü”g”Ši”[”z—ñ
+clear sLmagn; % •R’·SelectŒã‚Ì‹­“xiU•jŠi”[”z—ñ
+clear sLphas; % •R’·SelectŒã‚ÌˆÊ‘ŠŠi”[”z—ñ
 nString=strcnt;
 strLen=13;
 nSstring=0;
@@ -484,7 +478,7 @@ for templ=1:nSstring,
 end;
 end;
 % -----------------------------------------------
-%????Sort?????S?????e?s???????????R??????????????????
+%‰¼‚ÉSortŒã‚Ì‘S‚Ä‚ÌŠes‚ª‚Ğ‚Æ‚Â‚Ì•R‚Å‚ ‚é‚Æ‚İ‚È‚·ˆ—
 %sLcplx = sFcplx;
 %sLmagn = sFmagn;
 %sLfreq = sFfreq;
@@ -501,7 +495,7 @@ end;
 
 % --- 2D Graph plot
 if(0),
-    for tempk=1:nframe,  % ??????
+    for tempk=1:nframe,  % ŠÔ²
         t3D2(tempk) = (dftsize/Fs)*(tempk);
     end;
     scatter(t3D2,sLfreq(1,:),50,'+');
@@ -520,7 +514,7 @@ end;
 
 % --- 3D Graph plot
 if(1),
-    for templ=1:nSstring,  % ?R??
+    for templ=1:nSstring,  % •R”
         for tempk=1:nframe,  % Frame
             t3D2(tempk) = (dftsize/Fs)*(tempk);
             f3D2(templ,tempk) = sLfreq(templ,tempk);
@@ -530,11 +524,11 @@ if(1),
         tempLw=3;
         tempMs=5;
         if(templ==1),
-            surf(t3D2,f3D,db3D,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
+            %surf(t3D2,f3D,db3D,'FaceColor','interp','EdgeColor','none','FaceLighting','phong')
             %mesh(t3D2,f3D,db3D);
-            %plot3(t3D2,f3D2(templ,:),db3D2(templ,:),'-ob',...
-            %                                        'LineWidth',tempLw,...
-            %                                        'MarkerSize',tempMs);
+            plot3(t3D2,f3D2(templ,:),db3D2(templ,:),'-ob',...
+                                                    'LineWidth',tempLw,...
+                                                    'MarkerSize',tempMs);
             %plot3(t3D2,f3D2(1,:),db3D2(1,:));
             %scatter3(t3D2,f3D2(1,:),db3D2(1,:));
             xlabel('Time [sec]');
@@ -580,7 +574,7 @@ end;
 
 
 
-% --- ?c???R(sL?n??)????????IFFT&3??????
+% --- c‘¶•R(sLŒn—ñ)‚É‘Î‚µ‚ÄIFFT&3Ÿ•âŠÔ
 if(1),
 for templ=1:nSstring,
     for tempk=1:nframe,
@@ -592,7 +586,7 @@ for templ=1:nSstring,
             ifftS = real( ifft( Xp, dftsize ) )*2 ;
         else
             ifftS = horzcat( ifftS, real( ifft( Xp, dftsize ) )*2 );
-if(1), % 3??????????
+if(1), % 3Ÿ•âŠÔˆ—
             gThree=0;
             gTwo=0;
             gOne=0;
@@ -636,14 +630,14 @@ if(1), % 3??????????
             end;
 end;
         end;
-    end; % Frame??????????
-    % ?R?????Z????????????
+    end; % Frame‚²‚Æ‚Ìˆ—
+    % •R‚ğ‰ÁZ‚µ‚Ä‚¢‚­ˆ—
     if(templ==1),
         sumS = ifftS;
     else
         sumS = sumS + ifftS;
     end;
-end; % String??????????
+end; % String‚²‚Æ‚Ìˆ—
 %sound( sumS, Fs ); 
 %tXp = (1:length(sumS))/Fs; % Time vector
 %plot(tXp,sumS);

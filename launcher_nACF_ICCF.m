@@ -193,12 +193,15 @@ while (1),
             zLabelStr = ( funcStr );
             
             
-            [ x0, fsX, bitsX ] = wavread( xCsvFilename );
-            [ y0, fsY, bitsY ] = wavread( yCsvFilename );
+            %[ x0, fsX, bitsX ] = wavread( xCsvFilename );
+            %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
+            [ x0, fsX ] = audioread( xCsvFilename );
+            [ y0, fsY ] = audioread( yCsvFilename );
             
             
             fs = fsX;
-            bits = bitsX;
+            %bits = bitsX;
+            bits = 0;
             lenX0 = length(x0);
             lenY0 = length(y0);
             
