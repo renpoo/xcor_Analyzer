@@ -173,8 +173,7 @@ if (1),
     handles.flagsdata.debugStepFlag = 0;
     handles.flagsdata.plotFlag          = 1;
     handles.flagsdata.plot3dFlag       = 1;
-    
-    handles.flagsdata.graphTitle       = 'Graph Title';
+    handles.flagsdata.graphTitle       = 'Gra'
     
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );

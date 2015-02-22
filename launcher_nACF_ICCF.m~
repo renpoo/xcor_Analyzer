@@ -209,28 +209,21 @@ while ( loopFlag == 1 ),
             %[ x0, fsX, bitsX ] = wavread( xCsvFilename );
             %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
             [ x0, fsX ] = audioread( xCsvFilename );
-
+            [ y0, fsY ] = audioread( yCsvFilename );
             
-            if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
-                y0 = x0( :, 1);
-                x0 = x0( :, 2);
-            else
-                [ y0, fsY ] = audioread( yCsvFilename );
-            end;
-
             
             fs = fsX;
             %bits = bitsX;
             bits = 0;
             lenX0 = length(x0);
             lenY0 = length(y0);
-
+            
             
             tS = tS0;
             tE = tE0;
             
             tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs ) - 10; % ########### CAUTION
+            tE_Idx = convTime2Index_( tE, x0, fs );
             
             x = x0( tS_Idx : tE_Idx );
             y = y0( tS_Idx : tE_Idx );
@@ -302,7 +295,7 @@ while ( loopFlag == 1 ),
                 tS = tS0 + windowSize * k;
                 tE = tS + windowSize * windowScale;
                 tS_Idx = convTime2Index_( tS, x0, fs );
-                tE_Idx = convTime2Index_( tE, x0, fs ) - 10; % ###### CAUTION!
+                tE_Idx = convTime2Index_( tE, x0, fs );
                 x = x0( tS_Idx : tE_Idx );
                 y = y0( tS_Idx : tE_Idx );
                 

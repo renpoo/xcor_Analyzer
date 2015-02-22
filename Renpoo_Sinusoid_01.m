@@ -28,8 +28,7 @@ s = s0R; % Selecting Single Channel of input WAV File
 if ( 1 ),
     cutf = 4000; % Cut-off frequency
     cutfnorm = cutf / ( Fs / 2 ); % Normalized frequency
-    df = designfilt( 'lowpassfir', 'FilterOrder', 100, 'CutoffFrequency', ...
-        cutfnorm );
+    df = designfilt( 'lowpassfir', 'FilterOrder', 100, 'CutoffFrequency', cutfnorm );
     % --- Check Delay Effect by LPF above
     %grpdelay( df, 2048, Fs ); % When Group Delay is uniform, it
     %should be fixed by simply time shift
@@ -92,9 +91,7 @@ for k = 1 : nframe,
     end;
 end;
 if (0),
-    surf( t3D, f3D, db3D, 'FaceColor', 'interp', ...
-        'EdgeColor', 'none', ...
-        'FaceLighting', 'phong');
+    surf( t3D, f3D, db3D, 'FaceColor', 'interp', 'EdgeColor', 'none', 'FaceLighting', 'phong');
     %mesh(t3D,f3D,db3D);
     xlabel('Time [sec]');
     ylabel('Frequency [Hz]');
@@ -149,15 +146,13 @@ if (0),
                 zlabel( 'Magnitude [dB]' );
                 hold on;
             else
-                scatter3( t3D2, f3D2( l, : ), db3D2( l, : ) ...
-                    );
+                scatter3( t3D2, f3D2( l, : ), db3D2( l, : ) );
             end;
         end;
         hold off;
         
         if (0),
-            surf( t3D2, f3D2, db3D2, 'FaceColor', 'interp', ...
-                'EdgeColor', 'none', 'FaceLighting', 'phong' );
+            surf( t3D2, f3D2, db3D2, 'FaceColor', 'interp', 'EdgeColor', 'none', 'FaceLighting', 'phong' );
             %surf(t3D2,f3D2,db3D2);
             %mesh(t3D2,f3D2,db3D2);
             %scatter3(t3D2,f3D2,db3D2);
@@ -237,8 +232,7 @@ if (1),
         end;
         for l = 2 : dftsize / 2 - 1,
             if ( sMagn( l, k ) > 0.1),
-                if ( sMagn( l, k ) >= sMagn( l-1, k ) ) ...
-                        && ( sMagn( l, k ) >= sMagn( l+1, k ) ),
+                if ( sMagn( l, k ) >= sMagn( l-1, k ) ) && ( sMagn( l, k ) >= sMagn( l+1, k ) ),
                     tmpStop = tmpStop + 1;
                     sFmagn( tmpStop, k ) = sMagn( l, k );
                     sFcplx( tmpStop, k ) = sCplx( l, k );
@@ -346,19 +340,14 @@ if (1),
                 tmpR = 0;
                 for m = 1 : sortTop( k + 1 ),
                     if ( sFfreq( l, k ) ~= 0 ) && ( sFfreq( m, k+1 ) ~= 0) && ( sFstno( m, k+1 ) == 0 ),
-                        if ( abs( sFfreq( l, k ) - sFfreq( m, k+1 ) ) <= dDiff)...
-                                && ( abs( sFfreq( l, k ) - sFfreq( m, k+1 ) )...
-                                <= abs( sFfreq( l + 1, k ) ...
-                                - sFfreq( m, k + 1 ) ) ),
+                        if ( abs( sFfreq( l, k ) - sFfreq( m, k+1 ) ) <= dDiff) ...
+                                && ( abs( sFfreq( l, k ) - sFfreq( m, k+1 ) ) <= abs( sFfreq( l + 1, k ) - sFfreq( m, k + 1 ) ) ),
                             if ( fDiff < 0 ),
-                                fDiff = abs( sFfreq( l, k ) - ...
-                                    sFfreq( m, k + 1 ) );
+                                fDiff = abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) );
                                 tmpR = m;
                             else
-                                if ( abs( sFfreq( l, k ) - sFfreq( ...
-                                        m, k + 1 ) ) < fDiff ),
-                                    fDiff = abs( sFfreq( l, k ) ...
-                                        - sFfreq( m, k + 1 ) );
+                                if ( abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) ) < fDiff ),
+                                    fDiff = abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) );
                                     tmpR = m;
                                 else
                                     break;
@@ -376,24 +365,16 @@ if (1),
                         sCcplx( strcnt, k ) = sFcplx( l, k );
                         sCfreq( strcnt, k ) = sFfreq( l, k );
                         sCphas( strcnt, k ) = sFphas( l, k );
-                        sCmagn( strcnt, k+1 ) = sFmagn( tmpR, k+1 ...
-                            );
-                        sCcplx( strcnt, k+1 ) = sFcplx( tmpR, k+1 ...
-                            );
-                        sCfreq( strcnt, k+1 ) = sFfreq( tmpR, k+1 ...
-                            );
-                        sCphas( strcnt, k+1 ) = sFphas( tmpR, k+1 ...
-                            );
+                        sCmagn( strcnt, k+1 ) = sFmagn( tmpR, k+1 );
+                        sCcplx( strcnt, k+1 ) = sFcplx( tmpR, k+1 );
+                        sCfreq( strcnt, k+1 ) = sFfreq( tmpR, k+1 );
+                        sCphas( strcnt, k+1 ) = sFphas( tmpR, k+1 );
                     else
                         sFstno( tmpR, k+1 ) = sFstno( l, k );
-                        sCmagn( sFstno( l, k ),k+1 ) = sFmagn( ...
-                            tmpR, k+1 );
-                        sCcplx( sFstno( l, k ),k+1 ) = sFcplx( ...
-                            tmpR, k+1 );
-                        sCfreq( sFstno( l, k ),k+1 ) = sFfreq( ...
-                            tmpR, k+1 );
-                        sCphas( sFstno( l, k ),k+1 ) = sFphas( ...
-                            tmpR, k+1 );
+                        sCmagn( sFstno( l, k ),k+1 ) = sFmagn( tmpR, k+1 );
+                        sCcplx( sFstno( l, k ),k+1 ) = sFcplx( tmpR, k+1 );
+                        sCfreq( sFstno( l, k ),k+1 ) = sFfreq( tmpR, k+1 );
+                        sCphas( sFstno( l, k ),k+1 ) = sFphas( tmpR, k+1 );
                     end;
                 end;
             end;
@@ -402,8 +383,7 @@ if (1),
             if ( sFstno( l, k ) == 0 ),
                 tempStringFlag = 0;
             else
-                tempStringFlag = sCfreq( sFstno( l, k ), k+1 ...
-                    );
+                tempStringFlag = sCfreq( sFstno( l, k ), k+1 );
             end;
             if ( tempStringFlag == 0 ),
                 fDiff = -1;
@@ -413,16 +393,11 @@ if (1),
                     if ( sFfreq( l, k ) ~= 0) && ( sFfreq( m, k + 1 ) ~= 0) && ( sFstno( m, k + 1 ) == 0),
                         if ( abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) ) <= dDiff ),
                             if ( fDiff < 0 ),
-                                fDiff = abs( sFfreq( l, k ) - ...
-                                    sFfreq( m, k + 1 ) ...
-                                    );
+                                fDiff = abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) );
                                 tmpR = m;
                             else
-                                if ( abs( sFfreq( l, k ) - sFfreq( ...
-                                        m, k + 1 ) ) < fDiff ),
-                                    fDiff = abs( sFfreq( l, k ) ...
-                                        - sFfreq( m, k ...
-                                        + 1 ) );
+                                if ( abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) ) < fDiff ),
+                                    fDiff = abs( sFfreq( l, k ) - sFfreq( m, k + 1 ) );
                                     tmpR = m;
                                 else
                                     break;
@@ -445,16 +420,11 @@ if (1),
                         sCfreq( strcnt, k +1 ) = sFfreq( tmpR, k+1);
                         sCphas( strcnt, k +1 ) = sFphas( tmpR, k+1);
                     else
-                        sFstno( tmpR, k + 1 ) = sFstno( l, k ...
-                            );
-                        sCmagn( sFstno( l, k ), k+1 ) = ...
-                            sFmagn( tmpR, k+1 );
-                        sCcplx( sFstno( l, k ), k+1 ) = ...
-                            sFcplx( tmpR, k+1 );
-                        sCfreq( sFstno( l, k ), k+1 ) = ...
-                            sFfreq( tmpR, k+1 );
-                        sCphas( sFstno( l, k ), k+1 ) = ...
-                            sFphas( tmpR, k+1 );
+                        sFstno( tmpR, k + 1 ) = sFstno( l, k );
+                        sCmagn( sFstno( l, k ), k+1 ) = sFmagn( tmpR, k+1 );
+                        sCcplx( sFstno( l, k ), k+1 ) = sFcplx( tmpR, k+1 );
+                        sCfreq( sFstno( l, k ), k+1 ) = sFfreq( tmpR, k+1 );
+                        sCphas( sFstno( l, k ), k+1 ) = sFphas( tmpR, k+1 );
                     end;
                 end;
             end;
@@ -574,10 +544,7 @@ if (1),
             %surf( t3D2, f3D, db3D, 'FaceColor', 'interp',
             %'EdgeColor', 'none', 'FaceLighting', 'phong' );
             %mesh( t3D2, f3D, db3D );
-            plot3( t3D2, f3D2( l, : ), db3D2( l, : ), '-ob', ...
-                'LineWidth', lw, ...
-                'MarkerSize', ms ...
-                );
+            plot3( t3D2, f3D2( l, : ), db3D2( l, : ), '-ob', 'LineWidth', lw, 'MarkerSize', ms );
             %plot3( t3D2, f3D2( 1, : ), db3D2( 1, : ) );
             %scatter3( t3D2, f3D2( 1, : ), db3D2( 1, : ) );
             xlabel( 'Time [sec]' );
@@ -590,32 +557,21 @@ if (1),
             switch colorNo
                 case 1
                     %strC = 'b';
-                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-ob',...
-                        'LineWidth',lw,...
-                        'MarkerSize',ms);
+                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-ob', 'LineWidth',lw, 'MarkerSize',ms);
                 case 2
                     %strC = 'r';
-                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-or',...
-                        'LineWidth',lw,...
-                        'MarkerSize',ms);
+                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-or', 'LineWidth',lw, 'MarkerSize',ms);
                 case 3
                     %strC = 'g';
-                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-og',...
-                        'LineWidth',lw,...
-                        'MarkerSize',ms);
+                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-og', 'LineWidth',lw, 'MarkerSize',ms);
                 case 4
                     %strC = 'y';
-                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-oy',...
-                        'LineWidth',lw,...
-                        'MarkerSize',ms);
+                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-oy', 'LineWidth',lw, 'MarkerSize',ms);
                 case 0
                     %strC = 'k';
-                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-ok',...
-                        'LineWidth',lw,...
-                        'MarkerSize',ms);
+                    plot3(t3D2,f3D2(l,:),db3D2(l,:),'-ok', 'LineWidth',lw, 'MarkerSize',ms);
             end;
-            %plot3( t3D2, f3D2( l, : ), db3D2( l, : ), strC
-            %);
+            %plot3( t3D2, f3D2( l, : ), db3D2( l, : ), strC %);
             %scatter3( t3D2, f3D2( l, : ), db3D2( l, : ) );
         end;
     end;
@@ -640,7 +596,7 @@ if (1),
                 ifftS = real( ifft( Xp, dftsize ) ) * 2 ;
             else
                 ifftS = horzcat( ifftS, real( ifft( Xp, dftsize ) ) * 2 );
-                if(1), % 3??????????
+                if(1), % Cubic Interplation Caluculation
                     gThree = 0;
                     gTwo = 0;
                     gOne = 0;
@@ -674,24 +630,16 @@ if (1),
                         end;
                     end;
                     gZero = ifftS( originIdx );
-                    gOne = ( ifftS( originIdx + 1 ) - ifftS( originIdx ) ) ...
-                        / ( 1 / Fs );
+                    gOne = ( ifftS( originIdx + 1 ) - ifftS( originIdx ) ) / ( 1 / Fs );
                     gTtmp1 = ifftS( beta1 );
-                    gTtmp2 = ( ifftS( beta1 ) - ifftS( beta2 ) ) / ( 1 / Fs ...
-                        );
-                    gTwo = ( -3 / ( ( beta1 - originIdx ) / Fs ) ^ 2 ) ...
-                        * ( gZero - gTtmp1 ) + ( -1 / ( ( beta1 - originIdx ...
-                        ) / Fs ) ) ...
+                    gTtmp2 = ( ifftS( beta1 ) - ifftS( beta2 ) ) / ( 1 / Fs );
+                    gTwo = ( -3 / ( ( beta1 - originIdx ) / Fs ) ^ 2 ) * ( gZero - gTtmp1 ) + ( -1 / ( ( beta1 - originIdx ) / Fs ) ) ...
                         * ( 2 * gOne + gTtmp2 );
-                    gThree = ( 2 / ( ( beta1 - originIdx ) / Fs ) ^ 3 ) ...
-                        * ( gZero - gTtmp1 ) ...
-                        + ( 1 / ( ( beta1 - originIdx ) / Fs ) ^ 2 ) ...
+                    gThree = ( 2 / ( ( beta1 - originIdx ) / Fs ) ^ 3 ) * ( gZero - gTtmp1 ) + ( 1 / ( ( beta1 - originIdx ) / Fs ) ^ 2 ) ...
                         * ( gOne + gTtmp2 );
                     for tempi = beta2 : originIdx - 1,
-                        ifftS( tempi ) = gThree * ( ( tempi - originIdx ) / ...
-                            Fs ) ^ 3 ...
-                            + gTwo * ( ( tempi - originIdx ) / Fs ) ^ 2 ...
-                            + gOne * ( ( tempi - originIdx ) / Fs ) + gZero;
+                        ifftS( tempi ) = gThree * ( ( tempi - originIdx ) / Fs ) ^ 3 ...
+                            + gTwo * ( ( tempi - originIdx ) / Fs ) ^ 2 + gOne * ( ( tempi - originIdx ) / Fs ) + gZero;
                     end;
                 end;
             end;
@@ -717,6 +665,3 @@ if (1),
     plot( tXp, sumS );
     axis( [ 0.0, 1.55, -0.5, 0.5 ]);
 end;
-
-
-
