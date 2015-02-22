@@ -32,7 +32,8 @@ tic();
 if (flags.nacfFlag),
   funcStr = 'nACF';
   tStart  = 0.0;  %%% CAUTION!!! %%%
-  limitSize = convTime2Index_( (tStop - tStart), x, fs );
+  cropIdx = 1;
+  limitSize = convTime2Index_( (tStop - tStart), x, fs ) - cropIdx;
   if (flags.nacfAndoFlag),
     phi_p = nACF_ANDO_( (tStop - tStart), duration, x, x );
     %phi_p = arraySubstitute_( nACF_ANDO_( (tStop - tStart), duration, x, x ), limitSize );

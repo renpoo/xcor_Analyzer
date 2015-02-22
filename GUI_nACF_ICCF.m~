@@ -442,7 +442,7 @@ function edit7_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit7 as text
 %        str2double(get(hObject,'String')) returns contents of edit7 as a double
 
-handles.flagsdata.wavFileName = get( hObject, 'String' );
+set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 
 guidata(hObject,handles);
 
@@ -515,7 +515,7 @@ function edit8_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit8 as text
 %        str2double(get(hObject,'String')) returns contents of edit8 as a double
 
-handles.flagsdata.tS0 = str2num( get( hObject, 'String' ) );
+set( handles.edit8, 'String', handles.flagsdata.tS0 );
 
 guidata(hObject,handles);
 
@@ -542,7 +542,7 @@ function edit9_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit9 as text
 %        str2double(get(hObject,'String')) returns contents of edit9 as a double
 
-handles.flagsdata.tE0 = str2num( get( hObject, 'String' ) );
+set( handles.edit9, 'String', handles.flagsdata.tE0 );
 
 guidata(hObject,handles);
 
@@ -569,7 +569,7 @@ function edit10_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit10 as text
 %        str2double(get(hObject,'String')) returns contents of edit10 as a double
 
-handles.flagsdata.tStart = get( hObject, 'String' );
+set( handles.edit10, 'String', handles.flagsdata.tStart );
 
 guidata(hObject,handles);
 
@@ -596,7 +596,7 @@ function edit11_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit11 as text
 %        str2double(get(hObject,'String')) returns contents of edit11 as a double
 
-handles.flagsdata.tStop = get( hObject, 'String' );
+set( handles.edit11, 'String', handles.flagsdata.tStop );
 
 guidata(hObject,handles);
 
@@ -623,7 +623,7 @@ function edit12_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit12 as text
 %        str2double(get(hObject,'String')) returns contents of edit12 as a double
 
-handles.flagsdata.nStepIdx = str2num( get( hObject, 'String' ) );
+set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
 
 guidata(hObject,handles);
 
@@ -686,7 +686,7 @@ function edit13_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit13 as text
 %        str2double(get(hObject,'String')) returns contents of edit13 as a double
 
-handles.flagsdata.ch1Wav = get( hObject, 'String' );
+set( handles.edit13, 'String', handles.flagsdata.ch1Wav );
 
 guidata(hObject,handles);
 
@@ -712,7 +712,7 @@ function edit14_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit14 as text
 %        str2double(get(hObject,'String')) returns contents of edit14 as a double
 
-handles.flagsdata.ch2Wav = get( hObject, 'String' );
+set( handles.edit14, 'String', handles.flagsdata.ch2Wav );
 
 guidata(hObject,handles);
 
@@ -738,7 +738,7 @@ function edit15_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit15 as text
 %        str2double(get(hObject,'String')) returns contents of edit15 as a double
 
-handles.flagsdata.ch3Wav = get( hObject, 'String' );
+set( handles.edit15, 'String', handles.flagsdata.ch3Wav );
 
 guidata(hObject,handles);
 
@@ -765,7 +765,7 @@ function edit16_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit16 as text
 %        str2double(get(hObject,'String')) returns contents of edit16 as a double
 
-handles.flagsdata.ch4Wav = get( hObject, 'String' );
+set( handles.edit16, 'String', handles.flagsdata.ch4Wav );
 
 guidata(hObject,handles);
 
@@ -791,7 +791,7 @@ function edit17_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit17 as text
 %        str2double(get(hObject,'String')) returns contents of edit17 as a double
 
-handles.flagsdata.ch5Wav = get( hObject, 'String' );
+set( handles.edit17, 'String', handles.flagsdata.ch5Wav );
 
 guidata(hObject,handles);
 
@@ -818,7 +818,7 @@ function edit18_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit18 as text
 %        str2double(get(hObject,'String')) returns contents of edit18 as a double
 
-handles.flagsdata.ch6Wav = get( hObject, 'String' );
+set( handles.edit18, 'String', handles.flagsdata.ch6Wav );
 
 guidata(hObject,handles);
 
@@ -997,7 +997,7 @@ function edit25_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit25 as text
 %        str2double(get(hObject,'String')) returns contents of edit25 as a double
 
-handles.flagsdata.graphTitle = get( hObject, 'String' );
+set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 
 guidata(hObject,handles);
 

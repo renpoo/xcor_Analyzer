@@ -58,20 +58,17 @@ handles.flagsdata.debugFlag       = 1;
 handles.flagsdata.debugStepFlag = 0;
 handles.flagsdata.plotFlag          = 1;
 handles.flagsdata.plot3dFlag       = 1;
-handles.flagsdata.exitFlag          = 0;
-
-handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
 handles.flagsdata.graphTitle = '';
 handles.flagsdata.nStepIdx = 0;
 handles.flagsdata.tS0 = 0.0;
-handles.flagsdata.tE0 = 1.0;
-handles.flagsdata.tStart = -0.005;
-handles.flagsdata.tStop = +0.005;
+handles.flagsdata.tE0 = 0;
+handles.flagsdata.tStart;
+handles.flagsdata.tStop;
 
     
 
-args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
+args = [];  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
 while ( 1 ),
@@ -136,8 +133,8 @@ while ( 1 ),
     
     if ( 0 ),
         [ fname, pname ] = uigetfile( '*.csv', 'CSV DEFINITION FILE' );
-        wavFileName = strcat( pname, fname );
-        [ ch, csvFileNames ] = textread( wavFileName, '%s %s', 'delimiter', ',' );
+        defFileName = strcat( pname, fname );
+        [ ch, csvFileNames ] = textread( defFileName, '%s %s', 'delimiter', ',' );
         
         
         graphTitle = ch{1};                        % FORCE to get TITLE name to treat
@@ -198,10 +195,10 @@ while ( 1 ),
             
             
             if (flags.nacfFlag),
-                if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
+                if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
                     xLabel = 'Right';
                     yLabel = 'Left';
-                    xCsvFilename = handles.flagsdata.wavFileName;
+                    xCsvFilename = handles.flagsdata.defFileName;
                 else
                     xLabel = ch{i};
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
@@ -213,10 +210,10 @@ while ( 1 ),
                 labelStr = xLabel;
                 strTitleBase = strcat( '[', xLabel, ']' );
             else
-                if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
+                if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
                     xLabel = 'Right';
                     yLabel = 'Left';
-                    xCsvFilename = handles.flagsdata.wavFileName;
+                    xCsvFilename = handles.flagsdata.defFileName;
                 else
                     xLabel = ch{i};
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
@@ -234,7 +231,7 @@ while ( 1 ),
             zLabelStr = ( funcStr );
             
             
-            if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
+            if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
                 [ s0, fsS ] = audioread( xCsvFilename );
                 
                 disp('####');
@@ -381,8 +378,8 @@ while ( 1 ),
                 hold on;
                 
                 if ( flags.iccfFlag ),
-                    lw = 3;
-                    ms = 4;
+                    lw = 2;
+                    ms = 3;
                     %lc = '-ow';
                     lc = 'ow';
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );

@@ -12,6 +12,9 @@ audFileName = strcat( pname, '/', fname );
 samples = [ 1, inf ];
 [ s0, Fs ] = audioread( audFileName, samples );
 
+
+return;
+
 % --- Initializing
 t0 = ( 1 : length(s0) ) / Fs; % Time vector
 s0R = s0( 1 : length(s0), 1 ); % R channel
