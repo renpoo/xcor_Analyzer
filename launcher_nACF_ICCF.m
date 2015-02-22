@@ -1,7 +1,7 @@
 %function launcher_nACF_ICCF( handles )
 
-%close all;
-%clear;
+close all;
+clear;
 
 
 %pkg load signal;
@@ -49,9 +49,8 @@ results = struct(            ...
 
 args = [];  % input args for GUI_nACF_ICCF() for repeating calc.
 
-loopFlag = 1;
 
-while ( loopFlag == 1 ),
+while (1),
     
     %disp( args );
     %pause;
@@ -60,7 +59,7 @@ while ( loopFlag == 1 ),
         
     
     if ( 1 ),
-        if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loopFlag of this main procedure
+        if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
 
         if ( handles.flagsdata.funcFlag == 2 ),
             flags.nacfFlag = 1 ;
@@ -164,37 +163,25 @@ while ( loopFlag == 1 ),
     for i = 1+numberOfHeaders:length(ch),
         for j = i+1:length(ch)+1,
             
-            if ( flags.nacfFlag && (j>i+1) ) break; end; % FORCE to break the inner loopFlag for when nACF
-            if ( flags.nacfFlag && (i==1+numberOfHeaders) && flags.nacfSingleFlag ) break; end; % FORCE to break the inner loopFlag for when nACF
-            if ( flags.iccfFlag && (j==length(ch)+1) ) break; end; % FORCE to break the inner loopFlag for when nACF
-                            
-                
+            if ( flags.nacfFlag && (j>i+1) ) break; end; % FORCE to break the inner loop for when nACF
+            if ( flags.nacfFlag && (i==1+numberOfHeaders) && flags.nacfSingleFlag ) break; end; % FORCE to break the inner loop for when nACF
+            if ( flags.iccfFlag && (j==length(ch)+1) ) break; end; % FORCE to break the inner loop for when nACF
+            
+            
             if (flags.nacfFlag),
-                if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
-                    xLabel = 'Left';
-                    yLabel = 'Right';
-                    xCsvFilename = handles.flagsdata.defFileName;
-                else                
-                    xLabel = ch{i};
-                    xCsvFilename = strcat( pname, '/', csvFileNames{i} );
-                    yLabel = ch{i};
-                    yCsvFilename = strcat( pname, '/', csvFileNames{i} );
-                end;
-                    
+                xLabel = ch{i};
+                xCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                yLabel = ch{i};
+                yCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                
                 funcStr = 'nACF';
                 labelStr = xLabel;
                 strTitleBase = strcat( '[', xLabel, ']' );
             else
-                if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
-                    xLabel = 'Left';
-                    yLabel = 'Right';
-                    xCsvFilename = handles.flagsdata.defFileName;
-                else
-                    xLabel = ch{i};
-                    xCsvFilename = strcat( pname, '/', csvFileNames{i} );
-                    yLabel = ch{j};
-                    yCsvFilename = strcat( pname, '/', csvFileNames{j} );
-                end;
+                xLabel = ch{i};
+                xCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                yLabel = ch{j};
+                yCsvFilename = strcat( pname, '/', csvFileNames{j} );
                 
                 funcStr = 'ICCF';
                 labelStr = strcat( yLabel, ',', xLabel );
@@ -209,28 +196,21 @@ while ( loopFlag == 1 ),
             %[ x0, fsX, bitsX ] = wavread( xCsvFilename );
             %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
             [ x0, fsX ] = audioread( xCsvFilename );
-
+            [ y0, fsY ] = audioread( yCsvFilename );
             
-            if ( ~strcmp( handles.flagsdata.defFileName, '' ) ),
-                y0 = x0( :, 1);
-                x0 = x0( :, 2);
-            else
-                [ y0, fsY ] = audioread( yCsvFilename );
-            end;
-
             
             fs = fsX;
             %bits = bitsX;
             bits = 0;
             lenX0 = length(x0);
             lenY0 = length(y0);
-
+            
             
             tS = tS0;
             tE = tE0;
             
             tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs ) - 10; % ########### CAUTION
+            tE_Idx = convTime2Index_( tE, x0, fs );
             
             x = x0( tS_Idx : tE_Idx );
             y = y0( tS_Idx : tE_Idx );
@@ -302,7 +282,7 @@ while ( loopFlag == 1 ),
                 tS = tS0 + windowSize * k;
                 tE = tS + windowSize * windowScale;
                 tS_Idx = convTime2Index_( tS, x0, fs );
-                tE_Idx = convTime2Index_( tE, x0, fs ) - 10; % ###### CAUTION!
+                tE_Idx = convTime2Index_( tE, x0, fs );
                 x = x0( tS_Idx : tE_Idx );
                 y = y0( tS_Idx : tE_Idx );
                 
@@ -369,7 +349,6 @@ while ( loopFlag == 1 ),
         end;
     end;
     
-    %loopFlag = 0;
     
 end;
 

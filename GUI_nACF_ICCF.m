@@ -97,9 +97,6 @@ function calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-%launcher_nACF_ICCF( handles );
-
 guidata( hObject, handles );
 
 uiresume( gcf );
@@ -174,7 +171,6 @@ if (1),
     handles.flagsdata.plotFlag          = 1;
     handles.flagsdata.plot3dFlag       = 1;
     
-    handles.flagsdata.graphTitle       = 'Graph Title';
     
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
@@ -184,8 +180,6 @@ if (1),
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
     set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
     set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
-
-    set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 end;
 
 
