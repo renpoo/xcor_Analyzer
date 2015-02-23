@@ -22,7 +22,7 @@ resultData2 = zeros( windowSizeIdx, 1 );
 tmpResultData = zeros( windowSizeIdx, 1 );
 params = [];
 
-tic();
+%tic();
 
 ICCC = 0.0;
 pointiccc = 0.0;
@@ -111,7 +111,7 @@ if (flags.iccfFlag),
 
     end;
 end;
-toc();
+%toc();
 
 
 if (flags.plotFlag),

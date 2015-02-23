@@ -83,6 +83,7 @@ function varargout = GUI_nACF_ICCF_OutputFcn(hObject, eventdata, handles)
 
 if nargout
     [varargout{1:nargout}] = handles;
+    write_history_( handles.flagsdata, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 else
     %gui_mainfcn(gui_State, varargin{:});
 end
@@ -127,10 +128,13 @@ end;
 % Global Constant as Magic Number
 %handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
+handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 
-%handles.flagsdata.exitFlag       = 0;
+%handles.flagsdata.exitFlag = 0;
 
-if (1),
+disp( handles.flagsdata );
+
+if ( 0 ),
     handles.flagsdata.funcFlag         = 2;
     handles.flagsdata.nacfAndoFlag  = 0;
     handles.flagsdata.phiFlag           = 1;
@@ -149,7 +153,11 @@ if (1),
     handles.flagsdata.tStart            = -0.005;
     handles.flagsdata.tStop             = +0.005;
 
-    
+    handles.flagsdata.defCsvFileName   = '';
+    handles.flagsdata.wavFileName       = '';
+end;
+
+if ( 1 ),    
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
     set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
@@ -158,15 +166,16 @@ if (1),
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
     set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
     set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
-    
-    %{
+
+
+    set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
+    set( handles.edit7,   'String', handles.flagsdata.wavFileName );
     set( handles.edit8,   'String', handles.flagsdata.tS0 );
     set( handles.edit9,   'String', handles.flagsdata.tE0 );
     set( handles.edit10,  'String', handles.flagsdata.tStart );
     set( handles.edit11,  'String', handles.flagsdata.tStop );
     set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
-    %}
 end;
 
 %disp(handles.flagsdata);
@@ -370,7 +379,8 @@ handles.flagsdata.fname = fname;
 handles.flagsdata.pname = pname;
 
 handles.flagsdata.defCsvFileName = defCsvFileName;
-
+handles.flagsdata.wavFileName = '';
+handles.flagsdata.numberOfHeaders = 4;
 
 [ ch, csvFileNames ] = textread( defCsvFileName, '%s %s', 'delimiter', ',' );
 
@@ -400,7 +410,6 @@ handles.flagsdata.ch6Wav = getAppropriateFileName( 'Hind',     ch, csvFileNames,
 
 %{%}
 set( handles.edit6, 'String', handles.flagsdata.defCsvFileName );
-set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 set( handles.edit8, 'String', str2num( ch{2} ) );
 set( handles.edit9, 'String', str2num( csvFileNames{2} ) );
 set( handles.edit10, 'String', str2num( ch{3} ) );
@@ -480,7 +489,7 @@ handles.flagsdata.wavFileName = wavFileName;
 [ s, fs ] = audioread( wavFileName );
 handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0  = length(s) / fs - 0.1;
-handles.flagsdata.nStepIdx = length(s) / fs / 1.0;
+handles.flagsdata.nStepIdx = floor( handles.flagsdata.tE0 / 1.0 );
 
 handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.graphTitle = fname;
@@ -494,7 +503,7 @@ edit9_Callback(hObject, eventdata, handles);
 set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 set( handles.edit8, 'String', 0.0 );
 set( handles.edit9, 'String', length(s) / fs - 0.1 );
-set( handles.edit12, 'String', length(s) / fs / 1.0 );
+set( handles.edit12, 'String', floor( handles.flagsdata.tE0 / 1.0 ) );
 set( handles.edit25, 'String', fname );
 %{
 edit10_Callback(hObject, eventdata, handles);

@@ -28,7 +28,8 @@ params = [];
 strTitle = '';
 strTitleBase = '';
 
-tic();
+%tic();
+
 if (flags.nacfFlag),
   funcStr = 'nACF';
   tStart  = 0.0;  %%% CAUTION!!! %%%
@@ -76,7 +77,7 @@ if (flags.nacfFlag),
 
 
 end;
-toc();
+%toc();
 
 
 if (flags.plotFlag),

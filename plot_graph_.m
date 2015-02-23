@@ -46,7 +46,7 @@ title( strTitle );
 
 %pname = 'Output\ Images';
 %pname = strcat( 'Output\ Images', '/', graphTitle, '_', funcStr , '_', dateTime );
-pname = strcat( 'Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
+pname = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
 %pname = strcat( 'Output\ Images', '/', saveImageName, '_', funcStr , '_', dateTime );
 if ( exist( pname, 'dir' ) == 0 ),
   mkdir( pname );

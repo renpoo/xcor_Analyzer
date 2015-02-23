@@ -69,9 +69,10 @@ handles.flagsdata.tE0 = 1.0;
 handles.flagsdata.tStart = -0.005;
 handles.flagsdata.tStop = +0.005;
 
-    
-
 args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
+
+
+tInter = 0.75; 
 
 
 while ( 1 ),
@@ -288,7 +289,7 @@ while ( 1 ),
             x = x0( tS_Idx : tE_Idx );
             y = y0( tS_Idx : tE_Idx );
             
-            if ( flags.debugStepFlag ) sound( x, fs ); end;
+            if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
             
             windowSizeIdx = convTime2Index_( windowSize, x, fs );
 
@@ -299,9 +300,9 @@ while ( 1 ),
             
             
             %w = HanningWindow_(     length( x ) );
-            %w = HammingWindow_(     length( x ) );
+            w = HammingWindow_(     length( x ) );
             %w = BlackmanWindow_(    length( x ) );
-            w = RectangularWindow_( length( x ) );
+            %w = RectangularWindow_( length( x ) );
             
             if (flags.windowFlag),
                 x = x .* w';
@@ -355,13 +356,13 @@ while ( 1 ),
                     x = x0( tS_Idx : tE_Idx );
                     y = y0( tS_Idx : tE_Idx );
                     
-                    if ( flags.debugStepFlag ) sound( x, fs ); end;
+                    if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
                     
                     
                     %w = HanningWindow_(     length( x ) );
-                    %w = HammingWindow_(     length( x ) );
+                    w = HammingWindow_(     length( x ) );
                     %w = BlackmanWindow_(    length( x ) );
-                    w = RectangularWindow_( length( x ) );
+                    %w = RectangularWindow_( length( x ) );
                     
                     if ( flags.windowFlag ),
                         x = x .* w';
