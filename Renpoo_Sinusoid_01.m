@@ -13,7 +13,7 @@ samples = [ 1, inf ];
 [ s0, Fs ] = audioread( audFileName, samples );
 
 
-return;
+%return;
 
 % --- Initializing
 t0 = ( 1 : length(s0) ) / Fs; % Time vector
@@ -716,9 +716,9 @@ if (1),
         end;
     end;  % End of Process for Every Strings
     sound( sumS, Fs );
-    tXp  =  (1:length(sumS))/Fs; % Time vector
-    plot( tXp, sumS );
-    axis( [ 0.0, 1.55, -0.5, 0.5 ]);
+    %tXp  =  (1:length(sumS))/Fs; % Time vector
+    %plot( tXp, sumS );
+    %axis( [ 0.0, 1.55, -0.5, 0.5 ]);
 end;
 
 

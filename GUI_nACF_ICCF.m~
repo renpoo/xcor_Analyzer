@@ -112,50 +112,59 @@ function reset_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-handles.flagsdata.funcFlag         = 2;
-handles.flagsdata.nacfAndoFlag  = 0;
-handles.flagsdata.phiFlag           = 1;
-handles.flagsdata.dumpFlag        = 0;
-handles.flagsdata.debugFlag       = 1;
-handles.flagsdata.debugStepFlag = 0;
-handles.flagsdata.plotFlag          = 1;
-handles.flagsdata.plot3dFlag       = 1;
-
-handles.flagsdata.exitFlag          = 0;
-
-handles.flagsdata.graphTitle       = 'GraphTest';
-handles.flagsdata.nStepIdx         = 100;
-handles.flagsdata.tS0                = 0.0;
-handles.flagsdata.tE0                = 10.0;
-handles.flagsdata.tStart            = -0.005;
-handles.flagsdata.tStop             = +0.005;
-
-handles.flagsdata.defCsvFileName   = '';
-handles.flagsdata.wavFileName       = '';
-
-
-set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
-set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
-set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
-set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
-set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
-set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
-set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
-set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
-
-
-set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
-set( handles.edit7,   'String', handles.flagsdata.wavFileName );
-set( handles.edit8,   'String', handles.flagsdata.tS0 );
-set( handles.edit9,   'String', handles.flagsdata.tE0 );
-set( handles.edit10,  'String', handles.flagsdata.tStart );
-set( handles.edit11,  'String', handles.flagsdata.tStop );
-set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
-set( handles.edit25, 'String', handles.flagsdata.graphTitle );
-
+if ( 0 ),
+    handles.flagsdata.funcFlag         = 2;
+    handles.flagsdata.nacfAndoFlag  = 0;
+    handles.flagsdata.phiFlag           = 1;
+    handles.flagsdata.dumpFlag        = 0;
+    handles.flagsdata.debugFlag       = 1;
+    handles.flagsdata.debugStepFlag = 0;
+    handles.flagsdata.plotFlag          = 1;
+    handles.flagsdata.plot3dFlag       = 1;
     
+    handles.flagsdata.exitFlag          = 0;
+
+    handles.flagsdata.graphTitle       = 'GraphTest';
+    handles.flagsdata.nStepIdx         = 100;
+    handles.flagsdata.tS0                = 0.0;
+    handles.flagsdata.tE0                = 10.0;
+    handles.flagsdata.tStart            = -0.005;
+    handles.flagsdata.tStop             = +0.005;
+
+    handles.flagsdata.defCsvFileName   = '';
+    handles.flagsdata.wavFileName       = '';
+end;
+
+if ( 1 ),    
+    set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
+    set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
+    set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
+    set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
+    set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
+    set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
+    set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
+    set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
+
+
+    set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
+    set( handles.edit7,   'String', handles.flagsdata.wavFileName );
+    set( handles.edit8,   'String', handles.flagsdata.tS0 );
+    set( handles.edit9,   'String', handles.flagsdata.tE0 );
+    set( handles.edit10,  'String', handles.flagsdata.tStart );
+    set( handles.edit11,  'String', handles.flagsdata.tStop );
+    set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
+    set( handles.edit25, 'String', handles.flagsdata.graphTitle );
+end;
+
+%disp(handles.flagsdata);
+
 % Update handles structure
 guidata( handles.figure1, handles );
+
+
+
+
+initialize_gui( gcbf, handles, true );
 
 
 % --------------------------------------------------------------------
@@ -371,8 +380,6 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 handles.flagsdata.exitFlag = 1;
 
 guidata(hObject,handles);
-
-close;
 
 
 function edit6_Callback(hObject, eventdata, handles)
