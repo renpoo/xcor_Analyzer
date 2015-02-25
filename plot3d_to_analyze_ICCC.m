@@ -1,14 +1,14 @@
 %pkg load signal;
 %pkg load io;
 
-resultDataMat = [];
+ICCCMat = [];
 timeAxis = [];
 timeVec = [];
 
 
-[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (resultDataMat) FILE' );
+[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (ICCCMat) FILE' );
 dataFileName = strcat( pname, '/', fname );
-resultDataMat = dlmread( dataFileName );
+ICCCMat = dlmread( dataFileName );
 
 
 tokens = strsplit(fname, ',')';
@@ -46,26 +46,37 @@ zLabelStr = ( tokens{1,1} );
 
 
 %[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeAxis) FILE' );
-timeAxisFileName = strcat( pname, '/', strrep(fname, 'resultDataMat', 'timeAxis' ) );
+timeAxisFileName = strcat( pname, '/', strrep(fname, 'ICCCMat', 'timeAxis' ) );
 timeAxis = dlmread( timeAxisFileName );
 
 
 %[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeVec) FILE' );
-timeVecFileName = strcat( pname, '/', strrep(fname, 'resultDataMat', 'timeVec' ) );
+timeVecFileName = strcat( pname, '/', strrep(fname, 'ICCCMat', 'timeVec' ) );
 timeVec = dlmread( timeVecFileName );
 
 
-XYZ = surf( timeAxis, timeVec, resultDataMat, 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
-grid on;
+%XYZ = surf( timeAxis, timeVec, ICCCMat, 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
+lw = 3;
+ms = 4;
+lc = '-og';
+XY1 = plot3( tauICCCMat, timeVec, -gradient( nACF_( ICCCMat ) ), lc, 'LineWidth', lw, 'MarkerSize', ms );
 hold on;
+lc = '-or';
+XY2 = plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
+lc = '-ob';
+XY3 = plot3( tauICCCMat, timeVec, nACF_( ICCCMat ), lc, 'LineWidth', lw, 'MarkerSize', ms );
+grid on;
+axis( [ -5.0, 5.0,  0.0, timeVec( length(timeVec) ), 0.0, 1.0 ] );
 
+%{
 if ( flags.iccfFlag ),
     lw = 3;
     ms = 4;
-    %lc = '-ow';
-    lc = 'ow';
+    %lc = '-or';
+    lc = 'or';
     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end;
+%}
 
 %shading interp;
 %shading faceted;
