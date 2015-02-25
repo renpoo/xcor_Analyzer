@@ -534,8 +534,8 @@ handles.flagsdata.wavFileName = wavFileName;
 %[ s, fs, bits ] = wavread( wavFileName );
 [ s, fs ] = audioread( wavFileName );
 handles.flagsdata.tS0 = 0.0;
-handles.flagsdata.tE0  = length(s) / fs - 0.1;
-handles.flagsdata.nStepIdx = floor( handles.flagsdata.tE0 / 1.0 );
+handles.flagsdata.tE0  = length(s) / fs;
+handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / 1.0 );
 
 handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.graphTitle = fname;
@@ -548,8 +548,8 @@ edit9_Callback(hObject, eventdata, handles);
 %}
 set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 set( handles.edit8, 'String', 0.0 );
-set( handles.edit9, 'String', length(s) / fs - 0.1 );
-set( handles.edit12, 'String', floor( handles.flagsdata.tE0 / 1.0 ) );
+set( handles.edit9, 'String', length(s) / fs );
+set( handles.edit12, 'String', ceil( handles.flagsdata.tE0 / 1.0 ) );
 set( handles.edit25, 'String', fname );
 %{
 edit10_Callback(hObject, eventdata, handles);

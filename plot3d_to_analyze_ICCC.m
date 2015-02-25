@@ -2,7 +2,7 @@
 %pkg load io;
 
 ICCCMat = [];
-timeAxis = [];
+tauICCCMat = [];
 timeVec = [];
 
 
@@ -45,9 +45,9 @@ zLabelStr = ( tokens{1,1} );
 
 
 
-%[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeAxis) FILE' );
-timeAxisFileName = strcat( pname, '/', strrep(fname, 'ICCCMat', 'timeAxis' ) );
-timeAxis = dlmread( timeAxisFileName );
+%[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (tauICCCMat) FILE' );
+tauICCCMatFileName = strcat( pname, '/', strrep(fname, 'ICCCMat', 'tauICCCMat' ) );
+tauICCCMat = dlmread( tauICCCMatFileName );
 
 
 %[ fname, pname ] = uigetfile( '*.csv', 'CSV DATA (timeVec) FILE' );
@@ -55,7 +55,7 @@ timeVecFileName = strcat( pname, '/', strrep(fname, 'ICCCMat', 'timeVec' ) );
 timeVec = dlmread( timeVecFileName );
 
 
-%XYZ = surf( timeAxis, timeVec, ICCCMat, 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
+%XYZ = surf( tauICCCMat, timeVec, ICCCMat, 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
 lw = 3;
 ms = 4;
 lc = '-og';

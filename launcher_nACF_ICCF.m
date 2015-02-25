@@ -268,7 +268,7 @@ while ( 1 ),
             tE = tE0;
             
             tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs );
+            tE_Idx = convTime2Index_( tE, x0, fs ) - 1;
             
             x = x0( tS_Idx : tE_Idx );
             y = y0( tS_Idx : tE_Idx );
@@ -285,13 +285,16 @@ while ( 1 ),
             tS_Idx = convTime2Index_( tS, x0, fs );
             tE_Idx = convTime2Index_( tE, x0, fs );
 
+            windowSizeIdx = tE_Idx - tS_Idx;
             
-            x = x0( tS_Idx : tE_Idx );
-            y = y0( tS_Idx : tE_Idx );
+            %x = x0( tS_Idx : tE_Idx );
+            %y = y0( tS_Idx : tE_Idx );
+            x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
+            y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
             
             if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
             
-            windowSizeIdx = convTime2Index_( windowSize, x, fs );
+            %windowSizeIdx = convTime2Index_( windowSize, x, fs );
 
             
             % CAUTION !!!   Add ZERO vector to tail
@@ -352,23 +355,25 @@ while ( 1 ),
                 tE_Idx = convTime2Index_( tE, x0, fs );
 
                 
-                if ( length(x0) - tE_Idx > 0),
-                    x = x0( tS_Idx : tE_Idx );
-                    y = y0( tS_Idx : tE_Idx );
-                    
-                    if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
-                    
-                    
-                    %w = HanningWindow_(     length( x ) );
-                    w = HammingWindow_(     length( x ) );
-                    %w = BlackmanWindow_(    length( x ) );
-                    %w = RectangularWindow_( length( x ) );
-                    
-                    if ( flags.windowFlag ),
-                        x = x .* w';
-                        y = y .* w';
-                    end;
+                if ( length(x0) <= tE_Idx ),
+                    tE_Idx = length(x0) - 1;
                 end;
+                x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
+                y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
+                
+                if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
+                
+                
+                %w = HanningWindow_(     length( x ) );
+                w = HammingWindow_(     length( x ) );
+                %w = BlackmanWindow_(    length( x ) );
+                %w = RectangularWindow_( length( x ) );
+                
+                if ( flags.windowFlag ),
+                    x = x .* w';
+                    y = y .* w';
+                end;
+                %end;
                 
             end;
             
