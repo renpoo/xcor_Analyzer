@@ -1,5 +1,6 @@
-function [ a3, a2, a1, a0 ] = test_calc_CubicFuncCoeff_()
+function test_calc_CubicFuncCoeff_()
 
+clear;
 
 A1 = 1.0;
 A2 = 0.8;
@@ -9,7 +10,8 @@ sigma1 = 0;
 sigma2 = pi/3;
 T = 2*pi;
 ts = T/2-pi/4;
-te = T-pi/3;
+%te = T-pi/3;
+te = T/2;
 t1 = ts;
 t2 = te;
 
@@ -75,7 +77,7 @@ t2 = te;
     df2dt( te, A2, omega2, sigma2 ) );
 
 
-disp( strcat( '### ', num2str(a3), ' ### ', num2str(a2), ' ### ', num2str(a1), ' ### ', num2str(a0) ) );
+%disp( strcat( '### ', num2str(a3), ' ### ', num2str(a2), ' ### ', num2str(a1), ' ### ', num2str(a0) ) );
 
 range = [ 0, T ];
 %{
@@ -92,17 +94,21 @@ firstPlot =  f1_plot( A1, omega1, sigma1 );
 secondPlot =  f2_plot( A2, omega2, sigma2 );
 thirdPlot = g( a3, a2, a1 ,a0 );
 
-figure
+
+figure;
 hold on
-fplot(firstPlot, range, 'b:')
-fplot(secondPlot, range, 'r:' )
-fplot(thirdPlot, range, 'g:' )
+fplot(firstPlot, range, 'b');
+fplot(secondPlot, range, 'r' );
+fplot(thirdPlot, range, 'g' );
 %{
 fplot(firstPlot, [0, ts], 'b:')
 fplot(secondPlot, [te, T], 'r:' )
 fplot(thirdPlot, [ts, te], 'g:' )
 %}
-hold off
+
+axis( [ 0, T, -1, 1 ], 'square' );
+
+hold off;
 
 
 end
