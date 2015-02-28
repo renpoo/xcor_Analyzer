@@ -1,0 +1,88 @@
+function [ a3, a2, a1, a0 ] = test_calc_CubicFuncCoeff_()
+
+
+A1 = 1.0;
+A2 = 0.8;
+omega1 = 1;
+omega2 = 3/2;
+sigma1 = 0;
+sigma2 = pi/3;
+T = 2*pi;
+ts = T/2-pi/4;
+te = T-pi/3;
+t1 = ts;
+t2 = te;
+
+function p = makeParabola(a,b,c)
+p = @parabola;
+
+   function y = parabola(x)
+   y = a*x.^2 + b*x + c;
+   end
+
+end
+
+
+    function f1_t = f1( t, A1, omega1, sigma1 )
+        f1_t = @wave_f1;
+
+        function y = wave_f1( t, A1, omega1, sigma1 )
+            y = A1 * sin( omega1.*t + sigma1 );
+        end
+    end
+    
+    function f2_t = f2( t, A2, omega2, sigma2 )
+        f2_t = @wave_f2;
+
+        function y = wave_f2( t, A2, omega2, sigma2 )
+            y = A2 * sin( omega2.*t + sigma2 );
+        end
+    end
+    
+    
+    function d1_t = df1dt( t, A1, omega1, sigma1 )
+        d1_t = A1 * omega1 * cos( omega1.*t + sigma1 );
+    end
+    
+    
+    function d2_t = df2dt( t, A2, omega2, sigma2 )
+        d2_t = A2 * omega2 * cos( omega2.*t + sigma2 );
+    end
+    
+
+    function g_t = g( t, a3, a2, a1 ,a0 )
+        g_t = @cubic_f;
+        
+        function y = wave_f1( t, a3, a2, a1 ,a0 )
+            y = a3 * t.^3 + a2 * t.^2 + a1 * t + a0;
+        end
+    end
+
+[ a3, a2, a1, a0 ] = calc_CubicFuncCoeff_( ts, te, ...
+    f1( ts, A1, omega1, sigma1 ), ...
+    f2( te, A2, omega2, sigma2 ), ...
+    df1dt( ts, A1, omega1, sigma1 ), ...
+    df2dt( te, A2, omega2, sigma2 ) );
+
+
+disp( strcat( '### ', num2str(a3), ' ### ', num2str(a2), ' ### ', num2str(a1), ' ### ', num2str(a0) ) ); 
+
+range = [ 0, T ];
+%{
+firstPlot =  f1( [0, ts], A1, omega1, sigma1 );
+secondPlot =  f2( [te, T], A2, omega2, sigma2 );
+thirdPlot = g( [ts, te], a3, a2, a1 ,a0 );
+%}
+firstPlot =  f1( range, A1, omega1, sigma1 );
+secondPlot =  f2( range, A2, omega2, sigma2 );
+thirdPlot = g( range, a3, a2, a1 ,a0 );
+
+figure
+hold on
+plot(firstPlot,range, 'b:')
+plot(secondPlot,range, 'r:' )
+plot(thirdPlot,range, 'g:' )
+hold off
+
+
+end
