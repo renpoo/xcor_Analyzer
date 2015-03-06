@@ -685,7 +685,7 @@ function edit12_Callback(hObject, eventdata, handles)
 
 %handles.flagsdata.nStepIdx = str2num( get( hObject, 'String' ) );
 handles.flagsdata.timeSlice = str2num( get( hObject, 'String' ) );
-handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / handles.flagsdata.timeSlice ) - 1;
+handles.flagsdata.nStepIdx = 
 
 guidata(hObject,handles);
 

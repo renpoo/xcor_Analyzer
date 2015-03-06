@@ -9,7 +9,7 @@ end;
 outputDataFileName = strcat( pname, '/', saveFileName );
 
 
-[fid, errMsg] = fopen(outputDataFileName, 'a+');
+[fid, errMsg] = fopen(outputDataFileName, 'w+');
 if ( fid == -1 ) disp( errMsg ); return; end;
 
 

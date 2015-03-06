@@ -64,6 +64,7 @@ handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
 handles.flagsdata.graphTitle = '';
 handles.flagsdata.nStepIdx = 0;
+handles.flagsdata.timeSlice = 1.0;
 handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0 = 1.0;
 handles.flagsdata.tStart = -0.005;
@@ -72,7 +73,7 @@ handles.flagsdata.tStop = +0.005;
 args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
-tInter = 0.75; 
+tInter = 0.50; 
 
 
 while ( 1 ),
@@ -105,11 +106,12 @@ while ( 1 ),
         
         
         graphTitle = handles.flagsdata.graphTitle;                        % FORCE to get TITLE name to treat
-        tS0 = handles.flagsdata.tS0;                 % FORCE to get tS (Start) to cut the whole music signals
-        tE0 = handles.flagsdata.tE0;  % FORCE to get tE (End)   to cut the whole music signals
-        tStart = handles.flagsdata.tStart;              % FORCE to get tStart to calculate CCF
-        tStop  = handles.flagsdata.tStop;  % FORCE to get tStop  to calculate CCF
-        nStepIdx = handles.flagsdata.nStepIdx;          % FORCE to get windowSize to calculate Realtime CCF
+        tS0 = castNumeric_( handles.flagsdata.tS0 );                 % FORCE to get tS (Start) to cut the whole music signals
+        tE0 = castNumeric_( handles.flagsdata.tE0 );  % FORCE to get tE (End)   to cut the whole music signals
+        tStart = castNumeric_( handles.flagsdata.tStart );              % FORCE to get tStart to calculate CCF
+        tStop  = castNumeric_( handles.flagsdata.tStop );  % FORCE to get tStop  to calculate CCF
+        nStepIdx = castNumeric_( handles.flagsdata.nStepIdx );          % FORCE to get windowSize to calculate Realtime CCF
+        timeSlice = castNumeric_( handles.flagsdata.timeSlice );          % FORCE to get windowSize to calculate Realtime CCF
 
         pname = handles.flagsdata.pname;
         
@@ -278,6 +280,10 @@ while ( 1 ),
             lenX = length(x);
             lenY = length(y);
             
+            % CAUTION!!
+            %nStepIdx = ceil( ( tE - tS ) / timeSlice ) - 1;
+            nStepIdx = ceil( ( tE - tS ) / timeSlice );
+            
             windowSize = (tE - tS) / nStepIdx;
             
             tE = tS + windowSize * windowScale;
@@ -314,10 +320,10 @@ while ( 1 ),
             
             
             for (k = 1 : nStepIdx + 1 ),
-                saveImageName = strcat( funcStr, ',', labelStr, ',' , num2str(tS0, '%04.2f'), ',', num2str(tE0, '%04.2f'), ',' , num2str(tS, '%04.2f'), ',', num2str(tE, '%04.2f'), ',', num2str(tStart, '%04.2f'), ',', num2str(tStop, '%04.2f'), ',', num2str(nStepIdx, '%d'), ',', graphTitle );
+                saveImageName = strcat( funcStr, ',', labelStr, ',' , num2str(tS0, '%04.2f'), ',', num2str(tE0, '%04.2f'), ',' , num2str(tS, '%04.2f'), ',', num2str(tE, '%04.2f'), ',', num2str(tStart, '%04.2f'), ',', num2str(tStop, '%04.2f'), ',', num2str(timeSlice, '%d'), ',', graphTitle );
                 
                 
-                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )' ) );
+                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, timeSlice, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )' ) );
                 
                 
                 if ( k == 1 ),
@@ -358,6 +364,7 @@ while ( 1 ),
                 if ( length(x0) <= tE_Idx ),
                     tE_Idx = length(x0) - 1;
                 end;
+
                 x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
                 y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
                 
@@ -382,7 +389,7 @@ while ( 1 ),
             if (flags.plot3dFlag),
                 timeVec = (0:nStepIdx) * (tE0 - tS0) / nStepIdx + tS0;
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
-                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
+                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.2 );
                 grid on;
                 hold on;
                 
@@ -398,7 +405,7 @@ while ( 1 ),
                 ylabel( yLabelStr );
                 zlabel( zLabelStr );
                 
-                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), ', graphTitle);
+                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), [time slice : ', num2str(timeSlice, '%04.2f'), ' ]', graphTitle);
                 title( strTitle );
                 
                 hold off;

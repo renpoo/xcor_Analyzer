@@ -1,4 +1,4 @@
-function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, timeSlice, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
 %pkg load signal;
 %pkg load io;
@@ -106,7 +106,7 @@ if (flags.iccfFlag),
     params( 4, 7 ) = 0;
 
                    
-    strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%5.2f'), '-', num2str(tE, '%5.2f'), ')' );
+    strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%5.2f'), '-', num2str(tE, '%5.2f'), '), [time slice : ', num2str(timeSlice, '%04.2f'), ' ]' );
     strTitle = strcat( strTitleBase, ', ICCC= ', num2str(ICCC), ', tauICCC= ', num2str(tauICCC), ', Wiccc= ', num2str(Wiccc) );
 
     end;

@@ -9,20 +9,12 @@ omega2 = 3/2;
 sigma1 = 0;
 sigma2 = pi/3;
 T = 2*pi;
-ts = T/2-pi/4;
+%ts = T/2-pi/4;
+ts = T/2-pi/2;
 %te = T-pi/3;
 te = T/2;
 t1 = ts;
 t2 = te;
-
-    function p = makeParabola(a,b,c)
-        p = @parabola;
-        
-        function y = parabola(x)
-            y = a*x.^2 + b*x + c;
-        end
-        
-    end
 
 
     function plot_f1_t = f1_plot( A1, omega1, sigma1 )

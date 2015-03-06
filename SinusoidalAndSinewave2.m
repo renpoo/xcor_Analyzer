@@ -11,7 +11,7 @@ SoundMultiplier = 4; % Treated Sound Volume
 
 LPFilter = 1;
 HanningWindow = 1;
-SineWave = 1; % 1 = Generating Sine Wave / 0 = IFFT
+SineWave = 0; % 1 = Generating Sine Wave / 0 = IFFT
 
 OriginalSound = 0;
 LPFilteredSound = 0;

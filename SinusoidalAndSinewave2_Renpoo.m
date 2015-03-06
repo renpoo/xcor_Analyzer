@@ -1,5 +1,5 @@
-close all; 
-clear;
+%close all; 
+%clear;
 
 
 CutoffFrequency = 7000;
@@ -20,7 +20,7 @@ HanningWindowSound = 0;
 TreatedSound = 1;
 
 LPFilteredGraph = 0;
-HanningWindowGraph = 0;
+HanningWindowGraph = 1;
 PeakSelectionGraph = 0;
 FrequencySelectionGraph = 0;
 ConnectFrequencyGraph = 0;
@@ -580,6 +580,7 @@ sumStr = sumS'; % Transpose Vector sumS
 
 
 % --- Matlab Low-Pass Filter
+ %{
 if(LPFilterAfter),
     cutf = CutoffFrequency / 2; % Cut-off frequency
     cutfnorm = cutf/(Fs/2); % Normalized frequency
@@ -600,7 +601,7 @@ if(LPFilterAfter),
         axis([0,3.5,-0.18,0.18]);
     end;
 end;
-
+%}
 
 
 

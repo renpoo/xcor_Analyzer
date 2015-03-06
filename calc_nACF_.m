@@ -1,4 +1,4 @@
-function [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, timeSlice, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
 %pkg load signal;
 %pkg load io;
@@ -56,7 +56,7 @@ if (flags.nacfFlag),
   maxIdxs = maxIdxs( 2 : length(maxIdxs) );
   maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
 
-  strTitleBase = [ '[', xLabel, '] (' ,  num2str(tS, '%5.2f'), '-', num2str(tE, '%5.2f'), ')' ];
+  strTitleBase = [ '[', xLabel, '] (' ,  num2str(tS, '%5.2f'), '-', num2str(tE, '%5.2f'), '), [time slice : ', num2str(timeSlice, '%04.2f'), ' ]' ];
   strTitle = strTitleBase;
       
   params = zeros( length(maxValues), 7 );
