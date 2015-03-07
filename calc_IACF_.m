@@ -1,7 +1,7 @@
 function calc_IACF_(x, y, fs, bits, tS, tE, xLabel, yLabel, saveImageName, dumpFlag, debugFlag, plotFlag, ccfFlag, nacfFlag, nacfAndoFlag, iacfFlag, phiFlag, fileDlgFlag, castSignalFlag)
 
 pkg load signal;
-pkg load io;
+pkg load io;_
 
 tauEnd = 1.0 / 1000; # [s] : End of calcuration interval for nACF
 
@@ -125,7 +125,7 @@ if (iacfFlag),
     disp(maxTimes);
     disp( params );
     endif;
-
+_
     
     strTitle = [ yLabel, " <-> " xLabel, ', ICCC= ', num2str(IACC), ', tauICCC= ', num2str(tauIACC), ', Wiccc= ', num2str(Wiacc) ];
 

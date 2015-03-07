@@ -55,7 +55,7 @@ timeVecFileName = strcat( pname, '/', strrep(fname, 'resultDataMat', 'timeVec' )
 timeVec = dlmread( timeVecFileName );
 
 
-XYZ = surf( timeAxis, timeVec, resultDataMat, 'FaceColor', 'interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.03 );
+XYZ = surf( timeAxis, timeVec, resultDataMat, 'Shading', '', 'LineWidth', 0.01, 'EdgeAlpha', 0.05 );
 grid on;
 hold on;
 
@@ -80,8 +80,7 @@ ylabel( yLabelStr );
 zlabel( zLabelStr );
 
 
-%strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), ', graphTitle);
-strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), [T : ', num2str(time_T, '%04.2f'), ' ], ', graphTitle);
+strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), ', graphTitle);
 title( strTitle );
 
 
