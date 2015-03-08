@@ -203,7 +203,11 @@ while ( 1 ),
             if (flags.nacfFlag),
                 if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
                     xLabel = 'Right';
-                    yLabel = 'Left';
+                    if ( flags.nacfSingleFlag ),
+                        yLabel = '';
+                    else,
+                        yLabel = 'Left';
+                    end;
                     xCsvFilename = handles.flagsdata.wavFileName;
                 else
                     xLabel = ch{i};
@@ -389,7 +393,7 @@ while ( 1 ),
             if (flags.plot3dFlag),
                 timeVec = (0:nStepIdx) * (tE0 - tS0) / nStepIdx + tS0;
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
-                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.04 );
+                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', ' 'LineWidth', 0.01, 'EdgeAlpha', 0.1 );
                 grid on;
                 hold on;
                 
@@ -405,7 +409,7 @@ while ( 1 ),
                 ylabel( yLabelStr );
                 zlabel( zLabelStr );
                 
-                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), [T : ', num2str(time_T, '%04.2f'), ' ]', graphTitle);
+                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.2f'), '-', num2str(tE0, '%04.2f'), '), [T : ', num2str(time_T, '%04.2f'), ' ], ', graphTitle);
                 title( strTitle );
                 
                 hold off;

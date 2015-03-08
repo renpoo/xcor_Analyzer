@@ -37,7 +37,10 @@ Wiccc = 0.0;
 
 if (flags.iccfFlag),
   funcStr = 'ICCF';
+  
   limitSize = convTime2Index_( (tStop - tStart), x, fs );
+  if ( lenX < limitSize ), limitSize = lenX; end;
+  
   if (flags.phiFlag),
     PHI_ll_0 = PHI_xy_( 0, duration, x, x );
     PHI_rr_0 = PHI_xy_( 0, duration, y, y );

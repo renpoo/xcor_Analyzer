@@ -393,7 +393,7 @@ while ( 1 ),
             if (flags.plot3dFlag),
                 timeVec = (0:nStepIdx) * (tE0 - tS0) / nStepIdx + tS0;
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
-                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp', 'LineWidth', 0.01, 'EdgeAlpha', 0.03 );
+                XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 grid on;
                 hold on;
                 

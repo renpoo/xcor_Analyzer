@@ -17,6 +17,10 @@ lenX = length(x);
 duration = lenX / fs;  %duration (of input signal)
 
 
+% CAUTION!!
+% windowSizeIdx = windowSizeIdx + 1;
+
+
 maxValues  = zeros( windowSizeIdx, 1 );
 maxIdxs  = zeros( windowSizeIdx, 1 );
 
@@ -34,7 +38,10 @@ if (flags.nacfFlag),
   funcStr = 'nACF';
   tStart  = 0.0;  %%% CAUTION!!! %%%
   cropIdx = 1;
+  
   limitSize = convTime2Index_( (tStop - tStart), x, fs ) - cropIdx;
+  if ( lenX < limitSize ), limitSize = lenX; end;
+  
   if (flags.nacfAndoFlag),
     phi_p = nACF_ANDO_( (tStop - tStart), duration, x, x );
     %phi_p = arraySubstitute_( nACF_ANDO_( (tStop - tStart), duration, x, x ), limitSize );
