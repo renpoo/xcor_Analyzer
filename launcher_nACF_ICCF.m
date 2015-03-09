@@ -1,6 +1,6 @@
 %function launcher_nACF_ICCF( handles )
 
-close all;
+%close all;
 clear;
 
 
@@ -202,9 +202,10 @@ while ( 1 ),
             
             if (flags.nacfFlag),
                 if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
+                    
                     xLabel = 'Right';
                     if ( flags.nacfSingleFlag ),
-                        yLabel = '';
+                        yLabel = 'Right';
                     else,
                         yLabel = 'Left';
                     end;
@@ -214,12 +215,13 @@ while ( 1 ),
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
                     yLabel = ch{i};
                     yCsvFilename = strcat( pname, '/', csvFileNames{i} );
-                end;
-                
+                end;                
                 funcStr = 'nACF';
                 labelStr = xLabel;
                 strTitleBase = strcat( '[', xLabel, ']' );
+
             else
+                
                 if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
                     xLabel = 'Right';
                     yLabel = 'Left';
@@ -229,11 +231,11 @@ while ( 1 ),
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
                     yLabel = ch{j};
                     yCsvFilename = strcat( pname, '/', csvFileNames{j} );
-                end;
-                
+                end;                
                 funcStr = 'ICCF';
                 labelStr = strcat( yLabel, ',', xLabel );
                 strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
+
             end;
             
             xLabelStr = ( strcat( labelStr, ': tau [ms]' ) );
@@ -404,6 +406,32 @@ while ( 1 ),
                     lc = 'ow';
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                 end;
+                
+                if ( flags.nacfFlag ),
+                    clipVal = 0.2;
+                    eps = 0.15;
+                    [ maxValVec, tauE_Vec ] = substitute_peaks_( clipVal, eps, resultDataMat, x0, fs );
+                    a = ones( 1, nStepIdx + 1 ) .* clipVal;
+                    lw = 3;
+                    ms = 4;
+                    lc = '-ow';
+                    plot3( arraySubstitute_( tauE_Vec, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                end;
+                    
+                if ( flags.iccfFlag ),
+                    clipVal = 0.2;
+                    eps = 0.15;
+                    [ maxValVec_R, tauE_Vec_R ] = substitute_peaks_( clipVal, eps, resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) ), x0, fs );
+                    a = ones( 1, nStepIdx + 1 ) .* clipVal;
+                    lw = 3;
+                    ms = 4;
+                    lc = '-ow';
+                    plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
+                    [ maxValVec_L, tauE_Vec_L ] = substitute_peaks_( clipVal, eps, resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) ) , y0, fs );
+                    plot3( arraySubstitute_( tauE_Vec_L - tStop * 10^3, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                end;
+                                
                 
                 xlabel( xLabelStr );
                 ylabel( yLabelStr );
