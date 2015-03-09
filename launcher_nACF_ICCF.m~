@@ -421,25 +421,19 @@ while ( 1 ),
                 if ( flags.iccfFlag ),
                     clipVal = 0.2;
                     eps = 0.15;
-                    [ maxValVec, tauE_Vec ] = substitute_peaks_( clipVal, eps, resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) ), x0, fs );
+                    subResultDataMat_R = 
+                    [ maxValVec_R, tauE_Vec_R ] = substitute_peaks_( clipVal, eps, resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) ), x0, fs );
                     a = ones( 1, nStepIdx + 1 ) .* clipVal;
                     lw = 3;
                     ms = 4;
                     lc = '-ow';
-                    plot3( arraySubstitute_( tauE_Vec, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
+                    eps = -0.15;
+                    [ maxValVec_L, tauE_Vec_L ] = substitute_peaks_( clipVal, eps, resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) ) , y0, fs );
+                    plot3( arraySubstitute_( tauE_Vec_L - tStop * 10^3, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                 end;
-                
-                if ( flags.iccfFlag ),
-                    clipVal = 0.2;
-                    eps = 0.15;
-                    [ maxValVec, tauE_Vec ] = substitute_peaks_( clipVal, eps, resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) ), x0, fs );
-                    a = ones( 1, nStepIdx + 1 ) .* clipVal;
-                    lw = 3;
-                    ms = 4;
-                    lc = '-ow';
-                    plot3( arraySubstitute_( tauE_Vec, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                end;
-                
+                                
                 
                 xlabel( xLabelStr );
                 ylabel( yLabelStr );

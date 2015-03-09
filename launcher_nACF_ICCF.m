@@ -420,15 +420,21 @@ while ( 1 ),
                     
                 if ( flags.iccfFlag ),
                     clipVal = 0.2;
-                    eps = 0.15;
-                    [ maxValVec_R, tauE_Vec_R ] = substitute_peaks_( clipVal, eps, resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) ), x0, fs );
+
                     a = ones( 1, nStepIdx + 1 ) .* clipVal;
+
                     lw = 3;
                     ms = 4;
                     lc = '-ow';
+
+                    eps = 0.15;
+                    subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
+                    [ maxValVec_R, tauE_Vec_R ] = substitute_peaks_( clipVal, eps, subResultDataMat_R, x0, fs );
                     plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
-                    [ maxValVec_L, tauE_Vec_L ] = substitute_peaks_( clipVal, eps, resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) ) , y0, fs );
+                    eps = -0.15;
+                    subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
+                    [ maxValVec_L, tauE_Vec_L ] = substitute_peaks_( clipVal, eps,  subResultDataMat_L, y0, fs );
                     plot3( arraySubstitute_( tauE_Vec_L - tStop * 10^3, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                 end;
                                 
