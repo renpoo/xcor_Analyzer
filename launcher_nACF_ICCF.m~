@@ -45,7 +45,7 @@ results = struct(            ...
     'PHI_rr_0',      0,  ... % result 11
     'PHI_lr',         [],  ... % result 12
     'phi_lr',          []  );     % result 13
-   
+
 
 
 handles = struct( 'flagsdata',   [] );
@@ -73,7 +73,7 @@ handles.flagsdata.tStop = +0.005;
 args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
-tInter = 0.50; 
+tInter = 0.50;
 
 
 while ( 1 ),
@@ -81,12 +81,12 @@ while ( 1 ),
     %disp( args );
     %pause;
     
-    handles = GUI_nACF_ICCF( args );    
-        
+    handles = GUI_nACF_ICCF( args );
+    
     
     if ( 1 ),
         if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
-
+        
         if ( handles.flagsdata.funcFlag == 2 ),
             flags.nacfFlag = 1 ;
             flags.iccfFlag = 0 ;
@@ -112,18 +112,18 @@ while ( 1 ),
         tStop  = castNumeric_( handles.flagsdata.tStop );  % FORCE to get tStop  to calculate CCF
         nStepIdx = castNumeric_( handles.flagsdata.nStepIdx );          % FORCE to get windowSize to calculate Realtime CCF
         time_T = castNumeric_( handles.flagsdata.time_T );          % FORCE to get windowSize to calculate Realtime CCF
-
+        
         pname = handles.flagsdata.pname;
         
         if isfield(handles.flagsdata, 'ch'),
             ch = handles.flagsdata.ch;
             csvFileNames = handles.flagsdata.csvFileNames;
         else
-           ch = zeros( 6, 1 );
+            ch = zeros( 6, 1 );
         end;
         
         args = handles;
-
+        
     end;
     
     
@@ -215,11 +215,11 @@ while ( 1 ),
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
                     yLabel = ch{i};
                     yCsvFilename = strcat( pname, '/', csvFileNames{i} );
-                end;                
+                end;
                 funcStr = 'nACF';
                 labelStr = xLabel;
                 strTitleBase = strcat( '[', xLabel, ']' );
-
+                
             else
                 
                 if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
@@ -231,11 +231,11 @@ while ( 1 ),
                     xCsvFilename = strcat( pname, '/', csvFileNames{i} );
                     yLabel = ch{j};
                     yCsvFilename = strcat( pname, '/', csvFileNames{j} );
-                end;                
+                end;
                 funcStr = 'ICCF';
                 labelStr = strcat( yLabel, ',', xLabel );
                 strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );
-
+                
             end;
             
             xLabelStr = ( strcat( labelStr, ': tau [ms]' ) );
@@ -296,7 +296,7 @@ while ( 1 ),
             
             tS_Idx = convTime2Index_( tS, x0, fs );
             tE_Idx = convTime2Index_( tE, x0, fs );
-
+            
             windowSizeIdx = tE_Idx - tS_Idx;
             
             %x = x0( tS_Idx : tE_Idx );
@@ -307,7 +307,7 @@ while ( 1 ),
             if ( flags.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
             
             %windowSizeIdx = convTime2Index_( windowSize, x, fs );
-
+            
             
             % CAUTION !!!   Add ZERO vector to tail
             %x0 = vertcat( x0, zeros( windowSizeIdx * 2, 1 ) );
@@ -361,16 +361,16 @@ while ( 1 ),
                 
                 tS = tS0 + windowSize * k;
                 tE = tS + windowSize * windowScale;
-
+                
                 
                 tS_Idx = convTime2Index_( tS, x0, fs );
                 tE_Idx = convTime2Index_( tE, x0, fs );
-
+                
                 
                 if ( length(x0) <= tE_Idx ),
                     tE_Idx = length(x0) - 1;
                 end;
-
+                
                 x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
                 y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
                 
@@ -409,31 +409,46 @@ while ( 1 ),
                 
                 if ( flags.nacfFlag ),
                     clipVal = 0.2;
-                    eps = 0.15;
-                    [ maxValVec, tauE_Vec ] = substitute_peaks_( clipVal, eps, resultDataMat, x0, fs );
-                    a = ones( 1, nStepIdx + 1 ) .* clipVal;
+                    eps = 0.05;
+                    [ maxValVec, tauE_Vec, tauEidx_Vec, tmpEpsVec ] = substitute_peaks_( clipVal, eps, resultDataMat, x0, fs );
+                    
+                    a = ones( 1, nStepIdx+1 ) .* clipVal;
+                    
                     lw = 3;
                     ms = 4;
                     lc = '-ow';
+                    
                     plot3( arraySubstitute_( tauE_Vec, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                 end;
-                    
+                
                 if ( flags.iccfFlag ),
                     clipVal = 0.2;
-                    eps = 0.15;
-                    subResultDataMat_R = 
-                    [ maxValVec_R, tauE_Vec_R ] = substitute_peaks_( clipVal, eps, resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) ), x0, fs );
-                    a = ones( 1, nStepIdx + 1 ) .* clipVal;
+                    
+                    a = ones( 1, nStepIdx+1 ) .* clipVal;
+                    
                     lw = 3;
                     ms = 4;
                     lc = '-ow';
+                    
+                    eps = 0.05;
+                    subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
+                    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R, tmpEpsVec_R ] = substitute_peaks_( clipVal, eps, subResultDataMat_R, x0, fs );
                     plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
-                    eps = -0.15;
-                    [ maxValVec_L, tauE_Vec_L ] = substitute_peaks_( clipVal, eps, resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) ) , y0, fs );
-                    plot3( arraySubstitute_( tauE_Vec_L - tStop * 10^3, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    eps = 0.05;
+                    subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
+                    reverseIdx = length(subResultDataMat_L) : -1 : 1;
+                    subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
+                    %tmp = subResultDataMat_L - subResultDataMat_R; return;
+                    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L, tmpEpsVec_L ] = substitute_peaks_( clipVal, eps,  subResultDataMat_L, y0, fs );
+                    tauE_Vec_L = -tauE_Vec_L;
+                    %tauEidx_Vec_L = length(subResultDataMat_L) - tauEidx_Vec_L;
+                    plot3( arraySubstitute_( tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+
+                    tmp = maxValVec_L - maxValVec_R;
+                    %tmp = tauE_Vec_L - tauE_Vec_R;
                 end;
-                                
+                
                 
                 xlabel( xLabelStr );
                 ylabel( yLabelStr );
