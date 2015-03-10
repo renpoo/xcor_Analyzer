@@ -325,7 +325,7 @@ while ( 1 ),
             end;
             
             
-            for (k = 1 : nStepIdx + 1 ),
+            for (k = 1 : nStepIdx ),
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , num2str(tS0, '%04.2f'), ',', num2str(tE0, '%04.2f'), ',' , num2str(tS, '%04.2f'), ',', num2str(tE, '%04.2f'), ',', num2str(tStart, '%04.2f'), ',', num2str(tStop, '%04.2f'), ',', num2str(time_T, '%04.2f'), ',', graphTitle );
                 
                 
@@ -393,7 +393,7 @@ while ( 1 ),
             
             
             if (flags.plot3dFlag),
-                timeVec = (0:nStepIdx) * (tE0 - tS0) / nStepIdx + tS0;
+                timeVec = (0:nStepIdx-1) * (tE0 - tS0) / nStepIdx-1 + tS0;
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 grid on;
@@ -410,9 +410,9 @@ while ( 1 ),
                 if ( flags.nacfFlag ),
                     clipVal = 0.2;
                     eps = 0.05;
-                    [ maxValVec, tauE_Vec, tauEidx_Vec, tmpEpsVec ] = substitute_peaks_( clipVal, eps, resultDataMat, x0, fs );
+                    [ minValVec, tauE_Vec, tauEidx_Vec, tmpEpsVec ] = substitute_peaks_( clipVal, eps, resultDataMat, x0, fs );
                     
-                    a = ones( 1, nStepIdx+1 ) .* clipVal;
+                    a = ones( 1, nStepIdx ) .* clipVal;
                     
                     lw = 3;
                     ms = 4;
@@ -424,28 +424,47 @@ while ( 1 ),
                 if ( flags.iccfFlag ),
                     clipVal = 0.2;
                     
-                    a = ones( 1, nStepIdx+1 ) .* clipVal;
+                    a = ones( 1, nStepIdx ) .* clipVal;
                     
                     lw = 3;
                     ms = 4;
-                    lc = '-ow';
                     
                     eps = 0.05;
                     subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
-                    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R, tmpEpsVec_R ] = substitute_peaks_( clipVal, eps, subResultDataMat_R, x0, fs );
+                    
+                    lc = '-ow';
+                    [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R, tmpEpsVec_R ] = substitute_peaks_( clipVal, eps, subResultDataMat_R, x0, fs );
                     plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
+                    lc = '-or';
+                    [ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
+                    plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
+                    lc = '-oy';
+                    %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
+                    plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+
                     eps = 0.05;
                     subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
                     reverseIdx = length(subResultDataMat_L) : -1 : 1;
                     subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                     %tmp = subResultDataMat_L - subResultDataMat_R; return;
-                    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L, tmpEpsVec_L ] = substitute_peaks_( clipVal, eps,  subResultDataMat_L, y0, fs );
-                    tauE_Vec_L = -tauE_Vec_L;
+                    
+                    lc = '-ow';
+                    [ minValVec_L, tauE_Vec_L, tauEidx_Vec_L, tmpEpsVec_L ] = substitute_peaks_( clipVal, eps,  subResultDataMat_L, y0, fs );
+                    %tauE_Vec_L = -tauE_Vec_L;
                     %tauEidx_Vec_L = length(subResultDataMat_L) - tauEidx_Vec_L;
-                    plot3( arraySubstitute_( tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
+                    lc = '-ob';
+                    [ tmpIdx_L, env_tauE_Vec_L ] = plot_env_tauE( tauE_Vec_L );
+                    plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
+                    lc = '-og';
+                    %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
+                    plot3( -gradient( env_tauE_Vec_L ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
 
-                    tmp = maxValVec_L - maxValVec_R;
+                    %tmp = minValVec_L - minValVec_R;
                     %tmp = tauE_Vec_L - tauE_Vec_R;
                 end;
                 
