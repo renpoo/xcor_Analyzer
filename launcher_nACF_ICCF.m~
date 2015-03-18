@@ -458,9 +458,9 @@ while ( 1 ),
                     end;
                     
                 end;
-                
+                                
                 if ( flags.nacfFlag ),
-                    %if ( 0 ),
+                %if ( 0 ),
                     clipVal = 0.2;
                     [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, resultDataMat, x0, fs );
                     
@@ -495,11 +495,11 @@ while ( 1 ),
                         %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
                         plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
-                    end;
+                   end;
                 end;
                 
                 %if ( flags.iccfFlag ),
-                
+               
                 
                 xlabel( xLabelStr );
                 ylabel( yLabelStr );
@@ -515,113 +515,106 @@ while ( 1 ),
                 pname = strcat( '_Output Images' );
                 outputDataFileName = strcat( pname, '/', fname );
                 saveas( 1, strcat( outputDataFileName ) );
-                
-                
+
+
                 if ( flags.nacfFlag ),
-                    figure( 2 );
-                    plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
-                    xLabelStr = 'time [s]';
-                    xlabel( xLabelStr );
-                    yLabelStr = 'tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'tauE_Vec_R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 2, strcat( outputDataFileName ) );
-                    
-                    figure( 3 );
-                    plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'env tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'env_tauE_Vec_R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 3, strcat( outputDataFileName ) );
-                    
-                    figure( 4 );
-                    plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'grad env tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'grad_env_tauE_Vec_R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 4, strcat( outputDataFileName ) );
+                figure( 2 );
+                plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
+                xLabelStr = 'time [s';
+                xlabel( xLabelStr );
+                yLabelStr = 'tauE Vec R';
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'tauE_Vec_R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 2, strcat( outputDataFileName ) );
+                
+                figure( 3 );
+                plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
+                xlabel( xLabelStr );
+                yLabelStr = 'env tauE Vec R';
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'env_tauE_Vec_R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 3, strcat( outputDataFileName ) );
+                
+                figure( 4 );
+                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
+                xlabel( xLabelStr );
+                yLabelStr = 'grad env tauE Vec R';
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'grad_env_tauE_Vec_R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 4, strcat( outputDataFileName ) );
                 end;
                 
                 if ( flags.iccfFlag ),
-                    figure( 2 );
-                    plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
-                    xLabelStr = 'time [s]';
-                    xlabel( xLabelStr );
-                    yLabelStr = 'tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'tauE Vec R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 2, strcat( outputDataFileName ) );
-                    
-                    figure( 3 );
-                    plot( timeVec, arraySubstitute_( tauE_Vec_L, length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'tauE Vec L';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'tauE Vec L', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 3, strcat( outputDataFileName ) );
-                    
-                    figure( 4 );
-                    plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'env tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'env tauE Vec R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 4, strcat( outputDataFileName ) );
-                    
-                    figure( 5 );
-                    plot( timeVec, arraySubstitute_( env_tauE_Vec_L, length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'env tauE Vec L';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'env tauE Vec L', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 5, strcat( outputDataFileName ) );
-                    
-                    figure( 6 );
-                    plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'grad env tauE Vec R';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'grad env tauE Vec R', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 6, strcat( outputDataFileName ) );
-                    
-                    figure( 7 );
-                    plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_L ), length(timeVec) ) );
-                    xlabel( xLabelStr );
-                    yLabelStr = 'grad env tauE Vec L';
-                    ylabel( yLabelStr );
-                    title( strTitle );
-                    fname = strcat( 'grad env tauE Vec L', saveImageName, '.jpg');
-                    pname = strcat( '_Output Images' );
-                    outputDataFileName = strcat( pname, '/', fname );
-                    saveas( 7, strcat( outputDataFileName ) );
-                end;
+                figure( 2 );
+                plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'tauE Vec R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 2, strcat( outputDataFileName ) );
                 
+                figure( 3 );
+                plot( timeVec, arraySubstitute_( tauE_Vec_L, length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'tauE Vec L', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 3, strcat( outputDataFileName ) );
+                
+                figure( 4 );
+                plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'env tauE Vec R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 4, strcat( outputDataFileName ) );
+                
+                figure( 5 );
+                plot( timeVec, arraySubstitute_( env_tauE_Vec_L, length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'env tauE Vec L', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 5, strcat( outputDataFileName ) );
+                
+                figure( 6 );
+                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'grad env tauE Vec R', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 6, strcat( outputDataFileName ) );
+                
+                figure( 7 );
+                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_L ), length(timeVec) ) );
+                xlabel( xLabelStr );
+                ylabel( yLabelStr );
+                title( strTitle );
+                fname = strcat( 'grad env tauE Vec L', saveImageName, '.jpg');
+                pname = strcat( '_Output Images' );
+                outputDataFileName = strcat( pname, '/', fname );
+                saveas( 7, strcat( outputDataFileName ) );
+                end;
+              
             end;
             
             

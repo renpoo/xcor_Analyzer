@@ -540,6 +540,8 @@ handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0  = length(s) / fs;
 %handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / 1.0 );
 handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
+handles.flagsdata.tStart = -handles.flagsdata.time_T / 2.0;
+handles.flagsdata.tStop  = +handles.flagsdata.time_T / 2.0;
 
 handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.graphTitle = fname;
@@ -553,8 +555,8 @@ edit9_Callback(hObject, eventdata, handles);
 set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 set( handles.edit8, 'String', 0.0 );
 set( handles.edit9, 'String', length(s) / fs );
-%set( handles.edit12, 'String', ceil( handles.flagsdata.tE0 / 1.0 ) );
-%set( handles.edit12, 'String', ceil( handles.flagsdata.tE0 / 0.1 ) ) - 1;
+set( handles.edit10, 'String', -handles.flagsdata.time_T / 2.0 );
+set( handles.edit11, 'String', +handles.flagsdata.time_T / 2.0 );
 set( handles.edit25, 'String', fname );
 %{
 edit10_Callback(hObject, eventdata, handles);
@@ -686,6 +688,8 @@ function edit12_Callback(hObject, eventdata, handles)
 %handles.flagsdata.nStepIdx = str2num( get( hObject, 'String' ) );
 handles.flagsdata.time_T = str2num( get( hObject, 'String' ) );
 handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
+handles.flagsdata.tStart = -handles.flagsdata.time_T / 2.0;
+handles.flagsdata.tStop  = +handles.flagsdata.time_T / 2.0;
 
 guidata(hObject,handles);
 
