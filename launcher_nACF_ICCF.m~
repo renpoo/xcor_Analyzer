@@ -8,11 +8,6 @@ clear;
 %pkg load io;
 
 
-%disp( handles );
-%return;
-%pause;
-
-
 flags = struct(            ...
     'ccfFlag',            0,  ...  % arg 1
     'nacfFlag',          0,  ...  % arg 2
@@ -80,9 +75,6 @@ tInter = 0.50;
 
 while ( 1 ),
     
-    %disp( args );
-    %pause;
-    
     handles = GUI_nACF_ICCF( args );
     
     
@@ -129,30 +121,11 @@ while ( 1 ),
     end;
     
     
-    %disp( flags );
-    %return;
-    
     numberOfHeaders = 4;
     windowScale = 1;
     
     
     bufSize = 30;
-    
-    
-    if ( 0 ),
-        [ fname, pname ] = uigetfile( '*.csv', 'CSV DEFINITION FILE' );
-        wavFileName = strcat( pname, fname );
-        [ ch, csvFileNames ] = textread( wavFileName, '%s %s', 'delimiter', ',' );
-        
-        
-        graphTitle = ch{1};                        % FORCE to get TITLE name to treat
-        tS0 = str2num( ch{2} );                 % FORCE to get tS (Start) to cut the whole music signals
-        tE0 = str2num( csvFileNames{2} );  % FORCE to get tE (End)   to cut the whole music signals
-        tStart = str2num( ch{3} );              % FORCE to get tStart to calculate CCF
-        tStop  = str2num( csvFileNames{3} );  % FORCE to get tStop  to calculate CCF
-        %windowSize = str2num( ch{4} );     % FORCE to get windowSize to calculate Realtime CCF
-        nStepIdx = str2num( ch{4} );          % FORCE to get windowSize to calculate Realtime CCF
-    end;
     
     
     [ temp, dateTime ] = system('date +%y%m%d%H%M%S');
@@ -167,7 +140,6 @@ while ( 1 ),
     tauICCC  = 0.0;
     Wiccc    = 0.0;
     
-    %cropIdx = 1;
     
     clear resultDataMat;
     clear timeAxisMat;
@@ -197,12 +169,12 @@ while ( 1 ),
     for i = 1+numberOfHeaders : length(ch),
         for j = i+1 : length(ch)+1,
             
-            if ( flags.nacfFlag && (j>i+1) ) break; end; % FORCE to break the inner loop for when nACF
-            if ( flags.nacfFlag && (i==1+numberOfHeaders) && flags.nacfSingleFlag ) break; end; % FORCE to break the inner loop for when nACF
-            if ( flags.iccfFlag && (j==length(ch)+1) ) break; end; % FORCE to break the inner loop for when nACF
+            if ( flags.nacfFlag && (j>i+1) ) break; end;   % FORCE to break the inner loop for when nACF
+            if ( flags.nacfFlag && (i==1+numberOfHeaders) && flags.nacfSingleFlag ) break; end;   % FORCE to break the inner loop for when nACF
+            if ( flags.iccfFlag && (j==length(ch)+1) ) break; end;   % FORCE to break the inner loop for when ICCF
             
             
-            if (flags.nacfFlag),
+            if ( flags.nacfFlag ),
                 if ( ~strcmp( handles.flagsdata.wavFileName, '' ) ),
                     
                     xLabel = 'Right';
@@ -328,7 +300,7 @@ while ( 1 ),
             
             
             for (k = 1 : nStepIdx ),
-                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'Original Start,', num2str(tS0, '%04.3f'), ',', 'Original End,', num2str(tE0, '%04.3f'), ',', 'Window Start,', num2str(tS, '%04.3f'), ',', 'Window End,', num2str(tE, '%04.3f'), ',', '-tau,', num2str(tStart, '%04.3f'), ',', 'tau,', num2str(tStop, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
+                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS0,', num2str(tS0, '%04.3f'), ',', 'End,', num2str(tE0, '%04.3f'), ',', 'tS,', num2str(tS, '%04.3f'), ',', 'tE,', num2str(tE, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
                 
                 
                 [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )' ) );
@@ -380,7 +352,7 @@ while ( 1 ),
                 
                 
                 %w = HanningWindow_(     length( x ) );
-                w = HammingWindow_(     length( x ) );
+                %w = HammingWindow_(     length( x ) );
                 %w = BlackmanWindow_(    length( x ) );
                 %w = RectangularWindow_( length( x ) );
                 
@@ -392,118 +364,98 @@ while ( 1 ),
                 
             end;
             
+            timeVec = (0:nStepIdx-1) * (tE0 - tS0) / nStepIdx-1 + tS0;   % CAUTION!!!
+            
+            clipVal = 0.2;
+            a = ones( 1, nStepIdx ) .* clipVal;
+            
+            if ( flags.iccfFlag ),
+                subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
+                
+                [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
+                grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
+                
+                subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
+                reverseIdx = length(subResultDataMat_L) : -1 : 1;
+                subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
+                
+                [ minValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs );
+                [ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
+                grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
+            end;
+            
+            
+            if ( flags.nacfFlag ),
+                subResultDataMat_R = resultDataMat;
+                
+                [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
+                grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
+            end;
             
             
             if (flags.plot3dFlag),
-                figure( 1 );
-                timeVec = (0:nStepIdx-1) * (tE0 - tS0) / nStepIdx-1 + tS0;   % CAUTION!!!
+                figNumber = 1;
+                figure( figNumber );
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.3 );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 %XYZ = contour3( timeAxisMat( 1,: ), timeVec, resultDataMat );
+                
                 grid on;
                 hold on;
                 
+                lw = 3;
+                ms = 4;
+                
                 if ( flags.iccfFlag ),
-                    lw = 3;
-                    ms = 4;
                     %lc = '-ow';
                     lc = 'ow';
+                    
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
                     if ( flags.iccfWidthFlag ),
-                        clipVal = 0.2;
-                        
-                        a = ones( 1, nStepIdx ) .* clipVal;
-                        
-                        lw = 3;
-                        ms = 4;
-                        
-                        subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
-                        
                         lc = '-ow';
-                        %lc = '-ob';
-                        [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
                         plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-or';
-                        [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                         plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-oy';
-                        %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
-                        plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                        
-                        subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
-                        reverseIdx = length(subResultDataMat_L) : -1 : 1;
-                        subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
-                        %tmp = subResultDataMat_L - subResultDataMat_R; return;
-                        
-                        lc = '-ow';
-                        %lc = '-ob';
-                        [ minValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal,  subResultDataMat_L, y0, fs );
-                        %tauE_Vec_L = -tauE_Vec_L;
-                        %tauEidx_Vec_L = length(subResultDataMat_L) - tauEidx_Vec_L;
-                        plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( grad_env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-ob';
-                        [ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
                         plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-og';
-                        %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
                         plot3( -gradient( env_tauE_Vec_L ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                        
-                        %tmp = minValVec_L - minValVec_R;
-                        %tmp = tauE_Vec_L - tauE_Vec_R;
                     end;
                     
                 end;
-                                
+                
                 if ( flags.nacfFlag ),
-                %if ( 0 ),
-                    clipVal = 0.2;
-                    [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, resultDataMat, x0, fs );
-                    
-                    a = ones( 1, nStepIdx ) .* clipVal;
-                    
-                    lw = 3;
-                    ms = 4;
                     lc = '-ow';
-                    
                     plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    
                     if ( flags.nacfWidthFlag ),
-                        clipVal = 0.2;
-                        
-                        a = ones( 1, nStepIdx ) .* clipVal;
-                        
-                        lw = 3;
-                        ms = 4;
-                        
-                        %subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
-                        subResultDataMat_R = resultDataMat;
-                        
                         lc = '-ow';
-                        %lc = '-ob';
-                        [ minValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
                         plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-or';
-                        [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                         plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-oy';
-                        %[ tmpIdx_R, env_tauE_Vec_R ] = plot_env_tauE( tauE_Vec_R );
                         plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
-                   end;
+                    end;
                 end;
                 
-                %if ( flags.iccfFlag ),
-               
                 
                 xlabel( xLabelStr );
                 ylabel( yLabelStr );
                 zlabel( zLabelStr );
+                
                 
                 strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
                 title( strTitle );
@@ -512,109 +464,44 @@ while ( 1 ),
                 
                 % CAUTION!!!
                 fname = strcat( saveImageName, '.fig');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 1, strcat( outputDataFileName ) );
-
-
+                %pnameImg = strcat( '_Output Images' );
+                pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
+                outputGraphFileName = strcat( pnameImg, '/', fname );
+                saveas( figNumber, strcat( outputGraphFileName ) );
+                
+                
                 if ( flags.nacfFlag ),
-                figure( 2 );
-                plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
-                xLabelStr = 'time [s';
-                xlabel( xLabelStr );
-                yLabelStr = 'tauE Vec R';
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'tauE_Vec_R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 2, strcat( outputDataFileName ) );
-                
-                figure( 3 );
-                plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
-                xlabel( xLabelStr );
-                yLabelStr = 'env tauE Vec R';
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'env_tauE_Vec_R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 3, strcat( outputDataFileName ) );
-                
-                figure( 4 );
-                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
-                xlabel( xLabelStr );
-                yLabelStr = 'grad env tauE Vec R';
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'grad_env_tauE_Vec_R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 4, strcat( outputDataFileName ) );
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
                 end;
                 
                 if ( flags.iccfFlag ),
-                figure( 2 );
-                plot( timeVec, arraySubstitute_( tauE_Vec_R, length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'tauE Vec R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 2, strcat( outputDataFileName ) );
-                
-                figure( 3 );
-                plot( timeVec, arraySubstitute_( tauE_Vec_L, length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'tauE Vec L', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 3, strcat( outputDataFileName ) );
-                
-                figure( 4 );
-                plot( timeVec, arraySubstitute_( env_tauE_Vec_R, length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'env tauE Vec R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 4, strcat( outputDataFileName ) );
-                
-                figure( 5 );
-                plot( timeVec, arraySubstitute_( env_tauE_Vec_L, length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'env tauE Vec L', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 5, strcat( outputDataFileName ) );
-                
-                figure( 6 );
-                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_R ), length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'grad env tauE Vec R', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 6, strcat( outputDataFileName ) );
-                
-                figure( 7 );
-                plot( timeVec, arraySubstitute_( gradient( env_tauE_Vec_L ), length(timeVec) ) );
-                xlabel( xLabelStr );
-                ylabel( yLabelStr );
-                title( strTitle );
-                fname = strcat( 'grad env tauE Vec L', saveImageName, '.jpg');
-                pname = strcat( '_Output Images' );
-                outputDataFileName = strcat( pname, '/', fname );
-                saveas( 7, strcat( outputDataFileName ) );
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L', figNumber, pnameImg, saveImageName);
+                    
+                    figNumber = figNumber + 1;
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L', figNumber, pnameImg, saveImageName);
                 end;
-              
+                
             end;
             
             
