@@ -1,4 +1,4 @@
-function [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_nACF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
 %pkg load signal;
 %pkg load io;
@@ -67,7 +67,6 @@ if (flags.nacfFlag),
   strTitle = strTitleBase;
       
   params = zeros( length(maxValues), 7 );
-  params = zeros( length(maxValues), 7 );
   for ( i = 1 : length(maxValues) ),
     params( i, 1 ) = maxTimes( i );
     params( i, 2 ) = maxTimes( i );
@@ -88,7 +87,7 @@ end;
 
 
 if (flags.plotFlag),
-  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS, tE );
+  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE );
 end;
 
 

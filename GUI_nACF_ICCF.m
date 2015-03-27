@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 21-Feb-2015 07:44:43
+% Last Modified by GUIDE v2.5 27-Mar-2015 12:54:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,15 +52,6 @@ function GUI_nACF_ICCF_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to GUI_nACF_ICCF (see VARARGIN)
-
-if (0),
-    disp('######');
-    disp( length(varargin{ : }) );
-    if (nargin > 0),
-        handles = varargin{ : } ;
-    end;
-    disp('######');
-end;
 
 % Choose default command line output for GUI_nACF_ICCF
 handles.output = hObject;
@@ -120,6 +111,7 @@ handles.flagsdata.debugFlag       = 1;
 handles.flagsdata.debugStepFlag = 0;
 handles.flagsdata.plotFlag          = 1;
 handles.flagsdata.plot3dFlag       = 1;
+handles.flagsdata.playSoundFlag  = 0;
 
 handles.flagsdata.exitFlag          = 0;
 
@@ -149,8 +141,8 @@ set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
 set( handles.edit7,   'String', handles.flagsdata.wavFileName );
 set( handles.edit8,   'String', handles.flagsdata.tS0 );
 set( handles.edit9,   'String', handles.flagsdata.tE0 );
-set( handles.edit10,  'String', handles.flagsdata.tStart );
-set( handles.edit11,  'String', handles.flagsdata.tStop );
+%set( handles.edit10,  'String', handles.flagsdata.tStart );
+%set( handles.edit11,  'String', handles.flagsdata.tStop );
 %set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
@@ -174,11 +166,9 @@ end;
 % Global Constant as Magic Number
 %handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
-handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
-
-%handles.flagsdata.exitFlag = 0;
-
-if ( 0 ),
+try
+    handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
+catch err
     handles.flagsdata.funcFlag         = 2;
     handles.flagsdata.nacfAndoFlag  = 0;
     handles.flagsdata.phiFlag           = 1;
@@ -187,9 +177,8 @@ if ( 0 ),
     handles.flagsdata.debugStepFlag = 0;
     handles.flagsdata.plotFlag          = 1;
     handles.flagsdata.plot3dFlag       = 1;
+    handles.flagsdata.playSoundFlag = 0;
     
-    handles.flagsdata.exitFlag          = 0;
-
     handles.flagsdata.graphTitle       = 'GraphTest';
     handles.flagsdata.nStepIdx         = 100;
     handles.flagsdata.time_T            = 1.0;
@@ -202,9 +191,12 @@ if ( 0 ),
     handles.flagsdata.wavFileName       = '';
 end;
 
-%disp( handles.flagsdata );
 
-if ( 1 ),    
+handles.flagsdata.playSoundFlag = 0;
+handles.flagsdata.exitFlag          = 0;
+
+    
+if ( 1 ),
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
     set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
@@ -219,13 +211,15 @@ if ( 1 ),
     set( handles.edit7,   'String', handles.flagsdata.wavFileName );
     set( handles.edit8,   'String', handles.flagsdata.tS0 );
     set( handles.edit9,   'String', handles.flagsdata.tE0 );
-    set( handles.edit10,  'String', handles.flagsdata.tStart );
-    set( handles.edit11,  'String', handles.flagsdata.tStop );
+    %set( handles.edit10,  'String', handles.flagsdata.tStart );
+    %set( handles.edit11,  'String', handles.flagsdata.tStop );
     set( handles.edit12, 'String', handles.flagsdata.time_T );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 end;
 
-%disp(handles.flagsdata);
+
+%write_history_( handles.flagsdata, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
+%return;
 
 % Update handles structure
 guidata( handles.figure1, handles );
@@ -461,8 +455,8 @@ handles.flagsdata.ch6Wav = getAppropriateFileName( 'Hind',     ch, csvFileNames,
 set( handles.edit6, 'String', handles.flagsdata.defCsvFileName );
 set( handles.edit8, 'String', str2num( ch{2} ) );
 set( handles.edit9, 'String', str2num( csvFileNames{2} ) );
-set( handles.edit10, 'String', str2num( ch{3} ) );
-set( handles.edit11, 'String', str2num( csvFileNames{3} ) ); 
+%set( handles.edit10, 'String', str2num( ch{3} ) );
+%set( handles.edit11, 'String', str2num( csvFileNames{3} ) ); 
 set( handles.edit12, 'String', str2num( ch{4} ) ); 
 set( handles.edit13, 'String', getAppropriateFileName( 'Right',    ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
 set( handles.edit14, 'String', getAppropriateFileName( 'Left',     ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
@@ -555,8 +549,8 @@ edit9_Callback(hObject, eventdata, handles);
 set( handles.edit7, 'String', handles.flagsdata.wavFileName );
 set( handles.edit8, 'String', 0.0 );
 set( handles.edit9, 'String', length(s) / fs );
-set( handles.edit10, 'String', -handles.flagsdata.time_T / 2.0 );
-set( handles.edit11, 'String', +handles.flagsdata.time_T / 2.0 );
+%set( handles.edit10, 'String', -handles.flagsdata.time_T ); % / 2.0 );
+%set( handles.edit11, 'String', +handles.flagsdata.time_T ); % / 2.0 );
 set( handles.edit25, 'String', fname );
 %{
 edit10_Callback(hObject, eventdata, handles);
@@ -564,7 +558,6 @@ edit11_Callback(hObject, eventdata, handles);
 edit12_Callback(hObject, eventdata, handles);
 edit25_Callback(hObject, eventdata, handles);
 %}
-
 
 guidata(hObject,handles);
 
@@ -1067,6 +1060,7 @@ handles.flagsdata.graphTitle = get( hObject, 'String' );
 
 guidata(hObject,handles);
 
+
 % --- Executes during object creation, after setting all properties.
 function edit25_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit25 (see GCBO)
@@ -1078,3 +1072,16 @@ function edit25_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton13.
+function pushbutton13_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.flagsdata.playSoundFlag = 1;
+
+guidata(hObject,handles);
+
+uiresume( gcf );

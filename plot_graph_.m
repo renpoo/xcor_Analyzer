@@ -1,4 +1,4 @@
-function plot_graph_( plotData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS, tE )
+function plot_graph_( plotData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE )
 
 %pkg load io;
 
@@ -46,7 +46,7 @@ title( strTitle );
 
 %pname = 'Output\ Images';
 %pname = strcat( 'Output\ Images', '/', graphTitle, '_', funcStr , '_', dateTime );
-pname = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
+pname = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f') );
 %pname = strcat( 'Output\ Images', '/', saveImageName, '_', funcStr , '_', dateTime );
 if ( exist( pname, 'dir' ) == 0 ),
   mkdir( pname );
