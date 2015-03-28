@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 27-Mar-2015 12:54:22
+% Last Modified by GUIDE v2.5 27-Mar-2015 16:26:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -120,8 +120,8 @@ handles.flagsdata.nStepIdx         = 100;
 handles.flagsdata.time_T        = 1.0;
 handles.flagsdata.tS0                = 0.0;
 handles.flagsdata.tE0                = 10.0;
-handles.flagsdata.tStart            = -0.005;
-handles.flagsdata.tStop             = +0.005;
+handles.flagsdata.tStart            = -handles.flagsdata.time_T;
+handles.flagsdata.tStop             = handles.flagsdata.time_T;
 
 handles.flagsdata.defCsvFileName   = '';
 handles.flagsdata.wavFileName       = '';
@@ -681,8 +681,8 @@ function edit12_Callback(hObject, eventdata, handles)
 %handles.flagsdata.nStepIdx = str2num( get( hObject, 'String' ) );
 handles.flagsdata.time_T = str2num( get( hObject, 'String' ) );
 handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
-handles.flagsdata.tStart = -handles.flagsdata.time_T / 2.0;
-handles.flagsdata.tStop  = +handles.flagsdata.time_T / 2.0;
+handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
+handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
 
 guidata(hObject,handles);
 

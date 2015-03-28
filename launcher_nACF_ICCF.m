@@ -243,7 +243,7 @@ while ( 1 ),
                 [ x0, fsX ] = audioread( xCsvFilename );
                 [ y0, fsY ] = audioread( yCsvFilename );
             end;
-  
+            
             %x0 = tmp;
             %y0 = tmp;
             
@@ -266,7 +266,7 @@ while ( 1 ),
             x = x0( tS_Idx : tE_Idx );
             y = y0( tS_Idx : tE_Idx );
             
-
+            
             
             if ( flags.playSoundFlag ),
                 sound( x, fs );
@@ -487,7 +487,8 @@ while ( 1 ),
                 % CAUTION!!!
                 fname = strcat( saveImageName, '.fig');
                 %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
-                pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f') );
+                %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f') );
+                pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(tStop, '%04.3f') );
                 outputGraphFileName = strcat( pnameImg, '/', fname );
                 saveas( figNumber, strcat( outputGraphFileName ) );
                 
@@ -536,9 +537,11 @@ while ( 1 ),
                 dump_data_( tSMat,            'tSMat',             funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( tEMat,            'tEMat',              funcStr, saveImageName, graphTitle, dateTime );
                 
-                dump_data_( tauE_Vec_R,              'tauE_Vec_R',              funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( env_tauE_Vec_R,        'env_tauE_Vec_R',        funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( grad_env_tauE_Vec_R, 'grad_env_tauE_Vec_R', funcStr, saveImageName, graphTitle, dateTime );
+                if ( flags.nacfWidthFlag ),
+                    dump_data_( tauE_Vec_R,              'tauE_Vec_R',              funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( env_tauE_Vec_R,        'env_tauE_Vec_R',        funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( grad_env_tauE_Vec_R, 'grad_env_tauE_Vec_R', funcStr, saveImageName, graphTitle, dateTime );
+                end;
                 
                 if ( flags.iccfFlag ),
                     if (flags.phiFlag),
