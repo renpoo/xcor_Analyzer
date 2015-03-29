@@ -11,7 +11,8 @@
 flags = struct(            ...
     'ccfFlag',            0,  ...  % arg 1
     'nacfFlag',          0,  ...  % arg 2
-    'nacfAndoFlag',   0,  ...  % arg 3
+    'nacfAndoFlag',   0,  ... 
+    'normalizeFlag',   1,  ...  % arg 3
     'nacfSingleFlag', 1,  ...  % arg 4
     'iccfFlag',          1,  ...  % arg 5
     'phiFlag',           1,  ...  % arg 6
@@ -49,6 +50,7 @@ results = struct(            ...
 handles = struct( 'flagsdata',   [] );
 
 handles.flagsdata.funcFlag         = 2;
+handles.flagsdata.normalizeFlag  = 1;
 handles.flagsdata.nacfAndoFlag  = 0;
 handles.flagsdata.phiFlag           = 1;
 handles.flagsdata.dumpFlag        = 0;
@@ -59,6 +61,9 @@ handles.flagsdata.plot3dFlag       = 0;
 handles.flagsdata.playSoundFlag  = 1;
 handles.flagsdata.exitFlag          = 0;
 
+handles.flagsdata.nacfWidthFlag  = 0;
+handles.flagsdata.iccfWidthFlag  = 0;
+
 handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
 handles.flagsdata.graphTitle = '';
@@ -68,6 +73,11 @@ handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0 = 1.0;
 handles.flagsdata.tStart = -0.005;
 handles.flagsdata.tStop = +0.005;
+
+handles.flagsdata.pname = '';
+handles.flagsdata.fname = '';
+handles.flagsdata.wavFileName = '';
+
 
 args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
@@ -95,6 +105,7 @@ while ( 1 ),
         else
             continue;
         end;
+        flags.normalizeFlag  = handles.flagsdata.normalizeFlag ;
         flags.nacfAndoFlag  = handles.flagsdata.nacfAndoFlag ;
         flags.phiFlag           = handles.flagsdata.phiFlag ;
         flags.dumpFlag        = handles.flagsdata.dumpFlag ;
@@ -104,6 +115,8 @@ while ( 1 ),
         flags.plot3dFlag      = handles.flagsdata.plot3dFlag ;
         flags.playSoundFlag = handles.flagsdata.playSoundFlag ;
         
+        flags.nacfWidthFlag  = handles.flagsdata.nacfWidthFlag ;
+        flags.iccfWidthFlag  = handles.flagsdata.iccfWidthFlag ;
         
         graphTitle = handles.flagsdata.graphTitle;                        % FORCE to get TITLE name to treat
         tS0 = castNumeric_( handles.flagsdata.tS0 );                 % FORCE to get tS (Start) to cut the whole music signals
@@ -389,9 +402,9 @@ while ( 1 ),
             
             timeVec = (0:nStepIdx-1) * (tE0 - tS0) / nStepIdx-1 + tS0;   % CAUTION!!!
             
-            %clipVal = 0.2;
+            clipVal = 0.2;
             %clipVal = 0.4;
-            clipVal = 0.01;
+            %clipVal = 0.01;
             a = ones( 1, nStepIdx ) .* clipVal;
             
             if ( flags.iccfFlag && flags.iccfWidthFlag ),

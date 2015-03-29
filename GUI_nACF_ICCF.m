@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 27-Mar-2015 16:26:18
+% Last Modified by GUIDE v2.5 29-Mar-2015 18:45:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -105,6 +105,7 @@ function reset_Callback(hObject, eventdata, handles)
 
 handles.flagsdata.funcFlag         = 2;
 handles.flagsdata.nacfAndoFlag  = 0;
+handles.flagsdata.normalizeFlag  = 1;
 handles.flagsdata.phiFlag           = 1;
 handles.flagsdata.dumpFlag        = 0;
 handles.flagsdata.debugFlag       = 1;
@@ -112,6 +113,9 @@ handles.flagsdata.debugStepFlag = 0;
 handles.flagsdata.plotFlag          = 1;
 handles.flagsdata.plot3dFlag       = 1;
 handles.flagsdata.playSoundFlag  = 0;
+
+handles.flagsdata.nacfWidthFlag  = 0;
+handles.flagsdata.iccfWidthFlag  = 0;
 
 handles.flagsdata.exitFlag          = 0;
 
@@ -128,8 +132,9 @@ handles.flagsdata.wavFileName       = '';
 
 
 set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
-set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
-set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
+set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
+set( handles.checkbox2,   'value', handles.flagsdata.nacfWidthFlag );
+set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
 set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
 set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
 set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
@@ -170,6 +175,7 @@ try
     handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 catch err
     handles.flagsdata.funcFlag         = 2;
+    handles.flagsdata.normalizeFlag  = 1;
     handles.flagsdata.nacfAndoFlag  = 0;
     handles.flagsdata.phiFlag           = 1;
     handles.flagsdata.dumpFlag        = 0;
@@ -178,6 +184,9 @@ catch err
     handles.flagsdata.plotFlag          = 1;
     handles.flagsdata.plot3dFlag       = 1;
     handles.flagsdata.playSoundFlag = 0;
+    
+    handles.flagsdata.nacfWidthFlag  = 0;
+    handles.flagsdata.iccfWidthFlag  = 0;
     
     handles.flagsdata.graphTitle       = 'GraphTest';
     handles.flagsdata.nStepIdx         = 100;
@@ -198,8 +207,10 @@ handles.flagsdata.exitFlag          = 0;
     
 if ( 1 ),
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
-    set( handles.checkbox1,   'value', handles.flagsdata.nacfAndoFlag );
-    set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
+    set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
+    %set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
+    set( handles.checkbox2,   'value', handles.flagsdata.nacfWidthFlag );
+    set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
     set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
     set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
@@ -262,7 +273,7 @@ function checkbox1_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
 
-handles.flagsdata.nacfAndoFlag = get( hObject, 'value' );
+handles.flagsdata.normalizeFlag = get( hObject, 'value' );
 
 %disp(handles.flagsdata);
 
@@ -277,7 +288,8 @@ function checkbox2_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox2
 
-handles.flagsdata.phiFlag = get( hObject, 'value' );
+%handles.flagsdata.phiFlag = get( hObject, 'value' );
+handles.flagsdata.nacfWidthFlag = get( hObject, 'value' );
 
 %disp(handles.flagsdata);
 
@@ -534,8 +546,8 @@ handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0  = length(s) / fs;
 %handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / 1.0 );
 handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
-handles.flagsdata.tStart = -handles.flagsdata.time_T / 2.0;
-handles.flagsdata.tStop  = +handles.flagsdata.time_T / 2.0;
+handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
+handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
 
 handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.graphTitle = fname;
@@ -1085,3 +1097,16 @@ handles.flagsdata.playSoundFlag = 1;
 guidata(hObject,handles);
 
 uiresume( gcf );
+
+
+% --- Executes on button press in checkbox12.
+function checkbox12_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox12
+
+handles.flagsdata.iccfWidthFlag = get( hObject, 'value' );
+
+guidata(hObject,handles);

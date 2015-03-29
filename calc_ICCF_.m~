@@ -45,11 +45,14 @@ if (flags.iccfFlag),
     PHI_ll_0 = PHI_xy_( 0, duration, x, x );
     PHI_rr_0 = PHI_xy_( 0, duration, y, y );
     PHI_lr   = PHI_xy_( tStop, duration, x, y );
-
+    phi_lr   = PHI_lr;
+    if (flags.normalizeFlag),
+        phi_lr   = phi_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
+    end;
     if (flags.normalizeFlag),
             phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
     else
-            phi_lr   = PHI_lr;
+            phi_p = ACF_( x( 1:limitSize ) );
     end;
   else 
     phi_lr   = IACF_( tStop, duration, x, y );

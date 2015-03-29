@@ -7,6 +7,7 @@ function plot_graph_( plotData, timeAxis, saveImageName, funcStr, strTitle, xLab
 tStart = timeAxis( 1 );
 tStop  = timeAxis( length(timeAxis) );
 
+maxValue = max( plotData );
 
 clf ();
 figure(1);
@@ -21,7 +22,7 @@ Yline = line( [0 0], [-1 1] );
 set(Yline, 'color', [ 0.6 0.6 0.6 ]);
 
 grid on;
-axis( [ tStart, tStop, -1, 1 ], 'square' );
+axis( [ tStart, tStop, -maxValue, maxValue ], 'square' );
 %axis ('labelxy', 'tic');
 
 
