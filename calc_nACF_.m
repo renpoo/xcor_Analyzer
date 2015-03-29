@@ -28,6 +28,7 @@ maxIdxs  = zeros( windowSizeIdx, 1 );
 resultData  = zeros( windowSizeIdx, 1 );
 resultData2 = zeros( windowSizeIdx, 1 );
 tmpResultData = zeros( windowSizeIdx, 1 );
+timeAxis = [];
 params = [];
 strTitle = '';
 strTitleBase = '';
@@ -50,7 +51,7 @@ if (flags.nacfFlag),
             phi_p = nACF_( x( 1:limitSize ) );
     else
             phi_p = ACF_( x( 1:limitSize ) );
-    end;
+    end
     %phi_p = arraySubstitute_( nACF_( x( 1:limitSize ) ), limitSize );
   end;
   resultData = phi_p; % nACF

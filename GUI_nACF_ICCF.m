@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 29-Mar-2015 18:45:10
+% Last Modified by GUIDE v2.5 29-Mar-2015 20:45:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -114,18 +114,24 @@ handles.flagsdata.plotFlag          = 1;
 handles.flagsdata.plot3dFlag       = 1;
 handles.flagsdata.playSoundFlag  = 0;
 
-handles.flagsdata.nacfWidthFlag  = 0;
+handles.flagsdata.nacfSingleFlag = 1;
+handles.flagsdata.windowFlag      = 0;
+handles.flagsdata.castSignalFlag = 0;
+
+handles.flagsdata.calcTauE_VecFlag  = 0;
 handles.flagsdata.iccfWidthFlag  = 0;
 
 handles.flagsdata.exitFlag          = 0;
 
 handles.flagsdata.graphTitle       = 'GraphTest';
 handles.flagsdata.nStepIdx         = 100;
-handles.flagsdata.time_T        = 1.0;
+handles.flagsdata.time_T            = 1.0;
 handles.flagsdata.tS0                = 0.0;
 handles.flagsdata.tE0                = 10.0;
 handles.flagsdata.tStart            = -handles.flagsdata.time_T;
 handles.flagsdata.tStop             = handles.flagsdata.time_T;
+
+handles.flagsdata.clipVal            = 0.2;
 
 handles.flagsdata.defCsvFileName   = '';
 handles.flagsdata.wavFileName       = '';
@@ -133,7 +139,7 @@ handles.flagsdata.wavFileName       = '';
 
 set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
 set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
-set( handles.checkbox2,   'value', handles.flagsdata.nacfWidthFlag );
+set( handles.checkbox2,   'value', handles.flagsdata.calcTauE_VecFlag );
 set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
 set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
 set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
@@ -151,7 +157,7 @@ set( handles.edit9,   'String', handles.flagsdata.tE0 );
 %set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
-
+set( handles.edit25, 'String', handles.flagsdata.clipVal );
     
 % Update handles structure
 guidata( handles.figure1, handles );
@@ -184,8 +190,12 @@ catch err
     handles.flagsdata.plotFlag          = 1;
     handles.flagsdata.plot3dFlag       = 1;
     handles.flagsdata.playSoundFlag = 0;
+
+    handles.flagsdata.nacfSingleFlag = 1;
+    handles.flagsdata.windowFlag      = 0;
+    handles.flagsdata.castSignalFlag = 0;    
     
-    handles.flagsdata.nacfWidthFlag  = 0;
+    handles.flagsdata.calcTauE_VecFlag  = 0;
     handles.flagsdata.iccfWidthFlag  = 0;
     
     handles.flagsdata.graphTitle       = 'GraphTest';
@@ -195,6 +205,8 @@ catch err
     handles.flagsdata.tE0                = 10.0;
     handles.flagsdata.tStart            = -0.005;
     handles.flagsdata.tStop             = +0.005;
+
+    handles.flagsdata.clipVal            = 0.2;
 
     handles.flagsdata.defCsvFileName   = '';
     handles.flagsdata.wavFileName       = '';
@@ -209,7 +221,7 @@ if ( 1 ),
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
     %set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
-    set( handles.checkbox2,   'value', handles.flagsdata.nacfWidthFlag );
+    set( handles.checkbox2,   'value', handles.flagsdata.calcTauE_VecFlag );
     set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
     set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
     set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
@@ -226,6 +238,7 @@ if ( 1 ),
     %set( handles.edit11,  'String', handles.flagsdata.tStop );
     set( handles.edit12, 'String', handles.flagsdata.time_T );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
+    set( handles.edit25, 'String', handles.flagsdata.clipVal );
 end;
 
 
@@ -289,7 +302,7 @@ function checkbox2_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of checkbox2
 
 %handles.flagsdata.phiFlag = get( hObject, 'value' );
-handles.flagsdata.nacfWidthFlag = get( hObject, 'value' );
+handles.flagsdata.calcTauE_VecFlag = get( hObject, 'value' );
 
 %disp(handles.flagsdata);
 
@@ -1110,3 +1123,29 @@ function checkbox12_Callback(hObject, eventdata, handles)
 handles.flagsdata.iccfWidthFlag = get( hObject, 'value' );
 
 guidata(hObject,handles);
+
+
+
+function edit26_Callback(hObject, eventdata, handles)
+% hObject    handle to edit26 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit26 as text
+%        str2double(get(hObject,'String')) returns contents of edit26 as a double
+
+handles.flagsdata.clipVal = get( hObject, 'String' );
+
+guidata(hObject,handles);
+
+% --- Executes during object creation, after setting all properties.
+function edit26_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit26 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

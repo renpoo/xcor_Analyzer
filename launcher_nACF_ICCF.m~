@@ -25,7 +25,8 @@ flags = struct(            ...
     'castSignalFlag', 0,  ...  % arg 13
     'windowFlag',      0,  ...  % arg 14
     'cyclicFlag',       0, ...   % arg 15
-    'calcTauE_VecFlag', 0,  ...  % arg 16
+    'nacfWidthFlag', 0,  ...  % arg 16
+    'iccfWidthFlag',  0,  ...  % arg 17
     'playSoundFlag', 0,  ...  % arg 18
     'exitFlag',          0  );    % arg 19
 
@@ -60,9 +61,8 @@ handles.flagsdata.plot3dFlag       = 0;
 handles.flagsdata.playSoundFlag  = 1;
 handles.flagsdata.exitFlag          = 0;
 
-handles.flagsdata.calcTauE_VecFlag  = 0;
-%handles.flagsdata.calcTauE_VecFlag  = 0;
-handles.flagsdata.nacfSingleFlag  = 1;
+handles.flagsdata.nacfWidthFlag  = 0;
+handles.flagsdata.iccfWidthFlag  = 0;
 
 handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
@@ -74,8 +74,6 @@ handles.flagsdata.tE0 = 1.0;
 handles.flagsdata.tStart = -0.005;
 handles.flagsdata.tStop = +0.005;
 
-handles.flagsdata.clipVal = 0.2;
-    
 handles.flagsdata.pname = '';
 handles.flagsdata.fname = '';
 handles.flagsdata.wavFileName = '';
@@ -107,8 +105,6 @@ while ( 1 ),
         else
             continue;
         end;
-        
-        %{
         handles.flagsdata.normalizeFlag  = handles.flagsdata.normalizeFlag ;
         handles.flagsdata.nacfAndoFlag  = handles.flagsdata.nacfAndoFlag ;
         handles.flagsdata.phiFlag           = handles.flagsdata.phiFlag ;
@@ -119,9 +115,8 @@ while ( 1 ),
         handles.flagsdata.plot3dFlag      = handles.flagsdata.plot3dFlag ;
         handles.flagsdata.playSoundFlag = handles.flagsdata.playSoundFlag ;
         
-        handles.flagsdata.calcTauE_VecFlag  = handles.flagsdata.calcTauE_VecFlag ;
-        handles.flagsdata.calcTauE_VecFlag  = handles.flagsdata.calcTauE_VecFlag ;
-        %}
+        handles.flagsdata.nacfWidthFlag  = handles.flagsdata.nacfWidthFlag ;
+        handles.flagsdata.iccfWidthFlag  = handles.flagsdata.iccfWidthFlag ;
         
         graphTitle = handles.flagsdata.graphTitle;                        % FORCE to get TITLE name to treat
         tS0 = castNumeric_( handles.flagsdata.tS0 );                 % FORCE to get tS (Start) to cut the whole music signals
@@ -344,14 +339,13 @@ while ( 1 ),
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS,', num2str(tS, '%04.3f'), ',', 'tE,', num2str(tE, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
                 
                 
-                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, handles.flagsdata )' ) );
+                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )' ) );
                 
                 
                 if ( k == 1 ),
                     firstRdSize = size( results.resultData );
                     firstTaSize = size( results.timeAxis );
                 end;
-
                 resultDataMat( k, : ) = arraySubstitute_( results.resultData, firstRdSize( 1,2 ) );
                 timeAxisMat( k, : )   = arraySubstitute_( results.timeAxis,   firstTaSize( 1,2 ) );
                 
@@ -408,13 +402,12 @@ while ( 1 ),
             
             timeVec = (0:nStepIdx-1) * (tE0 - tS0) / nStepIdx-1 + tS0;   % CAUTION!!!
             
-            %clipVal = 0.2;
+            clipVal = 0.2;
             %clipVal = 0.4;
             %clipVal = 0.01;
-            clipVal = handles.flagsdata.clipVal;
             a = ones( 1, nStepIdx ) .* clipVal;
             
-            if ( handles.flagsdata.iccfFlag && handles.flagsdata.calcTauE_VecFlag ),
+            if ( handles.flagsdata.iccfFlag && handles.flagsdata.iccfWidthFlag ),
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
@@ -423,7 +416,6 @@ while ( 1 ),
                 
                 subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
                 reverseIdx = length(subResultDataMat_L) : -1 : 1;
-                %reverseIdx = 1 : length(subResultDataMat_L) ;
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
                 [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs );
@@ -432,7 +424,7 @@ while ( 1 ),
             end;
             
             
-            if ( handles.flagsdata.nacfFlag && handles.flagsdata.calcTauE_VecFlag  ),
+            if ( handles.flagsdata.nacfFlag && handles.flagsdata.nacfWidthFlag  ),
                 subResultDataMat_R = resultDataMat;
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
@@ -460,36 +452,36 @@ while ( 1 ),
                     
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
-                    if ( handles.flagsdata.calcTauE_VecFlag ),
+                    if ( handles.flagsdata.iccfWidthFlag ),
                         lc = '-ow';
                         plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-or';
-                        %plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-oy';
-                        %plot3( grad_env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( grad_env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-ob';
-                        %plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-og';
-                        %plot3( -gradient( env_tauE_Vec_L ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( -gradient( env_tauE_Vec_L ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     end;
                     
                 end;
                 
                 if ( handles.flagsdata.nacfFlag ),
-                    if ( handles.flagsdata.calcTauE_VecFlag ),
+                    if ( handles.flagsdata.nacfWidthFlag ),
                         lc = '-ow';
                         plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-or';
-                        %plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                         lc = '-oy';
-                        %plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                        plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
                     end;
                 end;
@@ -514,7 +506,7 @@ while ( 1 ),
                 saveas( figNumber, strcat( outputGraphFileName ) );
                 
                 
-                if ( handles.flagsdata.nacfFlag && handles.flagsdata.calcTauE_VecFlag ),
+                if ( handles.flagsdata.nacfFlag && handles.flagsdata.nacfWidthFlag ),
                     figNumber = figNumber + 1;
                     [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
                     
@@ -525,7 +517,7 @@ while ( 1 ),
                     [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
                 end;
                 
-                if ( handles.flagsdata.iccfFlag && handles.flagsdata.calcTauE_VecFlag ),
+                if ( handles.flagsdata.iccfFlag && handles.flagsdata.iccfWidthFlag ),
                     figNumber = figNumber + 1;
                     [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
                     
@@ -558,7 +550,7 @@ while ( 1 ),
                 dump_data_( tSMat,            'tSMat',             funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( tEMat,            'tEMat',              funcStr, saveImageName, graphTitle, dateTime );
                 
-                if ( handles.flagsdata.calcTauE_VecFlag ),
+                if ( handles.flagsdata.nacfWidthFlag ),
                     dump_data_( tauE_Vec_R,              'tauE_Vec_R',              funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( env_tauE_Vec_R,        'env_tauE_Vec_R',        funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( grad_env_tauE_Vec_R, 'grad_env_tauE_Vec_R', funcStr, saveImageName, graphTitle, dateTime );
@@ -575,7 +567,7 @@ while ( 1 ),
                     dump_data_( tauICCCMat,   'tauICCCMat',  funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( WicccMat,      'WicccMat',      funcStr, saveImageName, graphTitle, dateTime );
                     
-                    if ( handles.flagsdata.calcTauE_VecFlag ),
+                    if ( handles.flagsdata.iccfWidthFlag ),
                         dump_data_( tauE_Vec_L,              'tauE_Vec_L',              funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( env_tauE_Vec_L,        'env_tauE_Vec_L',        funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( grad_env_tauE_Vec_L, 'grad_env_tauE_Vec_L', funcStr, saveImageName, graphTitle, dateTime );

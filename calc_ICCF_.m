@@ -20,6 +20,7 @@ duration = lenX / fs;  %duration (of input signal)
 resultData  = zeros( windowSizeIdx, 1 );
 resultData2 = zeros( windowSizeIdx, 1 );
 tmpResultData = zeros( windowSizeIdx, 1 );
+timeAxis = [];
 params = [];
 
 %tic();
@@ -50,7 +51,7 @@ if (flags.iccfFlag),
             phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
     else
             phi_lr   = PHI_lr;
-    end;
+    end
   else 
     phi_lr   = IACF_( tStop, duration, x, y );
   end;
