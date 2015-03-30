@@ -157,7 +157,7 @@ set( handles.edit9,   'String', handles.flagsdata.tE0 );
 %set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
-set( handles.edit25, 'String', handles.flagsdata.clipVal );
+set( handles.edit26, 'String', handles.flagsdata.clipVal );
     
 % Update handles structure
 guidata( handles.figure1, handles );
@@ -238,7 +238,7 @@ if ( 1 ),
     %set( handles.edit11,  'String', handles.flagsdata.tStop );
     set( handles.edit12, 'String', handles.flagsdata.time_T );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
-    set( handles.edit25, 'String', handles.flagsdata.clipVal );
+    set( handles.edit26, 'String', handles.flagsdata.clipVal );
 end;
 
 

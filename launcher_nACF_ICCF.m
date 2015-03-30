@@ -1,7 +1,7 @@
 %function launcher_nACF_ICCF( handles )
 
-%close all;
-%clear;
+close all;
+clear;
 
 
 %pkg load signal;
@@ -214,7 +214,7 @@ while ( 1 ),
                     yLabel = ch{i};
                     yCsvFilename = strcat( pname, '/', csvFileNames{i} );
                 end;
-                funcStr = 'nACF';
+                funcStr = 'ACF';
                 labelStr = xLabel;
                 strTitleBase = strcat( '[', xLabel, ']' );
                 
@@ -411,7 +411,12 @@ while ( 1 ),
             %clipVal = 0.2;
             %clipVal = 0.4;
             %clipVal = 0.01;
-            clipVal = handles.flagsdata.clipVal;
+            if ( ischar( handles.flagsdata.clipVal( 1 ) ) ),
+                clipVal = str2num( handles.flagsdata.clipVal );
+            else
+                clipVal = handles.flagsdata.clipVal;                
+            end;
+            
             a = ones( 1, nStepIdx ) .* clipVal;
             
             if ( handles.flagsdata.iccfFlag && handles.flagsdata.calcTauE_VecFlag ),
@@ -422,7 +427,7 @@ while ( 1 ),
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
                 subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
-                reverseIdx = length(subResultDataMat_L) : -1 : 1;
+                reverseIdx = ( size( subResultDataMat_L, 2 ) : -1 : 1 );
                 %reverseIdx = 1 : length(subResultDataMat_L) ;
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
@@ -510,6 +515,9 @@ while ( 1 ),
                 %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
                 %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f') );
                 pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(tStop, '%04.3f') );
+                if ( exist( pnameImg, 'dir' ) == 0 ),
+                    mkdir( pnameImg );
+                end;
                 outputGraphFileName = strcat( pnameImg, '/', fname );
                 saveas( figNumber, strcat( outputGraphFileName ) );
                 
