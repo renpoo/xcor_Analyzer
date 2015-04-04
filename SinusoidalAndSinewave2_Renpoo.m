@@ -9,10 +9,7 @@ ConnectDelta = 2^(1/12); % Connected Freq Multiplier
 StringLength = 7; % Selected String Length
 SoundMultiplier = 4; % Treated Sound Volume
 
-LPFilter = 1;
-LPFilterAfter = 1;
-HanningWindow = 1;
-SineWave = 1; % 1 = Generating Sine Wave / 0 = IFFT
+LPFilter = 1;SineWave = 1; % 1 = Generating Sine Wave / 0 = IFFT
 
 OriginalSound = 0;
 LPFilteredSound = 0;
@@ -20,12 +17,12 @@ HanningWindowSound = 0;
 TreatedSound = 1;
 
 LPFilteredGraph = 0;
-HanningWindowGraph = 1;
+HanningWindowGraph = 0;
 PeakSelectionGraph = 0;
 FrequencySelectionGraph = 0;
 ConnectFrequencyGraph = 0;
 ConnctSlctFrequencyGraph = 0;
-ConnctSlctFrequency3DGraph = 0;
+ConnctSlctFrequency3DGraph = 1;
 TreatedGraph = 1;
 
 
@@ -456,6 +453,9 @@ end;
 
 % --- 3D Graph plot
 if(ConnctSlctFrequency3DGraph),
+
+LPFilterAfter = 1;
+HanningWindow = 1;
     for templ=1:nSstring,  % Number of String
         for tempk=1:nframe,  % Frame
             t3D2(tempk) = (dftsize/Fs)*(tempk);

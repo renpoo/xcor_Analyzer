@@ -117,6 +117,7 @@ handles.flagsdata.playSoundFlag  = 0;
 handles.flagsdata.nacfSingleFlag = 1;
 handles.flagsdata.windowFlag      = 0;
 handles.flagsdata.castSignalFlag = 0;
+handles.flagsdata.cyclicFlag       = 0;
 
 handles.flagsdata.calcTauE_VecFlag  = 0;
 handles.flagsdata.iccfWidthFlag  = 0;
@@ -146,6 +147,7 @@ set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
 set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
 set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
 set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
+set( handles.checkbox8,   'value', handles.flagsdata.cyclicFlag );
 
 
 set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
@@ -194,7 +196,8 @@ catch err
     handles.flagsdata.nacfSingleFlag = 1;
     handles.flagsdata.windowFlag      = 0;
     handles.flagsdata.castSignalFlag = 0;    
-    
+    handles.flagsdata.cyclicFlag       = 0;
+
     handles.flagsdata.calcTauE_VecFlag  = 0;
     handles.flagsdata.iccfWidthFlag  = 0;
     
@@ -228,7 +231,8 @@ if ( 1 ),
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
     set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
     set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
-
+    set( handles.checkbox8,   'value', handles.flagsdata.cyclicFlag );
+    
 
     set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
     set( handles.edit7,   'String', handles.flagsdata.wavFileName );
@@ -731,7 +735,11 @@ function checkbox8_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkbox8
+handles.flagsdata.cyclicFlag = get( hObject, 'value' );
+
+%disp(handles.flagsdata);
+
+guidata(hObject,handles);
 
 
 % --- Executes on button press in checkbox9.

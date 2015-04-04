@@ -22,7 +22,8 @@ Yline = line( [0 0], [-1 1] );
 set(Yline, 'color', [ 0.6 0.6 0.6 ]);
 
 grid on;
-axis( [ tStart, tStop, -maxValue, maxValue ], 'square' );
+%axis( [ tStart, tStop, -maxValue, maxValue ], 'square' );
+axis( [ tStart, tStop, -1.0, 1.0 ], 'square' );
 %axis ('labelxy', 'tic');
 
 

@@ -46,13 +46,21 @@ if (flags.nacfFlag),
   if (flags.nacfAndoFlag),
     phi_p = nACF_ANDO_( (tStop - tStart), duration, x, x );
     %phi_p = arraySubstitute_( nACF_ANDO_( (tStop - tStart), duration, x, x ), limitSize );
-  else 
-    if (flags.normalizeFlag),
-            phi_p = nACF_( x( 1:limitSize ) );
-    else
-            phi_p = ACF_( x( 1:limitSize ) );
-    end
-    %phi_p = arraySubstitute_( nACF_( x( 1:limitSize ) ), limitSize );
+  else
+      if (flags.cyclicFlag),
+          if (flags.normalizeFlag),
+              phi_p = cyclicNCCF_( x( 1:limitSize ), x( 1:limitSize ) );
+          else
+              phi_p = cyclicCCF_( x( 1:limitSize ), x( 1:limitSize ) );
+          end
+      else
+          if (flags.normalizeFlag),
+              phi_p = nACF_( x( 1:limitSize ) );
+          else
+              phi_p = ACF_( x( 1:limitSize ) );
+          end
+          %phi_p = arraySubstitute_( nACF_( x( 1:limitSize ) ), limitSize );
+      end;
   end;
   resultData = phi_p; % nACF
   %tmpResultData = phi_p; % nACF

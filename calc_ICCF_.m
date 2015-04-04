@@ -43,16 +43,28 @@ if (flags.iccfFlag),
   if ( lenX < limitSize ), limitSize = lenX; end;
   
   if (flags.phiFlag),
-    PHI_ll_0 = PHI_xy_( 0, duration, x, x );
-    PHI_rr_0 = PHI_xy_( 0, duration, y, y );
-    PHI_lr   = PHI_xy_( tStop, duration, x, y );
-
-    if (flags.normalizeFlag),
+    if (flags.cyclicFlag),
+        PHI_ll_0 = cyclicPHI_xy_( 0, duration, x, x );
+        PHI_rr_0 = cyclicPHI_xy_( 0, duration, y, y );
+        PHI_lr   = cyclicPHI_xy_( tStop, duration, x, y );
+        if (flags.normalizeFlag),
             phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
-    else
+        else
             phi_lr   = PHI_lr;
-    end
-  else 
+        end;
+    else
+        PHI_ll_0 = PHI_xy_( 0, duration, x, x );
+        PHI_rr_0 = PHI_xy_( 0, duration, y, y );
+        PHI_lr   = PHI_xy_( tStop, duration, x, y );
+        if (flags.normalizeFlag),
+            phi_lr   = PHI_lr / sqrt( PHI_ll_0 * PHI_rr_0 );
+        else
+            phi_lr   = PHI_lr;
+        end;
+        %phi_p = arraySubstitute_( nACF_( x( 1:limitSize ) ), limitSize );
+    end;
+    
+  else
     phi_lr   = IACF_( tStop, duration, x, y );
   end;
 
