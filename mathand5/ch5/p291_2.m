@@ -1,6 +1,0 @@
-val=0;
-ui1=uicontrol('style','text','string',' Calculator ','position',[20 20 80 20]);
-ui2=uicontrol('style','edit','string','0',...
-     'position',[120 20 80 20],...
-     'callback','val=eval(get(ui2,''string''));set(ui3,''string'',num2str(val))');
-ui3=uicontrol('style','text','string',num2str(val),'position',[220 20 80 20]);

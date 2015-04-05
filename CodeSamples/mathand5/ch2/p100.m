@@ -1,0 +1,10 @@
+datnum=2048;dt=0.01;t=(1:datnum)*dt-dt;tlen=length(t);
+y=sin(2*pi*t*10);z=cos(2*pi*t*5);
+ffty=fft(y)*2/tlen;fftz=fft(z)*2/tlen;
+f= t/(datnum*dt*dt);
+subplot(2,3,1);plot(t,y);xlim([0 0.5]);
+subplot(2,3,2);plot(f,real(ffty));axis tight;ylim([-1 1]);
+subplot(2,3,3);plot(f,imag(ffty));axis tight;ylim([-1 1]);
+subplot(2,3,4);plot(t,z);xlim([0 0.5]);
+subplot(2,3,5);plot(f,real(fftz));axis tight; ylim([-1 1]);
+subplot(2,3,6);plot(f,imag(fftz)); axis tight;ylim([-1 1]);

@@ -13,7 +13,8 @@ clf ();
 figure(1);
 
 plot( timeAxis, plotData, 'b');
-xlabel('tau [ms]'); ylabel(funcStr);
+xlabel('tau [ms]');
+ylabel(funcStr);
 
 Xline = line( [ tStart tStop ], [0 0] );
 set(Xline, 'color', [ 0.6 0.6 0.6 ]);
