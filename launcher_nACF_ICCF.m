@@ -1,7 +1,7 @@
 %function launcher_nACF_ICCF( handles )
 
-close all;
-clear;
+%close all;
+%clear;
 
 
 %pkg load signal;
@@ -62,7 +62,7 @@ handles.flagsdata.exitFlag          = 0;
 
 handles.flagsdata.calcTauE_VecFlag  = 0;
 %handles.flagsdata.calcTauE_VecFlag  = 0;
-handles.flagsdata.nacfSingleFlag  = 1;
+handles.flagsdata.nacfSingleFlag  = 0;
 
 handles.flagsdata.numberOfHeaders = 4; % For CSV Definition File
 
@@ -267,7 +267,7 @@ while ( 1 ),
             
             fs = fsX;
             
-            %fs = 10;
+            %fs = 2;
             
             %bits = bitsX;
             bits = 0;
@@ -511,6 +511,7 @@ while ( 1 ),
                 hold off;
                 
                 % CAUTION!!!
+                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
                 fname = strcat( saveImageName, '.fig');
                 %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime );
                 %pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f') );

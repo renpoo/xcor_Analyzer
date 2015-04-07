@@ -492,7 +492,7 @@ set( handles.edit14, 'String', getAppropriateFileName( 'Left',     ch, csvFileNa
 set( handles.edit15, 'String', getAppropriateFileName( 'Top',      ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
 set( handles.edit16, 'String', getAppropriateFileName( 'Bottom', ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
 set( handles.edit17, 'String', getAppropriateFileName( 'Front',    ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-set( handles.edit18, 'String', getAppropriateFileName( 'HInd',      ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
+set( handles.edit18, 'String', getAppropriateFileName( 'Hind',      ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
 %{%}
 
 %{
