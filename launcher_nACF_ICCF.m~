@@ -75,6 +75,7 @@ handles.flagsdata.tStart = -0.005;
 handles.flagsdata.tStop = +0.005;
 
 handles.flagsdata.clipVal = 0.2;
+handles.flagsdata.Fs       = 44100;
     
 handles.flagsdata.pname = '';
 handles.flagsdata.fname = '';
@@ -89,6 +90,7 @@ tInter = 0.50;
 numberOfHeaders = 4;
 windowScale = 1;
 
+chDefs = {};
 ch = {};
 csvFileNames = {};
 
@@ -101,12 +103,12 @@ while ( 1 ),
     end;
     
     if ( 1 ),
-        if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
+        %if ( handles.flagsdata.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
         
-        if ( handles.flagsdata.funcFlag == 2 ),
+        if ( handles.flagsdata.funcFlag == 1 ),
             handles.flagsdata.nacfFlag = 1 ;
             handles.flagsdata.iccfFlag = 0 ;
-        elseif ( handles.flagsdata.funcFlag == 3 ),
+        elseif ( handles.flagsdata.funcFlag == 2 ),
             handles.flagsdata.nacfFlag = 0 ;
             handles.flagsdata.iccfFlag = 1 ;
         else
@@ -135,7 +137,9 @@ while ( 1 ),
         tStop  = castNumeric_( handles.flagsdata.tStop );  % FORCE to get tStop  to calculate CCF
         %nStepIdx = castNumeric_( handles.flagsdata.nStepIdx );          % FORCE to get windowSize to calculate Realtime CCF
         time_T = castNumeric_( handles.flagsdata.time_T );          % FORCE to get windowSize to calculate Realtime CCF
-        
+
+        nStepIdx = 0;
+
         pname = handles.flagsdata.pname;
 
         %{
@@ -146,14 +150,14 @@ while ( 1 ),
             ch = zeros( 6, 1 );
         end;
         %}
-        if isfield(handles.flagsdata, 'chDefs'),
+        if ( strcmp( handles.flagsdata.wavFileName, '' ) ),
             chDefs = handles.flagsdata.chDefs;
             %ch = handles.flagsdata.ch;
             %csvFileNames = handles.flagsdata.csvFileNames;
             ch = chDefs( :, 1 );
             csvFileNames = chDefs( :, 2 );
         else
-            ch = zeros( 6, 1 );
+            ch = zeros( 1, 1 );
         end;
         
         args = handles;
@@ -209,7 +213,7 @@ while ( 1 ),
             
             if ( handles.flagsdata.nacfFlag && (j>i+1) ) break; end;   % FORCE to break the inner loop for when nACF
             %if ( handles.flagsdata.nacfFlag && (i==1+numberOfHeaders) && handles.flagsdata.nacfSingleFlag ) break; end;   % FORCE to break the inner loop for when nACF
-            %if ( handles.flagsdata.nacfFlag && (i==1) && handles.flagsdata.nacfSingleFlag ) break; end;   % FORCE to break the inner loop for when nACF
+            if ( handles.flagsdata.nacfFlag && (i==2) && handles.flagsdata.nacfSingleFlag ) break; end;   % FORCE to break the inner loop for when nACF
             if ( handles.flagsdata.iccfFlag && (j==length(ch)+1) ) break; end;   % FORCE to break the inner loop for when ICCF
             
             
@@ -225,9 +229,9 @@ while ( 1 ),
                     xCsvFilename = handles.flagsdata.wavFileName;
                 else
                     xLabel = ch{i};
-                    xCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                    xCsvFilename = strcat( pname, csvFileNames{i} );
                     yLabel = ch{i};
-                    yCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                    yCsvFilename = strcat( pname, csvFileNames{i} );
                 end;
                 funcStr = 'ACF';
                 labelStr = xLabel;
@@ -241,9 +245,9 @@ while ( 1 ),
                     xCsvFilename = handles.flagsdata.wavFileName;
                 else
                     xLabel = ch{i};
-                    xCsvFilename = strcat( pname, '/', csvFileNames{i} );
+                    xCsvFilename = strcat( pname, csvFileNames{i} );
                     yLabel = ch{j};
-                    yCsvFilename = strcat( pname, '/', csvFileNames{j} );
+                    yCsvFilename = strcat( pname, csvFileNames{j} );
                 end;
                 funcStr = 'ICCF';
                 labelStr = strcat( yLabel, ',', xLabel );
@@ -273,8 +277,30 @@ while ( 1 ),
             else
                 %[ x0, fsX, bitsX ] = wavread( xCsvFilename );
                 %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
-                [ x0, fsX ] = audioread( xCsvFilename );
-                [ y0, fsY ] = audioread( yCsvFilename );
+                
+                %[ xFilename, xExtension ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
+                [ xCsvStrs ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
+                xExtension = xCsvStrs( length( xCsvStrs ) );
+                if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
+                    [ x0cell ] = textread( xCsvFilename, '%s', 'delimiter', ',' );
+                    x0 = strread( cell2mat( x0cell' );
+                    fsX = cast( castNumeric_( handles.flagsdata.Fs ),'uint32');
+                else
+                    [ x0, fsX ] = audioread( xCsvFilename );
+                end;
+                
+                [ yCsvStrs ] = strread( yCsvFilename, '%s', 'delimiter', '.' );
+                yExtension = yCsvStrs( length( yCsvStrs ) );
+                if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
+                    [ y0cell ] = textread( yCsvFilename, '%s', 'delimiter', ',' );
+                    y0 = cell2mat( y0cell );
+                    fsY = cast( castNumeric_( handles.flagsdata.Fs ),'uint32');
+                else
+                    [ y0, fsY ] = audioread( yCsvFilename );
+                end;
+                
+                %[ x0, fsX ] = audioread( xCsvFilename );
+                %[ y0, fsY ] = audioread( yCsvFilename );
             end;
             
             %x0 = tmp;
@@ -325,9 +351,9 @@ while ( 1 ),
             tE = tS + windowSize * windowScale;
             
             tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs );
+            tE_Idx = convTime2Index_( tE, x0, fs ) - 1;
             
-            windowSizeIdx = tE_Idx - tS_Idx;
+            windowSizeIdx = tE_Idx - tS_Idx + 1;
             
             %x = x0( tS_Idx : tE_Idx );
             %y = y0( tS_Idx : tE_Idx );
@@ -520,7 +546,7 @@ while ( 1 ),
                 zlabel( zLabelStr );
                 
                 
-                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
+                strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
                 title( strTitle );
                 
                 hold off;

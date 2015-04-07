@@ -214,7 +214,7 @@ catch err
     handles.flagsdata.tStop             = +0.005;
 
     handles.flagsdata.clipVal            = 0.2;
-    handles.flagsdata.clipVal            = 44100;
+    handles.flagsdata.Fs                 = 44100;
     
     handles.flagsdata.defCsvFileName   = '';
     handles.flagsdata.wavFileName       = '';
@@ -621,7 +621,8 @@ set( handles.edit9, 'String', handles.flagsdata.tE0 );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 %set( handles.edit10, 'String', -handles.flagsdata.time_T ); % / 2.0 );
 %set( handles.edit11, 'String', +handles.flagsdata.time_T ); % / 2.0 );
-set( handles.edit25, 'String', fname );
+set( handles.edit25, 'String', handles.flagsdata.graphTitle );
+set( handles.edit27, 'String', handles.flagsdata.Fs );
 %{
 edit10_Callback(hObject, eventdata, handles);
 edit11_Callback(hObject, eventdata, handles);

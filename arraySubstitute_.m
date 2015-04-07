@@ -3,7 +3,7 @@ function [ resultArray ] = arraySubstitute_( inputArray, bufSize )
 resultArray = zeros(bufSize, 1);
 %resultArray = {0};
 
-if ( length(inputArray) == 0 ) return; end;
+if ( length( inputArray ) == 0 ) return; end;
 
 
 if (length(inputArray) > bufSize),

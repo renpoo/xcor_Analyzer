@@ -277,8 +277,30 @@ while ( 1 ),
             else
                 %[ x0, fsX, bitsX ] = wavread( xCsvFilename );
                 %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
-                [ x0, fsX ] = audioread( xCsvFilename );
-                [ y0, fsY ] = audioread( yCsvFilename );
+                
+                %[ xFilename, xExtension ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
+                [ xCsvStrs ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
+                xExtension = xCsvStrs( length( xCsvStrs ) );
+                if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
+                    [ x0cell ] = textread( xCsvFilename, '%s', 'delimiter', ',' );
+                    x0 = strread( cell2mat( x0cell' ) )';
+                    fsX = castNumeric_( handles.flagsdata.Fs );
+                else
+                    [ x0, fsX ] = audioread( xCsvFilename );
+                end;
+                
+                [ yCsvStrs ] = strread( yCsvFilename, '%s', 'delimiter', '.' );
+                yExtension = yCsvStrs( length( yCsvStrs ) );
+                if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
+                    [ y0cell ] = textread( yCsvFilename, '%s', 'delimiter', ',' );
+                    y0 = strread( cell2mat( y0cell' ) )';
+                    fsY = castNumeric_( handles.flagsdata.Fs );
+                else
+                    [ y0, fsY ] = audioread( yCsvFilename );
+                end;
+                
+                %[ x0, fsX ] = audioread( xCsvFilename );
+                %[ y0, fsY ] = audioread( yCsvFilename );
             end;
             
             %x0 = tmp;
@@ -329,9 +351,9 @@ while ( 1 ),
             tE = tS + windowSize * windowScale;
             
             tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs );
+            tE_Idx = convTime2Index_( tE, x0, fs ) - 1;
             
-            windowSizeIdx = tE_Idx - tS_Idx;
+            windowSizeIdx = tE_Idx - tS_Idx + 1;
             
             %x = x0( tS_Idx : tE_Idx );
             %y = y0( tS_Idx : tE_Idx );
@@ -524,7 +546,7 @@ while ( 1 ),
                 zlabel( zLabelStr );
                 
                 
-                strTitle = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
+                strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
                 title( strTitle );
                 
                 hold off;
