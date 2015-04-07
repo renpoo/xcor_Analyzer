@@ -133,8 +133,7 @@ handles.flagsdata.tStart            = -handles.flagsdata.time_T;
 handles.flagsdata.tStop             = handles.flagsdata.time_T;
 
 handles.flagsdata.clipVal            = 0.2;
-handles.flagsdata.Fs                  = 44100;
-    
+
 handles.flagsdata.defCsvFileName   = '';
 handles.flagsdata.wavFileName       = '';
 
@@ -164,8 +163,7 @@ set( handles.edit9,   'String', handles.flagsdata.tE0 );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 set( handles.edit26, 'String', handles.flagsdata.clipVal );
-set( handles.edit27, 'String', handles.flagsdata.Fs );
-
+    
 % Update handles structure
 guidata( handles.figure1, handles );
 
