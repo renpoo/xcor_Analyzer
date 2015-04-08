@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 07-Apr-2015 10:30:27
+% Last Modified by GUIDE v2.5 08-Apr-2015 09:27:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -132,6 +132,11 @@ handles.flagsdata.tE0                = 10.0;
 handles.flagsdata.tStart            = -handles.flagsdata.time_T;
 handles.flagsdata.tStop             = handles.flagsdata.time_T;
 
+handles.flagsdata.xLabelStr = 'Time';
+handles.flagsdata.yLabelStr = 'Time';
+handles.flagsdata.xUnitStr = 'sec';
+handles.flagsdata.yUnitStr = 'sec';
+
 handles.flagsdata.clipVal            = 0.2;
 handles.flagsdata.Fs                  = 44100;
     
@@ -141,6 +146,7 @@ handles.flagsdata.wavFileName       = '';
 clear handles.flagsdata.chDefs;
 clear handles.flagsdata.ch;
 clear handles.flagsdata.csvFileNames;
+clear handles.flagsdata.tmpText_chDefs;
 
 set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
 set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
@@ -166,6 +172,12 @@ set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 set( handles.edit26, 'String', handles.flagsdata.clipVal );
 set( handles.edit27, 'String', handles.flagsdata.Fs );
 
+set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
+
+set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+set( handles.text19, 'String', [ 'T' ' (' handles.flagsdata.yUnitStr ')' ] );
+
 % Update handles structure
 guidata( handles.figure1, handles );
 
@@ -180,8 +192,6 @@ if isfield(handles, 'flagsdata') && ~isreset
     return;
 end;
 
-
-chDefs = {};
 
 try
     handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
@@ -213,16 +223,22 @@ catch err
     handles.flagsdata.tStart            = -0.005;
     handles.flagsdata.tStop             = +0.005;
 
+    handles.flagsdata.xLabelStr = 'Time';
+    handles.flagsdata.yLabelStr = 'Time';
+    handles.flagsdata.xUnitStr = 'sec';
+    handles.flagsdata.yUnitStr = 'sec';
+    
     handles.flagsdata.clipVal            = 0.2;
     handles.flagsdata.Fs                 = 44100;
-    
+
     handles.flagsdata.defCsvFileName   = '';
     handles.flagsdata.wavFileName       = '';
 
     
-    clear handles.flagsdata.chDefs;
-    clear handles.flagsdata.ch;
-    clear handles.flagsdata.csvFileNames;
+    handles.flagsdata.chDefs = {};
+    handles.flagsdata.ch = {};
+    handles.flagsdata.csvFileNames = {};
+    handles.flagsdata.tmpText_chDefs = {};
 end;
 
 
@@ -252,8 +268,14 @@ if ( 1 ),
     set( handles.edit12, 'String', handles.flagsdata.time_T );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
     set( handles.edit26, 'String', handles.flagsdata.clipVal );
-    
     set( handles.edit27, 'String', handles.flagsdata.Fs );
+    
+    set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
+    
+    set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+    set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+    set( handles.text19, 'String', [ 'T' ' (' handles.flagsdata.yUnitStr ')' ] );
+    
 end;
 
 
@@ -262,35 +284,6 @@ end;
 
 % Update handles structure
 guidata( handles.figure1, handles );
-
-
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
-
-handles.flagsdata.funcFlag = get( hObject, 'value' );
-
-%disp(handles.flagsdata);
-
-guidata(hObject,handles);
-
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 
 % --- Executes on button press in checkbox1.
@@ -463,7 +456,7 @@ handles.flagsdata.pname = pname;
 
 handles.flagsdata.defCsvFileName = defCsvFileName;
 handles.flagsdata.wavFileName = '';
-handles.flagsdata.numberOfHeaders = 3;
+handles.flagsdata.numberOfHeaders = 5;
 
 [ ch, csvFileNames ] = textread( defCsvFileName, '%s %s', 'delimiter', ',' );
 
@@ -472,13 +465,14 @@ handles.flagsdata.numberOfHeaders = 3;
 handles.flagsdata.ch = ch;
 handles.flagsdata.csvFileNames = csvFileNames;
 
-handles.flagsdata.graphTitle = ch{1};                            % FORCE to get TITLE name to treat
-handles.flagsdata.tS0 = str2num( ch{2} );                     % FORCE to get tS (Start) to cut the whole music signals
-handles.flagsdata.tE0 = str2num( csvFileNames{2} );      % FORCE to get tE (End)   to cut the whole music signals
-%handles.flagsdata.tStart = str2num( ch{3} );                  % FORCE to get tStart to calculate CCF
-%handles.flagsdata.tStop  = str2num( csvFileNames{3} );  % FORCE to get tStop  to calculate CCF
-%handles.flagsdata.nStepIdx = str2num( ch{4} );              % FORCE to get windowSize to calculate Realtime CCF
-handles.flagsdata.time_T = str2num( ch{3} );              % FORCE to get windowSize to calculate Realtime CCF
+handles.flagsdata.graphTitle = ch{1};
+handles.flagsdata.tS0 = str2num( ch{2} );
+handles.flagsdata.tE0 = str2num( csvFileNames{2} );
+handles.flagsdata.time_T = str2num( ch{3} );
+handles.flagsdata.xLabelStr = ch{4};
+handles.flagsdata.yLabelStr = csvFileNames{4};
+handles.flagsdata.xUnitStr = ch{5};
+handles.flagsdata.yUnitStr = csvFileNames{5};
 
 handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
 handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
@@ -487,12 +481,18 @@ handles.flagsdata.nCsvFileNames = length( csvFileNames );
 
 
 clear chDefs;
+clear tmpText_chDefs;
 for i = handles.flagsdata.numberOfHeaders+1 : length( ch ),
-    chDefs{ i-handles.flagsdata.numberOfHeaders, 1 } = ch{ i };
-    chDefs{ i-handles.flagsdata.numberOfHeaders, 2 } = csvFileNames{ i };
+    chDefs{ i - handles.flagsdata.numberOfHeaders, 1 } = ch{ i };
+    chDefs{ i - handles.flagsdata.numberOfHeaders, 2 } = csvFileNames{ i };
+    
+    tmpText_chDefs{ i } = strcat( ch{ i }, ' , ', csvFileNames{ i } );
 end;
 
 handles.flagsdata.chDefs = chDefs;
+handles.flagsdata.tmpText_chDefs = tmpText_chDefs;
+
+set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
 %handles.flagsdata.chDefs = getAppropriateFileName( 'Right',    ch, csvFileNames, handles.flagsdata.numberOfHeaders );
 %handles.flagsdata.ch2Wav = getAppropriateFileName( 'Left',      ch, csvFileNames, handles.flagsdata.numberOfHeaders );
 %handles.flagsdata.ch3Wav = getAppropriateFileName( 'Top',      ch, csvFileNames, handles.flagsdata.numberOfHeaders );
@@ -501,6 +501,10 @@ handles.flagsdata.chDefs = chDefs;
 %handles.flagsdata.ch6Wav = getAppropriateFileName( 'Hind',     ch, csvFileNames, handles.flagsdata.numberOfHeaders );
 
 %disp(handles.flagsdata.chDefs);
+set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
+set( handles.text19, 'String', [ 'T' ' (' handles.flagsdata.yUnitStr ')' ] );
+
 
 %return;
 
@@ -517,6 +521,9 @@ set( handles.edit9, 'String', handles.flagsdata.tE0 );
 %set( handles.edit12, 'String', str2num( ch{4} ) ); 
 set( handles.edit12, 'String', handles.flagsdata.time_T ); 
 %set( handles.edit13, 'String', chDefs );
+
+handles.flagsdata.Fs                 = 1;
+set( handles.edit27, 'String', handles.flagsdata.Fs );    
 
 %set( handles.edit13, 'String', getAppropriateFileName( 'Right',    ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
 %set( handles.edit14, 'String', getAppropriateFileName( 'Left',     ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
@@ -601,6 +608,10 @@ handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
 handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.graphTitle = fname;
 
+handles.flagsdata.xLabelStr = 'Time';
+handles.flagsdata.yLabelStr = 'Time';
+handles.flagsdata.xUnitStr = 'sec';
+handles.flagsdata.yUnitStr = 'sec';
 
 clear handles.flagsdata.chDefs;
 clear handles.flagsdata.ch;
@@ -1087,6 +1098,34 @@ function edit27_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in popupmenu1.
+function popupmenu1_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+
+handles.flagsdata.funcFlag = get( hObject, 'value' );
+
+%disp(handles.flagsdata);
+
+guidata(hObject,handles);
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

@@ -81,7 +81,7 @@ if (flags.iccfFlag),
   if (1),  
     [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, ~flags.iccfFlag);
     maxIdxs = maxIdxs( 1 : length(maxIdxs) );
-    maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
+    maxTimes = convIndex2Time_( maxIdxs, x, fs ); % * 1000 ;
     
     tauAlphaIdx = zeroIdxs(1);
     tauBetaIdx  = zeroIdxs(2);

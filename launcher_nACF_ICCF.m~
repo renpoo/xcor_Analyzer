@@ -48,7 +48,7 @@ results = struct(            ...
 
 handles = struct( 'flagsdata',   [] );
 
-handles.flagsdata.funcFlag         = 2;
+handles.flagsdata.funcFlag         = 1;
 handles.flagsdata.normalizeFlag  = 1;
 handles.flagsdata.nacfAndoFlag  = 0;
 handles.flagsdata.phiFlag           = 1;
@@ -76,11 +76,20 @@ handles.flagsdata.tStop = +0.005;
 
 handles.flagsdata.clipVal = 0.2;
 handles.flagsdata.Fs       = 44100;
+
+handles.flagsdata.xLabelStr = 'Time';
+handles.flagsdata.yLabelStr = 'Time';
+handles.flagsdata.xUnitStr = 'sec';
+handles.flagsdata.yUnitStr = 'sec';
     
 handles.flagsdata.pname = '';
 handles.flagsdata.fname = '';
 handles.flagsdata.wavFileName = '';
 
+handles.flagsdata.chDefs = {};
+handles.flagsdata.ch = {};
+handles.flagsdata.csvFileNames = {};
+handles.flagsdata.tmpText_chDefs = {};
 
 args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
@@ -138,6 +147,11 @@ while ( 1 ),
         %nStepIdx = castNumeric_( handles.flagsdata.nStepIdx );          % FORCE to get windowSize to calculate Realtime CCF
         time_T = castNumeric_( handles.flagsdata.time_T );          % FORCE to get windowSize to calculate Realtime CCF
 
+        xLabelStr = handles.flagsdata.xLabelStr;
+        yLabelStr = handles.flagsdata.yLabelStr;
+        xUnitStr = handles.flagsdata.xUnitStr;
+        yUnitStr = handles.flagsdata.yUnitStr;
+        
         nStepIdx = 0;
 
         pname = handles.flagsdata.pname;
@@ -279,22 +293,20 @@ while ( 1 ),
                 %[ y0, fsY, bitsY ] = wavread( yCsvFilename );
                 
                 %[ xFilename, xExtension ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
-                [ xCsvStrs ] = strread( xCsvFilename, '%s', 'delimiter', '.' );
-                xExtension = xCsvStrs( length( xCsvStrs ) );
+                [ xExtension ] = getFileExtension_( xCsvFilename );
                 if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
                     [ x0cell ] = textread( xCsvFilename, '%s', 'delimiter', ',' );
-                    x0 = strread( cell2mat( x0cell' );
-                    fsX = cast( castNumeric_( handles.flagsdata.Fs ),'uint32');
+                    x0 = strread( cell2mat( x0cell' ) )';
+                    fsX = castNumeric_( handles.flagsdata.Fs );
                 else
                     [ x0, fsX ] = audioread( xCsvFilename );
                 end;
                 
-                [ yCsvStrs ] = strread( yCsvFilename, '%s', 'delimiter', '.' );
-                yExtension = yCsvStrs( length( yCsvStrs ) );
+                [ yExtension ] = getFileExtension_( yCsvFilename );
                 if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
                     [ y0cell ] = textread( yCsvFilename, '%s', 'delimiter', ',' );
-                    y0 = cell2mat( y0cell );
-                    fsY = cast( castNumeric_( handles.flagsdata.Fs ),'uint32');
+                    y0 = strread( cell2mat( y0cell' ) )';
+                    fsY = castNumeric_( handles.flagsdata.Fs );
                 else
                     [ y0, fsY ] = audioread( yCsvFilename );
                 end;

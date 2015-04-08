@@ -66,7 +66,7 @@ if (flags.nacfFlag),
   [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData, 0, flags.nacfFlag);
   maxValues = maxValues( 2 : length(maxValues) );
   maxIdxs = maxIdxs( 2 : length(maxIdxs) );
-  maxTimes = convIndex2Time_( maxIdxs, x, fs ) * 1000 ;
+  maxTimes = convIndex2Time_( maxIdxs, x, fs ); % * 1000 ;
 
   strTitleBase = [ '[', xLabel, '] (' ,  num2str(tS, '%04.3f'), '-', num2str(tE, '%04.3f'), '), [T : ', num2str(time_T, '%04.2f'), ' ]' ];
   strTitle = strTitleBase;
