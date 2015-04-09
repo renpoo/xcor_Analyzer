@@ -147,7 +147,7 @@ handles.flagsdata.numberOfHeaders = 5;
 set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
 set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
 set( handles.checkbox2,   'value', handles.flagsdata.calcTauE_VecFlag );
-set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
+%set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
 set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
 set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
 set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
@@ -237,7 +237,7 @@ if ( 1 ),
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
     set( handles.checkbox2,   'value', handles.flagsdata.calcTauE_VecFlag );
-    set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
+    %set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
     set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
     set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
@@ -427,7 +427,7 @@ handles.flagsdata.pname = pname;
 handles.flagsdata.defCsvFileName = defCsvFileName;
 handles.flagsdata.wavFileName = '';
 
-handles.flagsdata.debugFlag = '';
+handles.flagsdata.debugFlag = 0;
 
 %handles.flagsdata.numberOfHeaders = 5;
 
@@ -959,6 +959,7 @@ function pushbutton10_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+guidata( hObject, handles );
 
 
 % --- Executes during object creation, after setting all properties.
@@ -966,6 +967,7 @@ function pushbutton11_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+guidata( hObject, handles );
 
 
 % --- Executes during object creation, after setting all properties.
@@ -973,6 +975,7 @@ function pushbutton13_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to pushbutton13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+guidata( hObject, handles );
 
 
 % --- Executes on button press in pushbutton12.
@@ -981,19 +984,12 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+fileID = fopen( strcat( handles.flagsdata.pname, handles.flagsdata.fname ), 'w+');
 
-saveBuffer = {};
+for m = 1 : handles.flagsdata.nCsvFileNames,
+    fprintf( fileID, '%s,%s\n', char( handles.flagsdata.ch( m ) ), char( handles.flagsdata.csvFileNames( m ) ) );
+end;
 
-saveBuffer{ i } = sprintf( '%s,', handles.flagsdata.graphTitle );
-saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.tS0, handles.flagsdata.tE0 );
-saveBuffer{ i } = sprintf( '%s,', handles.flagsdata.time_T );
-saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.xLabelStr, handles.flagsdata.yLabelStr );
-saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.xUnitStr, handles.flagsdata.yUnitStr  );
-%saveBuffer{ 6 } = sprintf( '%s,', handles.flagsdata.tmpText_chDefs );
+fclose( fileID );
 
-dlmwrite( 'testCSV.csv', saveBuffer, 'newline', 'pc' );
-
-fileID = fopen('exp.txt','w');
-fprintf(fileID,'%6s %12s\n','x','exp(x)');
-fprintf(fileID,'%6.2f %12.8f\n',A);
-fclose(fileID);
+guidata(hObject,handles);

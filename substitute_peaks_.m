@@ -3,7 +3,8 @@ function [ minValVec, tauE_Vec, tauEidx_Vec ] = substitute_peaks_( val, inputDat
 m = size( inputDataMat, 1 );
 n = size( inputDataMat, 2 );
 
-eps = 1.0 * 10^(-3);
+%eps = 1.0 * 10^(-3);
+eps = 2.0 * 10^(-3);
 %eps = 1.0 * 10^(-4);
 %eps = 1.0 * 10^(-5);
 %eps = 6.0 * 10^(-6);
@@ -33,6 +34,6 @@ for i = 1 : m,
     
     minValVec( i ) = minVal;
     tauEidx_Vec( i ) = minIdx;
-    tauE_Vec( i ) = convIndex2Time_( tauEidx_Vec( i ), s, fs ) * 10^3;   % CAUTION!!
+    tauE_Vec( i ) = convIndex2Time_( tauEidx_Vec( i ), s, fs ); % * 10^3;   % CAUTION!!
 end;
 

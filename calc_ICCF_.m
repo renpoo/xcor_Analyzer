@@ -1,9 +1,5 @@
 function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
 
-%pkg load signal;
-%pkg load io;
-
-%tauEnd = 1.0 / 1000; % [s] : End of calcuration interval for nACF
 
 if (flags.castSignalFlag),
   x = x - mean(x);
@@ -23,7 +19,6 @@ tmpResultData = zeros( windowSizeIdx, 1 );
 timeAxis = [];
 params = [];
 
-%tic();
 
 ICCC = 0.0;
 pointiccc = 0.0;
@@ -61,7 +56,6 @@ if (flags.iccfFlag),
         else
             phi_lr   = PHI_lr;
         end;
-        %phi_p = arraySubstitute_( nACF_( x( 1:limitSize ) ), limitSize );
     end;
     
   else
@@ -127,7 +121,8 @@ if (flags.iccfFlag),
     params( 4, 7 ) = 0;
 
                    
-    strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%04.3f'), '-', num2str(tE, '%04.3f'), '), [T : ', num2str(time_T, '%04.2f'), ' ]' );
+    %strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
+    strTitleBase = strcat( xLabel, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
     strTitle = strcat( strTitleBase, ', ICCC= ', num2str(ICCC), ', tauICCC= ', num2str(tauICCC), ', Wiccc= ', num2str(Wiccc) );
 
     end;

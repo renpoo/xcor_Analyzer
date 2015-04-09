@@ -38,6 +38,8 @@ handles.flagsdata.debugStepFlag      = 0;
 handles.flagsdata.plotFlag               = 1;
 handles.flagsdata.plot3dFlag            = 1;
 handles.flagsdata.playSoundFlag      = 0;
+handles.flagsdata.windowFlag          = 0;
+handles.flagsdata.castSignalFlag      = 0;
 handles.flagsdata.exitFlag               = 0;
 
 handles.flagsdata.graphTitle            = 'Graph Title';
@@ -130,7 +132,8 @@ while ( 1 ),
             ch = chDefs( :, 1 );
             csvFileNames = chDefs( :, 2 );
         else
-            ch = zeros( 1, 1 );
+            ch{ 1 } = 'WAV';
+            ch{ 2 } = 'WAV';
         end;
         
         args = handles;
@@ -340,7 +343,7 @@ while ( 1 ),
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS,', num2str(tS, '%04.3f'), ',', 'tE,', num2str(tE, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
                 
                 
-                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, handles.flagsdata )' ) );
+                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabelStr, yLabelStr, saveImageName, dateTime, handles.flagsdata )' ) );
                 
                 
                 if ( k == 1 ),

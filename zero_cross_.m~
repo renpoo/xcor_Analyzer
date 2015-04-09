@@ -13,16 +13,16 @@ big   = length(x);
 if length( zeroIdxs ) > 1,
   maxValues = zeros( floor( length(zeroIdxs)/2 ), 1 );
   maxIdxs   = zeros( floor( length(zeroIdxs)/2 ), 1 );
-  for i = 1 : 1 :length(zeroIdxs)-1 ,
-    [ maxVal, maxIdx ]  = max( x( zeroIdxs( i ) : zeroIdxs( i+1 ) ) );
-    if ( mod( i, 2 ) == 1 && skipFlag), continue; end;
-    maxValues( floor(i/2)+1 ) = maxVal;
-    maxIdxs( floor(i/2)+1 )   = maxIdx + zeroIdxs( i ) - 1 ;
-    if ( maxV <= maxValues( floor(i/2)+1 ) ),
-      maxV  = maxValues( floor(i/2)+1 );
-      maxI  = maxIdxs( floor(i/2)+1 );
-      small = zeroIdxs( i ) ;
-      big   = zeroIdxs( i+1 ) ;
+  for i = 2 : 2 :length(zeroIdxs)-1 ,
+    [ maxVal, maxIdx ]  = max( x( zeroIdxs(i) : zeroIdxs(i+1) ) );
+    %if ( mod( i, 2 ) == 1 && skipFlag), continue; end;
+    maxValues( i ) = maxVal;
+    maxIdxs( i )   = maxIdx + zeroIdxs(i) - 1 ;
+    if ( maxV <= maxValues(i) ),
+      maxV  = maxValues(i);
+      maxI  = maxIdxs(i);
+      small = zeroIdxs(i) ;
+      big   = zeroIdxs(i+1) ;
     end;
   end;
 end;  
@@ -34,5 +34,5 @@ if (wholeFlag),
   zeroIdxs  = [];
   maxValues(1) = maxV;
   maxIdxs(1)   = maxI;
-  zeroIdxs = [ small, big ];
+  zeroIdxs = [small, big];
 end;
