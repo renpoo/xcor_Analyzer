@@ -22,7 +22,7 @@ function varargout = GUI_nACF_ICCF(varargin)
 
 % Edit the above text to modify the response to help GUI_nACF_ICCF
 
-% Last Modified by GUIDE v2.5 08-Apr-2015 09:27:56
+% Last Modified by GUIDE v2.5 09-Apr-2015 13:14:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -102,51 +102,47 @@ function reset_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles.flagsdata.funcFlag              = 1;
+handles.flagsdata.normalizeFlag       = 1;
+handles.flagsdata.nacfSingleFlag      = 0;
+handles.flagsdata.calcTauE_VecFlag = 0;
+handles.flagsdata.dumpFlag             = 0;
+handles.flagsdata.debugFlag            = 1;
+handles.flagsdata.debugStepFlag      = 0;
+handles.flagsdata.plotFlag               = 1;
+handles.flagsdata.plot3dFlag            = 1;
+handles.flagsdata.playSoundFlag      = 0;
+handles.flagsdata.exitFlag               = 0;
 
-handles.flagsdata.funcFlag         = 1;
-handles.flagsdata.nacfAndoFlag  = 0;
-handles.flagsdata.normalizeFlag  = 1;
-handles.flagsdata.phiFlag           = 1;
-handles.flagsdata.dumpFlag        = 0;
-handles.flagsdata.debugFlag       = 1;
-handles.flagsdata.debugStepFlag = 0;
-handles.flagsdata.plotFlag          = 1;
-handles.flagsdata.plot3dFlag       = 1;
-handles.flagsdata.playSoundFlag  = 0;
+handles.flagsdata.graphTitle            = 'Graph Title';
+handles.flagsdata.time_T                 = 1.0;
+handles.flagsdata.tS0                     = 0.0;
+handles.flagsdata.tE0                     = 1.0;
+handles.flagsdata.tStart                 = -0.005;
+handles.flagsdata.tStop                  = +0.005;
+handles.flagsdata.clipVal                 = 0.2;
+handles.flagsdata.Fs                       = 44100;
 
-handles.flagsdata.nacfSingleFlag = 0;
-handles.flagsdata.windowFlag      = 0;
-handles.flagsdata.castSignalFlag = 0;
-handles.flagsdata.cyclicFlag       = 0;
+handles.flagsdata.xLabelStr             = 'Time';
+handles.flagsdata.yLabelStr             = 'Time';
+handles.flagsdata.xUnitStr              = 'sec';
+handles.flagsdata.yUnitStr              = 'sec';
 
-handles.flagsdata.calcTauE_VecFlag  = 0;
-handles.flagsdata.iccfWidthFlag  = 0;
+handles.flagsdata.pname                 = '';
+handles.flagsdata.fname                  = '';
+handles.flagsdata.wavFileName        = '';
+handles.flagsdata.defCsvFileName    = '';
 
-handles.flagsdata.exitFlag          = 0;
+handles.flagsdata.chDefs                = {};
+handles.flagsdata.ch                      = {};
+handles.flagsdata.csvFileNames       = {};
+handles.flagsdata.tmpText_chDefs   = {};
 
-handles.flagsdata.graphTitle       = 'GraphTest';
-%handles.flagsdata.nStepIdx         = 100;
-handles.flagsdata.time_T            = 1.0;
-handles.flagsdata.tS0                = 0.0;
-handles.flagsdata.tE0                = 10.0;
-handles.flagsdata.tStart            = -handles.flagsdata.time_T;
-handles.flagsdata.tStop             = handles.flagsdata.time_T;
+handles.flagsdata.nacfAndoFlag        = 0;
+handles.flagsdata.phiFlag                 = 1;
 
-handles.flagsdata.xLabelStr = 'Time';
-handles.flagsdata.yLabelStr = 'Time';
-handles.flagsdata.xUnitStr = 'sec';
-handles.flagsdata.yUnitStr = 'sec';
+handles.flagsdata.numberOfHeaders = 5;
 
-handles.flagsdata.clipVal            = 0.2;
-handles.flagsdata.Fs                  = 44100;
-    
-handles.flagsdata.defCsvFileName   = '';
-handles.flagsdata.wavFileName       = '';
-
-clear handles.flagsdata.chDefs;
-clear handles.flagsdata.ch;
-clear handles.flagsdata.csvFileNames;
-clear handles.flagsdata.tmpText_chDefs;
 
 set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
 set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
@@ -159,14 +155,10 @@ set( handles.checkbox6,   'value', handles.flagsdata.plotFlag );
 set( handles.checkbox7,   'value', handles.flagsdata.plot3dFlag );
 set( handles.checkbox8,   'value', handles.flagsdata.cyclicFlag );
 
-
 set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
 set( handles.edit7,   'String', handles.flagsdata.wavFileName );
 set( handles.edit8,   'String', handles.flagsdata.tS0 );
 set( handles.edit9,   'String', handles.flagsdata.tE0 );
-%set( handles.edit10,  'String', handles.flagsdata.tStart );
-%set( handles.edit11,  'String', handles.flagsdata.tStop );
-%set( handles.edit12, 'String', handles.flagsdata.nStepIdx );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 set( handles.edit26, 'String', handles.flagsdata.clipVal );
@@ -174,9 +166,10 @@ set( handles.edit27, 'String', handles.flagsdata.Fs );
 
 set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
 
-set( handles.text15, 'String', strcat( 'Start ', handles.flagsdata.xLabelStr, ' (', handles.flagsdata.xUnitStr, ')' ) );
-set( handles.text16, 'String', strcat( 'End ', handles.flagsdata.xLabelStr, ' (', handles.flagsdata.xUnitStr, ')' ) );
-set( handles.text19, 'String', strcat( 'T ', ' (', handles.flagsdata.yUnitStr, ')' ) );
+set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+set( handles.text19, 'String', [ 'T' ' [' handles.flagsdata.yUnitStr ']' ] );
+
 
 % Update handles structure
 guidata( handles.figure1, handles );
@@ -196,62 +189,55 @@ end;
 try
     handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 catch err
-    handles.flagsdata.funcFlag         = 1;
-    handles.flagsdata.normalizeFlag  = 1;
-    handles.flagsdata.nacfAndoFlag  = 0;
-    handles.flagsdata.phiFlag           = 1;
-    handles.flagsdata.dumpFlag        = 0;
-    handles.flagsdata.debugFlag       = 1;
-    handles.flagsdata.debugStepFlag = 0;
-    handles.flagsdata.plotFlag          = 1;
-    handles.flagsdata.plot3dFlag       = 1;
-    handles.flagsdata.playSoundFlag = 0;
-
-    handles.flagsdata.nacfSingleFlag = 0;
-    handles.flagsdata.windowFlag      = 0;
-    handles.flagsdata.castSignalFlag = 0;    
-    handles.flagsdata.cyclicFlag       = 0;
-
-    handles.flagsdata.calcTauE_VecFlag  = 0;
-    handles.flagsdata.iccfWidthFlag  = 0;
+    handles.flagsdata.funcFlag              = 1;
+    handles.flagsdata.normalizeFlag       = 1;
+    handles.flagsdata.nacfSingleFlag      = 0;
+    handles.flagsdata.calcTauE_VecFlag = 0;
+    handles.flagsdata.dumpFlag             = 0;
+    handles.flagsdata.debugFlag            = 1;
+    handles.flagsdata.debugStepFlag      = 0;
+    handles.flagsdata.plotFlag               = 1;
+    handles.flagsdata.plot3dFlag            = 1;
+    handles.flagsdata.playSoundFlag      = 0;
+    handles.flagsdata.exitFlag               = 0;
     
-    handles.flagsdata.graphTitle       = 'GraphTest';
-    %handles.flagsdata.nStepIdx         = 100;
-    handles.flagsdata.time_T            = 1.0;
-    handles.flagsdata.tS0                = 0.0;
-    handles.flagsdata.tE0                = 10.0;
-    handles.flagsdata.tStart            = -0.005;
-    handles.flagsdata.tStop             = +0.005;
-
-    handles.flagsdata.xLabelStr = 'Time';
-    handles.flagsdata.yLabelStr = 'Time';
-    handles.flagsdata.xUnitStr = 'sec';
-    handles.flagsdata.yUnitStr = 'sec';
+    handles.flagsdata.graphTitle            = '';
+    handles.flagsdata.time_T                 = 1.0;
+    handles.flagsdata.tS0                     = 0.0;
+    handles.flagsdata.tE0                     = 1.0;
+    handles.flagsdata.tStart                 = -0.005;
+    handles.flagsdata.tStop                  = +0.005;
+    handles.flagsdata.clipVal                 = 0.2;
+    handles.flagsdata.Fs                       = 44100;
     
-    handles.flagsdata.clipVal            = 0.2;
-    handles.flagsdata.Fs                 = 44100;
-
-    handles.flagsdata.defCsvFileName   = '';
-    handles.flagsdata.wavFileName       = '';
-
+    handles.flagsdata.xLabelStr             = 'Time';
+    handles.flagsdata.yLabelStr             = 'Time';
+    handles.flagsdata.xUnitStr              = 'sec';
+    handles.flagsdata.yUnitStr              = 'sec';
     
-    handles.flagsdata.chDefs = {};
-    handles.flagsdata.ch = {};
-    handles.flagsdata.csvFileNames = {};
-    handles.flagsdata.tmpText_chDefs = {};
+    handles.flagsdata.pname                 = '';
+    handles.flagsdata.fname                  = '';
+    handles.flagsdata.wavFileName        = '';
+    handles.flagsdata.defCsvFileName    = '';
+
+    handles.flagsdata.chDefs                = {};
+    handles.flagsdata.ch                      = {};
+    handles.flagsdata.csvFileNames       = {};
+    handles.flagsdata.tmpText_chDefs   = {};
+    
+    handles.flagsdata.nacfAndoFlag        = 0;
+    handles.flagsdata.phiFlag                 = 1;
+    
+    handles.flagsdata.numberOfHeaders = 5;
 end;
-
-
-handles.flagsdata.playSoundFlag = 0;
-handles.flagsdata.exitFlag          = 0;
 
     
 if ( 1 ),
+    
     set( handles.popupmenu1, 'value', handles.flagsdata.funcFlag );
     set( handles.checkbox1,   'value', handles.flagsdata.normalizeFlag );
-    %set( handles.checkbox2,   'value', handles.flagsdata.phiFlag );
     set( handles.checkbox2,   'value', handles.flagsdata.calcTauE_VecFlag );
-    set( handles.checkbox12,  'value', handles.flagsdata.nacfSingleFlag );
+    set( handles.checkbox12,  'value', handles.flagsdata.iccfWidthFlag );
     set( handles.checkbox3,   'value', handles.flagsdata.dumpFlag );
     set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
     set( handles.checkbox5,   'value', handles.flagsdata.debugStepFlag );
@@ -263,8 +249,6 @@ if ( 1 ),
     set( handles.edit7,   'String', handles.flagsdata.wavFileName );
     set( handles.edit8,   'String', handles.flagsdata.tS0 );
     set( handles.edit9,   'String', handles.flagsdata.tE0 );
-    %set( handles.edit10,  'String', handles.flagsdata.tStart );
-    %set( handles.edit11,  'String', handles.flagsdata.tStop );
     set( handles.edit12, 'String', handles.flagsdata.time_T );
     set( handles.edit25, 'String', handles.flagsdata.graphTitle );
     set( handles.edit26, 'String', handles.flagsdata.clipVal );
@@ -272,15 +256,12 @@ if ( 1 ),
     
     set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
     
-    set( handles.text15, 'String', strcat( 'Start ', handles.flagsdata.xLabelStr, ' (', handles.flagsdata.xUnitStr, ')' ) );
-    set( handles.text16, 'String', strcat( 'End ', handles.flagsdata.xLabelStr, ' (', handles.flagsdata.xUnitStr, ')' ) );
-    set( handles.text19, 'String', strcat( 'T ', ' (', handles.flagsdata.yUnitStr, ')' ) );
-    
+    set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+    set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+    set( handles.text19, 'String', [ 'T' ' [' handles.flagsdata.yUnitStr ']' ] );
+
 end;
 
-
-%write_history_( handles.flagsdata, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
-%return;
 
 % Update handles structure
 guidata( handles.figure1, handles );
@@ -431,24 +412,13 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function filenameStr = getAppropriateFileName( label, ch, csvFileNames, numberOfHeaders )
-for ( i = numberOfHeaders + 1 : length( csvFileNames ) ),
-    if ( strcmp( label, ch{ i } ) ),
-        filenameStr = csvFileNames{ i };
-        return;
-    else
-        filenameStr = '';
-    end;
-end;
-
-
 % --- Executes on button press in pushbutton10.
 function pushbutton10_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[ fname, pname ] = uigetfile( '*.csv', 'CSV Definition File' );
+[ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Definition File' );
 defCsvFileName = strcat( pname, fname );
 
 handles.flagsdata.fname = fname;
@@ -456,99 +426,66 @@ handles.flagsdata.pname = pname;
 
 handles.flagsdata.defCsvFileName = defCsvFileName;
 handles.flagsdata.wavFileName = '';
-handles.flagsdata.numberOfHeaders = 5;
+
+handles.flagsdata.debugFlag = '';
+
+%handles.flagsdata.numberOfHeaders = 5;
+
 
 [ ch, csvFileNames ] = textread( defCsvFileName, '%s %s', 'delimiter', ',' );
 
-%disp(csvFileNames);
 
 handles.flagsdata.ch = ch;
 handles.flagsdata.csvFileNames = csvFileNames;
 
 handles.flagsdata.graphTitle = ch{1};
-handles.flagsdata.tS0 = str2num( ch{2} );
-handles.flagsdata.tE0 = str2num( csvFileNames{2} );
-handles.flagsdata.time_T = str2num( ch{3} );
-handles.flagsdata.xLabelStr = ch{4};
-handles.flagsdata.yLabelStr = csvFileNames{4};
-handles.flagsdata.xUnitStr = ch{5};
-handles.flagsdata.yUnitStr = csvFileNames{5};
+handles.flagsdata.tS0          = str2num( ch{2} );
+handles.flagsdata.tE0          = str2num( csvFileNames{2} );
+handles.flagsdata.time_T      = str2num( ch{3} );
+handles.flagsdata.xLabelStr  = ch{4};
+handles.flagsdata.yLabelStr  = csvFileNames{4};
+handles.flagsdata.xUnitStr   = ch{5};
+handles.flagsdata.yUnitStr   = csvFileNames{5};
 
-handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
-handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
+handles.flagsdata.tStart      = -handles.flagsdata.time_T; % / 2.0;
+handles.flagsdata.tStop       = +handles.flagsdata.time_T; % / 2.0;
 
 handles.flagsdata.nCsvFileNames = length( csvFileNames );
 
 
-clear chDefs;
-clear tmpText_chDefs;
+chDefs              = {};
+tmpText_chDefs = {};
 for i = handles.flagsdata.numberOfHeaders+1 : length( ch ),
     chDefs{ i - handles.flagsdata.numberOfHeaders, 1 } = ch{ i };
     chDefs{ i - handles.flagsdata.numberOfHeaders, 2 } = csvFileNames{ i };
-    
     tmpText_chDefs{ i } = strcat( ch{ i }, ' , ', csvFileNames{ i } );
 end;
 
-handles.flagsdata.chDefs = chDefs;
+handles.flagsdata.chDefs              = chDefs;
 handles.flagsdata.tmpText_chDefs = tmpText_chDefs;
 
+handles.flagsdata.Fs                    = 1;
+
+
+set( handles.checkbox4,   'value', handles.flagsdata.debugFlag );
+        
+set( handles.edit25, 'String', handles.flagsdata.graphTitle );
+
 set( handles.text32, 'String', handles.flagsdata.tmpText_chDefs );
-%handles.flagsdata.chDefs = getAppropriateFileName( 'Right',    ch, csvFileNames, handles.flagsdata.numberOfHeaders );
-%handles.flagsdata.ch2Wav = getAppropriateFileName( 'Left',      ch, csvFileNames, handles.flagsdata.numberOfHeaders );
-%handles.flagsdata.ch3Wav = getAppropriateFileName( 'Top',      ch, csvFileNames, handles.flagsdata.numberOfHeaders );
-%handles.flagsdata.ch4Wav = getAppropriateFileName( 'Bottom', ch, csvFileNames, handles.flagsdata.numberOfHeaders );
-%handles.flagsdata.ch5Wav = getAppropriateFileName( 'Front',   ch, csvFileNames, handles.flagsdata.numberOfHeaders );
-%handles.flagsdata.ch6Wav = getAppropriateFileName( 'Hind',     ch, csvFileNames, handles.flagsdata.numberOfHeaders );
 
-%disp(handles.flagsdata.chDefs);
-set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
-set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' (' handles.flagsdata.xUnitStr ')' ] );
-set( handles.text19, 'String', [ 'T ' ' (' handles.flagsdata.xUnitStr ')' ] );
-set( handles.text19, 'String', strcat( 'T ', ' (', handles.flagsdata.yUnitStr, ')' ) );
+set( handles.text15, 'String', [ 'Start ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+set( handles.text16, 'String', [ 'End ' handles.flagsdata.xLabelStr ' [' handles.flagsdata.xUnitStr ']' ] );
+set( handles.text19, 'String', [ 'T' ' [' handles.flagsdata.yUnitStr ']' ] );
 
-%return;
-
-handles.flagsdata.wavFileName       = '';
 set( handles.edit7,   'String', handles.flagsdata.wavFileName );
 
-
-%{%}
 set( handles.edit6, 'String', handles.flagsdata.defCsvFileName );
 set( handles.edit8, 'String', handles.flagsdata.tS0 );
 set( handles.edit9, 'String', handles.flagsdata.tE0 );
-%set( handles.edit10, 'String', str2num( ch{3} ) );
-%set( handles.edit11, 'String', str2num( csvFileNames{3} ) ); 
-%set( handles.edit12, 'String', str2num( ch{4} ) ); 
 set( handles.edit12, 'String', handles.flagsdata.time_T ); 
-%set( handles.edit13, 'String', chDefs );
 
-handles.flagsdata.Fs                 = 1;
 set( handles.edit27, 'String', handles.flagsdata.Fs );    
 
-%set( handles.edit13, 'String', getAppropriateFileName( 'Right',    ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%set( handles.edit14, 'String', getAppropriateFileName( 'Left',     ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%set( handles.edit15, 'String', getAppropriateFileName( 'Top',      ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%set( handles.edit16, 'String', getAppropriateFileName( 'Bottom', ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%set( handles.edit17, 'String', getAppropriateFileName( 'Front',    ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%set( handles.edit18, 'String', getAppropriateFileName( 'Hind',      ch, csvFileNames, handles.flagsdata.numberOfHeaders ) );
-%{%}
-
-%{
-edit6_Callback( hObject, eventdata, handles );
-edit7_Callback( hObject, eventdata, handles );
-edit8_Callback(hObject, eventdata, handles);
-edit9_Callback(hObject, eventdata, handles);
-edit10_Callback(hObject, eventdata, handles);
-edit11_Callback(hObject, eventdata, handles);
-edit12_Callback(hObject, eventdata, handles);
-edit13_Callback(hObject, eventdata, handles);
-edit14_Callback(hObject, eventdata, handles);
-edit15_Callback(hObject, eventdata, handles);
-edit16_Callback(hObject, eventdata, handles);
-edit17_Callback(hObject, eventdata, handles);
-edit18_Callback(hObject, eventdata, handles);
-edit25_Callback(hObject, eventdata, handles);
-%}
 
 guidata( hObject, handles );
 
@@ -585,7 +522,7 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[ fname, pname ] = uigetfile( '*.wav', 'WAV Sound File' );
+[ fname, pname ] = uigetfile( '_Sounds/*.wav', 'WAV Sound File' );
 wavFileName = strcat( pname, fname );
 
 
@@ -600,42 +537,35 @@ handles.flagsdata.wavFileName = wavFileName;
 handles.flagsdata.Fs = fs;
 handles.flagsdata.tS0 = 0.0;
 handles.flagsdata.tE0  = length(s) / fs;
-%handles.flagsdata.nStepIdx = ceil( handles.flagsdata.tE0 / 1.0 );
-handles.flagsdata.time_T = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
+handles.flagsdata.time_T = ( handles.flagsdata.tE0 / 10 - fractionalPart_( handles.flagsdata.tE0 / 10 ) );
 handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
 handles.flagsdata.tStop  = +handles.flagsdata.time_T; % / 2.0;
 
-handles.flagsdata.wavFileName = wavFileName;
+
 handles.flagsdata.graphTitle = fname;
 
+handles.flagsdata.xLabelStr = 'Time';
+handles.flagsdata.yLabelStr = 'Time';
+handles.flagsdata.xUnitStr   = 'sec';
+handles.flagsdata.yUnitStr   = 'sec';
 
-clear handles.flagsdata.chDefs;
-clear handles.flagsdata.ch;
-clear handles.flagsdata.csvFileNames;
-
+handles.flagsdata.chDefs              = {};
+handles.flagsdata.ch                    = {};
+handles.flagsdata.csvFileNames     = {};
+handles.flagsdata.tmpText_chDefs = {};
+    
 handles.flagsdata.defCsvFileName   = '';
+
+
 set( handles.edit6,   'String', handles.flagsdata.defCsvFileName );
 
-%{
-edit6_Callback( hObject, eventdata, handles );
-edit7_Callback( hObject, eventdata, handles );
-edit8_Callback(hObject, eventdata, handles);
-edit9_Callback(hObject, eventdata, handles);
-%}
-set( handles.edit7, 'String', handles.flagsdata.wavFileName );
-set( handles.edit8, 'String', handles.flagsdata.tS0 );
-set( handles.edit9, 'String', handles.flagsdata.tE0 );
+set( handles.edit7,  'String', handles.flagsdata.wavFileName );
+set( handles.edit8,  'String', handles.flagsdata.tS0 );
+set( handles.edit9,  'String', handles.flagsdata.tE0 );
 set( handles.edit12, 'String', handles.flagsdata.time_T );
-%set( handles.edit10, 'String', -handles.flagsdata.time_T ); % / 2.0 );
-%set( handles.edit11, 'String', +handles.flagsdata.time_T ); % / 2.0 );
 set( handles.edit25, 'String', handles.flagsdata.graphTitle );
 set( handles.edit27, 'String', handles.flagsdata.Fs );
-%{
-edit10_Callback(hObject, eventdata, handles);
-edit11_Callback(hObject, eventdata, handles);
-edit12_Callback(hObject, eventdata, handles);
-edit25_Callback(hObject, eventdata, handles);
-%}
+
 
 guidata(hObject,handles);
 
@@ -756,7 +686,6 @@ function edit12_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit12 as text
 %        str2double(get(hObject,'String')) returns contents of edit12 as a double
 
-%handles.flagsdata.nStepIdx = str2num( get( hObject, 'String' ) );
 handles.flagsdata.time_T = str2num( get( hObject, 'String' ) );
 %handles.flagsdata.time_T = ceil( handles.flagsdata.tE0 / handles.flagsdata.time_T ) - 1;
 handles.flagsdata.tStart = -handles.flagsdata.time_T; % / 2.0;
@@ -791,34 +720,6 @@ handles.flagsdata.cyclicFlag = get( hObject, 'value' );
 guidata(hObject,handles);
 
 
-% --- Executes on button press in checkbox9.
-function checkbox9_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox9 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox9
-
-
-% --- Executes on button press in checkbox10.
-function checkbox10_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox10 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox10
-
-
-% --- Executes on button press in checkbox11.
-function checkbox11_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox11
-
-
-
 function edit13_Callback(hObject, eventdata, handles)
 % hObject    handle to edit13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -844,15 +745,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function edit19_Callback(hObject, eventdata, handles)
-% hObject    handle to edit19 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit19 as text
-%        str2double(get(hObject,'String')) returns contents of edit19 as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function edit19_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit19 (see GCBO)
@@ -864,16 +756,6 @@ function edit19_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function edit20_Callback(hObject, eventdata, handles)
-% hObject    handle to edit20 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit20 as text
-%        str2double(get(hObject,'String')) returns contents of edit20 as a double
 
 
 % --- Executes during object creation, after setting all properties.
@@ -889,16 +771,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function edit21_Callback(hObject, eventdata, handles)
-% hObject    handle to edit21 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit21 as text
-%        str2double(get(hObject,'String')) returns contents of edit21 as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function edit21_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit21 (see GCBO)
@@ -910,16 +782,6 @@ function edit21_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function edit22_Callback(hObject, eventdata, handles)
-% hObject    handle to edit22 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit22 as text
-%        str2double(get(hObject,'String')) returns contents of edit22 as a double
 
 
 % --- Executes during object creation, after setting all properties.
@@ -935,16 +797,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function edit23_Callback(hObject, eventdata, handles)
-% hObject    handle to edit23 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit23 as text
-%        str2double(get(hObject,'String')) returns contents of edit23 as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function edit23_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit23 (see GCBO)
@@ -958,16 +810,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function edit24_Callback(hObject, eventdata, handles)
-% hObject    handle to edit24 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of edit24 as text
-%        str2double(get(hObject,'String')) returns contents of edit24 as a double
-
-
 % --- Executes during object creation, after setting all properties.
 function edit24_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit24 (see GCBO)
@@ -979,21 +821,6 @@ function edit24_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in pushbutton12.
-function pushbutton12_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton12 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes during object creation, after setting all properties.
-function pushbutton11_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to pushbutton11 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
 
 
 function edit25_Callback(hObject, eventdata, handles)
@@ -1048,7 +875,6 @@ handles.flagsdata.nacfSingleFlag = get( hObject, 'value' );
 guidata(hObject,handles);
 
 
-
 function edit26_Callback(hObject, eventdata, handles)
 % hObject    handle to edit26 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1072,7 +898,6 @@ function edit26_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 
 function edit27_Callback(hObject, eventdata, handles)
@@ -1115,6 +940,7 @@ handles.flagsdata.funcFlag = get( hObject, 'value' );
 
 guidata(hObject,handles);
 
+
 % --- Executes during object creation, after setting all properties.
 function popupmenu1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to popupmenu1 (see GCBO)
@@ -1126,3 +952,48 @@ function popupmenu1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object creation, after setting all properties.
+function pushbutton10_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function pushbutton11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function pushbutton13_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pushbutton13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in pushbutton12.
+function pushbutton12_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+saveBuffer = {};
+
+saveBuffer{ i } = sprintf( '%s,', handles.flagsdata.graphTitle );
+saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.tS0, handles.flagsdata.tE0 );
+saveBuffer{ i } = sprintf( '%s,', handles.flagsdata.time_T );
+saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.xLabelStr, handles.flagsdata.yLabelStr );
+saveBuffer{ i } = sprintf( '%s,%s', handles.flagsdata.xUnitStr, handles.flagsdata.yUnitStr  );
+%saveBuffer{ 6 } = sprintf( '%s,', handles.flagsdata.tmpText_chDefs );
+
+dlmwrite( 'testCSV.csv', saveBuffer, 'newline', 'pc' );
+
+fileID = fopen('exp.txt','w');
+fprintf(fileID,'%6s %12s\n','x','exp(x)');
+fprintf(fileID,'%6.2f %12.8f\n',A);
+fclose(fileID);
