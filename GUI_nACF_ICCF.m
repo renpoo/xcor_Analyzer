@@ -190,7 +190,7 @@ end;
 
 
 try
-    handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
+    handles.flagsdata = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: open_history_() : No Command History File.' );
 catch err
     handles.flagsdata.funcFlag              = 1;
     handles.flagsdata.normalizeFlag       = 1;
@@ -235,6 +235,8 @@ catch err
     handles.flagsdata.phiFlag                 = 1;
     
     handles.flagsdata.numberOfHeaders = 5;
+    
+    write_history_( handles.flagsdata, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
 
     
