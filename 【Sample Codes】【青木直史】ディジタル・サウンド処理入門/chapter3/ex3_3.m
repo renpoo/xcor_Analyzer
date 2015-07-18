@@ -1,0 +1,11 @@
+clear;
+fs=44100;
+fe=1000;
+delta=2000;
+[b,filter_size]=FirLpf_(fs,fe,delta);
+a(1)=1;
+x=wavread('guitar.wav');
+y=filter(b,a,x);
+sound(x,fs);
+pause(2);
+sound(y,fs);
