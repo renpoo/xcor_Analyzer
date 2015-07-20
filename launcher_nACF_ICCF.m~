@@ -111,7 +111,7 @@ handles.data.phiFlag                 = 1;
 handles.data.numberOfHeaders = 5;
 %}
 
-%args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
+args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
 tInter = 0.0;
@@ -130,8 +130,7 @@ while ( 1 ),
 
     %{}%
     try
-        %handles = GUI_nACF_ICCF( args );
-        handles = GUI_nACF_ICCF( handles );
+        handles = GUI_nACF_ICCF( args );
     catch err
         return;
     end;
@@ -336,7 +335,6 @@ while ( 1 ),
             if ( handles.data.playSoundFlag ),
                 sound( x, fs );
                 handles.data.playSoundFlag = 0;
-                %continue;
                 break;
             end;
             
@@ -638,13 +636,8 @@ while ( 1 ),
             
             
         end;
-
-        handles.data.playSoundFlag = 0;                
-
     end;
     
-    
-    handles.data.playSoundFlag = 0;                
     %handles.data.exitFlag = 1;
     
 end;

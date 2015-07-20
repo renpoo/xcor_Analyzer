@@ -93,7 +93,7 @@ function calculate_Callback(hObject, eventdata, handles)
 
 %GUI_nACF_ICCF_OutputFcn(hObject, eventdata, handles);
 
-handles.data.playSoundFlag = 0;
+
 
 uiresume( gcf );
 
@@ -193,8 +193,6 @@ end;
 
 try
     handles.data = open_history_( 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: open_history_() : No Command History File.' );
-
-    handles.data.playSoundFlag      = 0;
 catch err
     handles.data.funcFlag              = 1;
     handles.data.normalizeFlag       = 1;
@@ -869,7 +867,7 @@ function pushbutton13_Callback(hObject, eventdata, handles)
 
 handles.data.playSoundFlag = 1;
 
-guidata(hObject,handles);
+%guidata(hObject,handles);
 
 uiresume( gcf );
 
