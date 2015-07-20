@@ -42,17 +42,17 @@ handles.data = struct(   ...
     'castSignalFlag',   0,        ...
     'exitFlag',         0,        ...
     'graphTitle',       'Graph Title',   ...
-    'time_T',           1.0,      ...
-    'tS0',              0.0,      ...
-    'tE0',              1.0,      ...
-    'tStart',           -0.005,   ...
-    'tStop',            +0.005,   ...
+    'timeT',            1.0,      ...
+    'timeS0',              0.0,      ...
+    'timeE0',              1.0,      ...
+    'tauMinus',         -0.005,   ...
+    'tauPlus',          +0.005,   ...
     'clipVal',          0.2,      ...
     'Fs',               44100,    ...
     'xLabelStr',        'Time',   ...
     'yLabelStr',        'Time',   ...
-    'xUnitStr',         'sec',    ...
-    'yUnitStr',         'sec',    ...
+    'xUnitimeStr',         'sec',    ...
+    'yUnitimeStr',         'sec',    ...
     'pname',            '',       ...
     'fname',            '',       ...
     'wavFileName',      '',       ...
@@ -82,18 +82,18 @@ handles.data.castSignalFlag      = 0;
 handles.data.exitFlag               = 0;
 
 handles.data.graphTitle            = 'Graph Title';
-handles.data.time_T                 = 1.0;
-handles.data.tS0                     = 0.0;
-handles.data.tE0                     = 1.0;
-handles.data.tStart                 = -0.005;
-handles.data.tStop                  = +0.005;
+handles.data.timeT                 = 1.0;
+handles.data.timeS0                     = 0.0;
+handles.data.timeE0                     = 1.0;
+handles.data.tauMinus                 = -0.005;
+handles.data.tauPlus                  = +0.005;
 handles.data.clipVal                 = 0.2;
 handles.data.Fs                       = 44100;
 
 handles.data.xLabelStr             = 'Time';
 handles.data.yLabelStr             = 'Time';
-handles.data.xUnitStr              = 'sec';
-handles.data.yUnitStr              = 'sec';
+handles.data.xUnitimeStr              = 'sec';
+handles.data.yUnitimeStr              = 'sec';
 
 handles.data.pname                 = '';
 handles.data.fname                  = '';
@@ -153,11 +153,11 @@ while ( 1 ),
 
         
         graphTitle = handles.data.graphTitle;                        % FORCE to get TITLE name to treat
-        tS0 = castNumeric_( handles.data.tS0 );                 % FORCE to get tS (Start) to cut the whole music signals
-        tE0 = castNumeric_( handles.data.tE0 );  % FORCE to get tE (End)   to cut the whole music signals
-        tStart = castNumeric_( handles.data.tStart );              % FORCE to get tStart to calculate CCF
-        tStop  = castNumeric_( handles.data.tStop );  % FORCE to get tStop  to calculate CCF
-        time_T = castNumeric_( handles.data.time_T );          % FORCE to get windowSize to calculate Realtime CCF
+        timeS0 = castNumeric_( handles.data.timeS0 );                 % FORCE to get timeS (Start) to cut the whole music signals
+        timeE0 = castNumeric_( handles.data.timeE0 );  % FORCE to get timeE (End)   to cut the whole music signals
+        tauMinus = castNumeric_( handles.data.tauMinus );              % FORCE to get tauMinus to calculate CCF
+        tauPlus  = castNumeric_( handles.data.tauPlus );  % FORCE to get tauPlus  to calculate CCF
+        timeT = castNumeric_( handles.data.timeT );          % FORCE to get windowSize to calculate Realtime CCF
 
 
         nStepIdx = 0;
@@ -199,8 +199,8 @@ while ( 1 ),
     clear maxIdxsMat;
     clear zeroIdxsMat;
     clear maxTimesMat;
-    clear tSMat;
-    clear tEMat;
+    clear timeSMat;
+    clear timeEMat;
     clear PHI_ll_0Mat;
     clear PHI_rr_0Mat;
     clear PHI_lrMat;
@@ -270,8 +270,8 @@ while ( 1 ),
                 
             end;
             
-            xLabelStr = ( [ labelStr ': T [' handles.data.xUnitStr ']' ] );
-            yLabelStr = ( [ handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
+            xLabelStr = ( [ labelStr ': T [' handles.data.xUnitimeStr ']' ] );
+            yLabelStr = ( [ handles.data.yLabelStr ' [' handles.data.yUnitimeStr ']' ] );
             zLabelStr = ( funcStr );
             
             
@@ -320,16 +320,16 @@ while ( 1 ),
             lenY0 = length(y0);
             
             
-            tS = tS0;
-            tE = tE0;
+            timeS = timeS0;
+            timeE = timeE0;
 
             
-            tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs ) - 1;
+            timeS_Idx = convTime2Index_( timeS, x0, fs );
+            timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
 
             
-            x = x0( tS_Idx : tE_Idx );
-            y = y0( tS_Idx : tE_Idx );
+            x = x0( timeS_Idx : timeE_Idx );
+            y = y0( timeS_Idx : timeE_Idx );
                         
             
             if ( handles.data.playSoundFlag ),
@@ -348,20 +348,20 @@ while ( 1 ),
 
             
             % CAUTION!!
-            %nStepIdx = ceil( ( tE - tS ) / time_T ) - 1;
-            nStepIdx = ceil( ( tE - tS ) / time_T );
+            %nStepIdx = ceil( ( timeE - timeS ) / timeT ) - 1;
+            nStepIdx = ceil( ( timeE - timeS ) / timeT );
             
-            windowSize = (tE - tS) / nStepIdx;
+            windowSize = (timeE - timeS) / nStepIdx;
             
-            tE = tS + windowSize * windowScale;
+            timeE = timeS + windowSize * windowScale;
             
-            tS_Idx = convTime2Index_( tS, x0, fs );
-            tE_Idx = convTime2Index_( tE, x0, fs ) - 1;
+            timeS_Idx = convTime2Index_( timeS, x0, fs );
+            timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             
-            windowSizeIdx = tE_Idx - tS_Idx + 1;
+            windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
-            x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
-            y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
+            x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+            y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
             if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
                                     
@@ -379,10 +379,10 @@ while ( 1 ),
             
             
             for (k = 1 : nStepIdx ),
-                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS,', num2str(tS, '%04.3f'), ',', 'tE,', num2str(tE, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
+                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'timeS,', num2str(timeS, '%04.3f'), ',', 'timeE,', num2str(timeE, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f'), ',', graphTitle );
                 
                 
-                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabelStr, yLabelStr, saveImageName, dateTime, handles.data )' ) );
+                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, timeS0, timeE0, timeS, timeE, tauMinus, tauPlus, timeT, windowSize, windowSizeIdx, xLabelStr, yLabelStr, saveImageName, dateTime, handles.data )' ) );
                 
                 
                 if ( k == 1 ),
@@ -398,8 +398,8 @@ while ( 1 ),
                 maxIdxsMat( k, : )    = arraySubstitute_( results.maxIdxs,   bufSize );
                 zeroIdxsMat( k, : )   = arraySubstitute_( results.zeroIdxs,  bufSize );
                 maxTimesMat( k, : )   = arraySubstitute_( results.maxTimes,  bufSize );
-                tSMat( k, : )         = tS;
-                tEMat( k, : )         = tE;
+                timeSMat( k, : )         = timeS;
+                timeEMat( k, : )         = timeE;
                 if (handles.data.iccfFlag && handles.data.phiFlag),
                     PHI_ll_0Mat( k, : ) = results.PHI_ll_0;
                     PHI_rr_0Mat( k, : ) = results.PHI_rr_0;
@@ -413,21 +413,21 @@ while ( 1 ),
                 end;
                 
                 
-                tS = tS0 + windowSize * k;
-                tE = tS + windowSize * windowScale;
+                timeS = timeS0 + windowSize * k;
+                timeE = timeS + windowSize * windowScale;
                 
                 
-                tS_Idx = convTime2Index_( tS, x0, fs );
-                tE_Idx = convTime2Index_( tE, x0, fs );
+                timeS_Idx = convTime2Index_( timeS, x0, fs );
+                timeE_Idx = convTime2Index_( timeE, x0, fs );
                 
                 
-                if ( length(x0) <= tE_Idx ),
-                    tE_Idx = length(x0) - 1;
+                if ( length(x0) <= timeE_Idx ),
+                    timeE_Idx = length(x0) - 1;
                 end;
 
                 
-                x = arraySubstitute_( x0( tS_Idx : tE_Idx ), windowSizeIdx );
-                y = arraySubstitute_( y0( tS_Idx : tE_Idx ), windowSizeIdx );
+                x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+                y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
 
                 
                 if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
@@ -441,8 +441,8 @@ while ( 1 ),
             end;
 
             
-            %timeVec = (0:nStepIdx-1) * ( tE0 - tS0 + time_T ) / nStepIdx-1 + tS0;   % CAUTION!!!
-            timeVec = ( 0 : nStepIdx-1 ) * ( tE0 - tS0 + time_T ) / nStepIdx + tS0;   % CAUTION!!!
+            %timeVec = (0:nStepIdx-1) * ( timeE0 - timeS0 + timeT ) / nStepIdx-1 + timeS0;   % CAUTION!!!
+            timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;   % CAUTION!!!
             
 
             % Clipping Plane
@@ -540,7 +540,7 @@ while ( 1 ),
                 zlabel( zLabelStr );
                 
                 
-                strTitle = strcat( strTitleBase, ' (' ,  num2str(tS0, '%04.3f'), '-', num2str(tE0, '%04.3f'), '), [T : ', num2str(time_T, '%04.3f'), ' ], ', graphTitle);
+                strTitle = strcat( strTitleBase, ' (' ,  num2str(timeS0, '%04.3f'), '-', num2str(timeE0, '%04.3f'), '), [T : ', num2str(timeT, '%04.3f'), ' ], ', graphTitle);
                 title( strTitle );
                 
                 hold off;
@@ -548,9 +548,9 @@ while ( 1 ),
                 
                 
                 % Save the 3D surf graph
-                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(time_T, '%04.3f'), ',', graphTitle );
+                saveImageName = strcat( funcStr, ',', labelStr, ',' , 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f'), ',', graphTitle );
                 fname = strcat( saveImageName, '.fig');
-                pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(tStop, '%04.3f') );
+                pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(tauPlus, '%04.3f') );
 
                 if ( exist( pnameImg, 'dir' ) == 0 ),
                     mkdir( pnameImg );
@@ -601,8 +601,8 @@ while ( 1 ),
                 dump_data_( maxIdxsMat,     'maxIdxsMat',     funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( zeroIdxsMat,    'zeroIdxsMat',     funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( maxTimesMat,  'maxTimesMat',  funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( tSMat,            'tSMat',             funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( tEMat,            'tEMat',              funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeSMat,            'timeSMat',             funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeEMat,            'timeEMat',              funcStr, saveImageName, graphTitle, dateTime );
                 
                 if ( handles.data.calcTauE_VecFlag ),
                     dump_data_( tauE_Vec_R,              'tauE_Vec_R',              funcStr, saveImageName, graphTitle, dateTime );

@@ -118,18 +118,18 @@ handles.data.castSignalFlag      = 0;
 handles.data.exitFlag               = 0;
 
 handles.data.graphTitle            = 'Graph Title';
-handles.data.time_T                 = 1.0;
-handles.data.tS0                     = 0.0;
-handles.data.tE0                     = 1.0;
-handles.data.tStart                 = -0.005;
-handles.data.tStop                  = +0.005;
+handles.data.timeT                 = 1.0;
+handles.data.timeS0                     = 0.0;
+handles.data.timeE0                     = 1.0;
+handles.data.tauMinus                 = -0.005;
+handles.data.tauPlus                  = +0.005;
 handles.data.clipVal                 = 0.2;
 handles.data.Fs                       = 44100;
 
 handles.data.xLabelStr             = 'Time';
 handles.data.yLabelStr             = 'Time';
-handles.data.xUnitStr              = 'sec';
-handles.data.yUnitStr              = 'sec';
+handles.data.xUnitimeStr              = 'sec';
+handles.data.yUnitimeStr              = 'sec';
 
 handles.data.pname                 = '';
 handles.data.fname                  = '';
@@ -160,18 +160,18 @@ set( handles.checkbox8,   'value', handles.data.cyclicFlag );
 
 set( handles.edit6,   'String', handles.data.defCsvFileName );
 set( handles.edit7,   'String', handles.data.wavFileName );
-set( handles.edit8,   'String', handles.data.tS0 );
-set( handles.edit9,   'String', handles.data.tE0 );
-set( handles.edit12, 'String', handles.data.time_T );
+set( handles.edit8,   'String', handles.data.timeS0 );
+set( handles.edit9,   'String', handles.data.timeE0 );
+set( handles.edit12, 'String', handles.data.timeT );
 set( handles.edit25, 'String', handles.data.graphTitle );
 set( handles.edit26, 'String', handles.data.clipVal );
 set( handles.edit27, 'String', handles.data.Fs );
 
 set( handles.text32, 'String', handles.data.tmpText_chDefs );
 
-set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
+set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitimeStr ']' ] );
 
 
 % Update handles structure
@@ -208,18 +208,18 @@ catch err
     handles.data.exitFlag               = 0;
     
     handles.data.graphTitle            = '';
-    handles.data.time_T                 = 1.0;
-    handles.data.tS0                     = 0.0;
-    handles.data.tE0                     = 1.0;
-    handles.data.tStart                 = -0.005;
-    handles.data.tStop                  = +0.005;
+    handles.data.timeT                 = 1.0;
+    handles.data.timeS0                     = 0.0;
+    handles.data.timeE0                     = 1.0;
+    handles.data.tauMinus                 = -0.005;
+    handles.data.tauPlus                  = +0.005;
     handles.data.clipVal                 = 0.2;
     handles.data.Fs                       = 44100;
     
     handles.data.xLabelStr             = 'Time';
     handles.data.yLabelStr             = 'Time';
-    handles.data.xUnitStr              = 'sec';
-    handles.data.yUnitStr              = 'sec';
+    handles.data.xUnitimeStr              = 'sec';
+    handles.data.yUnitimeStr              = 'sec';
     
     handles.data.pname                 = '';
     handles.data.fname                  = '';
@@ -255,18 +255,18 @@ if ( 1 ),
     
     set( handles.edit6,   'String', handles.data.defCsvFileName );
     set( handles.edit7,   'String', handles.data.wavFileName );
-    set( handles.edit8,   'String', handles.data.tS0 );
-    set( handles.edit9,   'String', handles.data.tE0 );
-    set( handles.edit12, 'String', handles.data.time_T );
+    set( handles.edit8,   'String', handles.data.timeS0 );
+    set( handles.edit9,   'String', handles.data.timeE0 );
+    set( handles.edit12, 'String', handles.data.timeT );
     set( handles.edit25, 'String', handles.data.graphTitle );
     set( handles.edit26, 'String', handles.data.clipVal );
     set( handles.edit27, 'String', handles.data.Fs );
     
     set( handles.text32, 'String', handles.data.tmpText_chDefs );
     
-    set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-    set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-    set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
+    set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+    set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+    set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitimeStr ']' ] );
 
 end;
 
@@ -447,16 +447,16 @@ handles.data.ch = ch;
 handles.data.csvFileNames = csvFileNames;
 
 handles.data.graphTitle = ch{1};
-handles.data.tS0          = str2num( ch{2} );
-handles.data.tE0          = str2num( csvFileNames{2} );
-handles.data.time_T      = str2num( ch{3} );
+handles.data.timeS0          = str2num( ch{2} );
+handles.data.timeE0          = str2num( csvFileNames{2} );
+handles.data.timeT      = str2num( ch{3} );
 handles.data.xLabelStr  = ch{4};
 handles.data.yLabelStr  = csvFileNames{4};
-handles.data.xUnitStr   = ch{5};
-handles.data.yUnitStr   = csvFileNames{5};
+handles.data.xUnitimeStr   = ch{5};
+handles.data.yUnitimeStr   = csvFileNames{5};
 
-handles.data.tStart      = -handles.data.time_T; % / 2.0;
-handles.data.tStop       = +handles.data.time_T; % / 2.0;
+handles.data.tauMinus      = -handles.data.timeT; % / 2.0;
+handles.data.tauPlus       = +handles.data.timeT; % / 2.0;
 
 handles.data.nCsvFileNames = length( csvFileNames );
 
@@ -481,16 +481,16 @@ set( handles.edit25, 'String', handles.data.graphTitle );
 
 set( handles.text32, 'String', handles.data.tmpText_chDefs );
 
-set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
+set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitimeStr ']' ] );
+set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitimeStr ']' ] );
 
 set( handles.edit7,   'String', handles.data.wavFileName );
 
 set( handles.edit6, 'String', handles.data.defCsvFileName );
-set( handles.edit8, 'String', handles.data.tS0 );
-set( handles.edit9, 'String', handles.data.tE0 );
-set( handles.edit12, 'String', handles.data.time_T ); 
+set( handles.edit8, 'String', handles.data.timeS0 );
+set( handles.edit9, 'String', handles.data.timeE0 );
+set( handles.edit12, 'String', handles.data.timeT ); 
 
 set( handles.edit27, 'String', handles.data.Fs );    
 
@@ -543,19 +543,19 @@ handles.data.wavFileName = wavFileName;
 %[ s, fs, bits ] = wavread( wavFileName );
 [ s, fs ] = audioread( wavFileName );
 handles.data.Fs = fs;
-handles.data.tS0 = 0.0;
-handles.data.tE0  = length(s) / fs;
-handles.data.time_T = ( handles.data.tE0 / 10 - fractionalPart_( handles.data.tE0 / 10 ) );
-handles.data.tStart = -handles.data.time_T; % / 2.0;
-handles.data.tStop  = +handles.data.time_T; % / 2.0;
+handles.data.timeS0 = 0.0;
+handles.data.timeE0  = length(s) / fs;
+handles.data.timeT = ( handles.data.timeE0 / 10 - fractionalPart_( handles.data.timeE0 / 10 ) );
+handles.data.tauMinus = -handles.data.timeT; % / 2.0;
+handles.data.tauPlus  = +handles.data.timeT; % / 2.0;
 
 
 handles.data.graphTitle = fname;
 
 handles.data.xLabelStr = 'Time';
 handles.data.yLabelStr = 'Time';
-handles.data.xUnitStr   = 'sec';
-handles.data.yUnitStr   = 'sec';
+handles.data.xUnitimeStr   = 'sec';
+handles.data.yUnitimeStr   = 'sec';
 
 handles.data.chDefs              = {};
 handles.data.ch                    = {};
@@ -568,9 +568,9 @@ handles.data.defCsvFileName   = '';
 set( handles.edit6,   'String', handles.data.defCsvFileName );
 
 set( handles.edit7,  'String', handles.data.wavFileName );
-set( handles.edit8,  'String', handles.data.tS0 );
-set( handles.edit9,  'String', handles.data.tE0 );
-set( handles.edit12, 'String', handles.data.time_T );
+set( handles.edit8,  'String', handles.data.timeS0 );
+set( handles.edit9,  'String', handles.data.timeE0 );
+set( handles.edit12, 'String', handles.data.timeT );
 set( handles.edit25, 'String', handles.data.graphTitle );
 set( handles.edit27, 'String', handles.data.Fs );
 
@@ -586,7 +586,7 @@ function edit8_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit8 as text
 %        str2double(get(hObject,'String')) returns contents of edit8 as a double
 
-handles.data.tS0 = str2num( get( hObject, 'String' ) );
+handles.data.timeS0 = str2num( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -613,7 +613,7 @@ function edit9_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit9 as text
 %        str2double(get(hObject,'String')) returns contents of edit9 as a double
 
-handles.data.tE0 = str2num( get( hObject, 'String' ) );
+handles.data.timeE0 = str2num( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -640,7 +640,7 @@ function edit10_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit10 as text
 %        str2double(get(hObject,'String')) returns contents of edit10 as a double
 
-handles.data.tStart = str2num( get( hObject, 'String' ) );
+handles.data.tauMinus = str2num( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -667,7 +667,7 @@ function edit11_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit11 as text
 %        str2double(get(hObject,'String')) returns contents of edit11 as a double
 
-handles.data.tStop = str2num( get( hObject, 'String' ) );
+handles.data.tauPlus = str2num( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -694,10 +694,10 @@ function edit12_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit12 as text
 %        str2double(get(hObject,'String')) returns contents of edit12 as a double
 
-handles.data.time_T = str2num( get( hObject, 'String' ) );
-%handles.data.time_T = ceil( handles.data.tE0 / handles.data.time_T ) - 1;
-handles.data.tStart = -handles.data.time_T; % / 2.0;
-handles.data.tStop  = +handles.data.time_T; % / 2.0;
+handles.data.timeT = str2num( get( hObject, 'String' ) );
+%handles.data.timeT = ceil( handles.data.timeE0 / handles.data.timeT ) - 1;
+handles.data.tauMinus = -handles.data.timeT; % / 2.0;
+handles.data.tauPlus  = +handles.data.timeT; % / 2.0;
 
 guidata(hObject,handles);
 
