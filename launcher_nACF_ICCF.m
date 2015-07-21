@@ -155,12 +155,12 @@ while ( 1 ),
         end;
 
         
-        graphTitle = handles.data.graphTitle;                        % FORCE to get TITLE name to treat
-        timeS0 = castNumeric_( handles.data.timeS0 );                 % FORCE to get timeS (Start) to cut the whole music signals
-        timeE0 = castNumeric_( handles.data.timeE0 );  % FORCE to get timeE (End)   to cut the whole music signals
-        tauMinus = castNumeric_( handles.data.tauMinus );              % FORCE to get tauMinus to calculate CCF
-        tauPlus  = castNumeric_( handles.data.tauPlus );  % FORCE to get tauPlus  to calculate CCF
-        timeT = castNumeric_( handles.data.timeT );          % FORCE to get windowSize to calculate Realtime CCF
+        graphTitle = handles.data.graphTitle;         % FORCE to get TITLE name to treat
+        timeS0   = castNum_( getVal_( handles.data.timeS0 ) );   % FORCE to get timeS0 (Start) to cut the whole music signals
+        timeE0   = castNum_( getVal_( handles.data.timeE0 ) );   % FORCE to get timeE0 (End)   to cut the whole music signals
+        tauMinus = castNum_( getVal_( handles.data.tauMinus ) ); % FORCE to get tauMinus to calculate CCF
+        tauPlus  = castNum_( getVal_( handles.data.tauPlus ) );  % FORCE to get tauPlus  to calculate CCF
+        timeT    = castNum_( getVal_( handles.data.timeT ) );    % FORCE to get windowSize to calculate Realtime CCF
 
 
         nStepIdx = 0;
@@ -300,7 +300,7 @@ while ( 1 ),
                 if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
                     [ x0cell ] = textread( R_CsvFilename, '%s', 'delimiter', ',' );
                     x0 = strread( cell2mat( x0cell' ) )';
-                    fsX = castNumeric_( handles.data.Fs );
+                    fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ x0, fsX ] = audioread( R_CsvFilename );
                 end;
@@ -309,7 +309,7 @@ while ( 1 ),
                 if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
                     [ y0cell ] = textread( L_CsvFilename, '%s', 'delimiter', ',' );
                     y0 = strread( cell2mat( y0cell' ) )';
-                    fsY = castNumeric_( handles.data.Fs );
+                    fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ y0, fsY ] = audioread( L_CsvFilename );
                 end;
@@ -497,7 +497,9 @@ while ( 1 ),
                 figNumber = 1;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
+                %XYZ = mesh( timeAxisMat( 1,: ), timeVec, resultDataMat );
                 colormap 'jet';
+                %colormap( autumn(5) )
                 
                 grid on;
                 hold on;

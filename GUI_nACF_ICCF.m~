@@ -89,12 +89,6 @@ function calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%disp(handles.data);
-
-%GUI_nACF_ICCF_OutputFcn(hObject, eventdata, handles);
-
-handles.data.playSoundFlag = 0;
-
 uiresume( gcf );
 
 
@@ -104,120 +98,79 @@ function reset_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-%handles = struct( 'data', [] );
-%{
-handles.data = struct(   ...
-    'funcFlag',         1,        ...
-    'normalizeFlag',    1,        ...
-    'nacfSingleFlag',   0,        ...
-    'calcTauE_VecFlag', 0,        ...
-    'cyclicFlag',       0,        ...
-    'dumpFlag',         0,        ...
-    'debugFlag',        1,        ...
-    'debugStepFlag',    0,        ...
-    'plotFlag',         1,        ...
-    'plot3dFlag',       1,        ...
-    'playSoundFlag',    0,        ...
-    'windowFlag',       0,        ...
-    'castSignalFlag',   0,        ...
-    'exitFlag',         0,        ...
-    'graphTitle',       'Graph Title',   ...
-    'timeT',            1.0,      ...
-    'timeS0',           0.0,      ...
-    'timeE0',           1.0,      ...
-    'tauMinus',         -0.005,   ...
-    'tauPlus',          +0.005,   ...
-    'clipVal',          0.2,      ...
-    'Fs',               44100,    ...
-    'xLabelStr',        'Time Lag',   ...
-    'yLabelStr',        'Time',   ...
-    'xUnitStr',         'ms',     ...
-    'yUnitStr',         'sec',    ...
-    'pname',            '',       ...
-    'fname',            '',       ...
-    'wavFileName',      '',       ...
-    'defCsvFileName',   '',       ...
-    'chDefs',           {},       ...
-    'ch',               {},       ...
-    'csvFileNames',     {},       ...
-    'tmpText_chDefs',   {},       ...
-    'nacfAndoFlag',     0,        ...
-    'phiFlag',          1,        ...
-    'numberOfHeaders',  5   );
-%}
 
-handles.data.funcFlag              = 1;
-handles.data.normalizeFlag       = 1;
-handles.data.nacfSingleFlag      = 0;
+handles.data.funcFlag         = 1;
+handles.data.normalizeFlag    = 1;
+handles.data.nacfSingleFlag   = 0;
 handles.data.calcTauE_VecFlag = 0;
-handles.data.cyclicFlag            = 0;
-handles.data.dumpFlag             = 0;
-handles.data.debugFlag            = 1;
-handles.data.debugStepFlag      = 0;
-handles.data.plotFlag               = 1;
-handles.data.plot3dFlag            = 1;
-handles.data.playSoundFlag      = 0;
-handles.data.windowFlag          = 0;
-handles.data.castSignalFlag      = 0;
-handles.data.exitFlag               = 0;
+handles.data.cyclicFlag       = 0;
+handles.data.dumpFlag         = 0;
+handles.data.debugFlag        = 1;
+handles.data.debugStepFlag    = 0;
+handles.data.plotFlag         = 1;
+handles.data.plot3dFlag       = 1;
+handles.data.playSoundFlag    = 0;
+handles.data.windowFlag       = 0;
+handles.data.castSignalFlag   = 0;
+handles.data.exitFlag         = 0;
 
-handles.data.graphTitle            = 'Graph Title';
-handles.data.timeT                 = 1.0;
-handles.data.timeS0                     = 0.0;
-handles.data.timeE0                     = 1.0;
-handles.data.tauMinus                 = -0.005;
-handles.data.tauPlus                  = +0.005;
-handles.data.clipVal                 = 0.2;
-handles.data.Fs                       = 44100;
+handles.data.graphTitle       = 'Graph Title';
+handles.data.timeT            = 1.0;
+handles.data.timeS0           = 0.0;
+handles.data.timeE0           = 1.0;
+handles.data.tauMinus         = -0.005;
+handles.data.tauPlus          = +0.005;
+handles.data.clipVal          = 0.2;
+handles.data.Fs               = 44100;
 
-handles.data.xLabelStr             = 'Tau';
-handles.data.yLabelStr             = 'Time';
-handles.data.xUnitStr              = 'ms';
-handles.data.yUnitStr              = 'sec';
-handles.data.xUnitScale   = 1000.0;
-handles.data.yUnitScale   = 1.0;
+handles.data.xLabelStr        = 'Tau';
+handles.data.yLabelStr        = 'Time';
+handles.data.xUnitStr         = 'ms';
+handles.data.yUnitStr         = 'sec';
+handles.data.xUnitScale       = 1000.0;
+handles.data.yUnitScale       = 1.0;
 
-handles.data.pname                 = '';
-handles.data.fname                  = '';
-handles.data.wavFileName        = '';
-handles.data.defCsvFileName    = '';
+handles.data.pname            = '';
+handles.data.fname            = '';
+handles.data.wavFileName      = '';
+handles.data.defCsvFileName   = '';
 
-handles.data.chDefs                = {};
-handles.data.ch                      = {};
-handles.data.csvFileNames       = {};
+handles.data.chDefs           = {};
+handles.data.ch               = {};
+handles.data.csvFileNames     = {};
 handles.data.tmpText_chDefs   = {};
 
-handles.data.nacfAndoFlag        = 0;
-handles.data.phiFlag                 = 1;
+handles.data.nacfAndoFlag     = 0;
+handles.data.phiFlag          = 1;
 
-handles.data.numberOfHeaders = 5;
+handles.data.numberOfHeaders  = 5;
 
 
-set( handles.popupmenu1, 'value', handles.data.funcFlag );
-set( handles.checkbox1,   'value', handles.data.normalizeFlag );
-set( handles.checkbox2,   'value', handles.data.calcTauE_VecFlag );
-set( handles.checkbox12,  'value', handles.data.nacfSingleFlag );
-set( handles.checkbox3,   'value', handles.data.dumpFlag );
-set( handles.checkbox4,   'value', handles.data.debugFlag );
-set( handles.checkbox5,   'value', handles.data.debugStepFlag );
-set( handles.checkbox6,   'value', handles.data.plotFlag );
-set( handles.checkbox7,   'value', handles.data.plot3dFlag );
-set( handles.checkbox8,   'value', handles.data.cyclicFlag );
+set( handles.popupmenu1, 'value',  handles.data.funcFlag );
+set( handles.checkbox1,  'value',  handles.data.normalizeFlag );
+set( handles.checkbox2,  'value',  handles.data.calcTauE_VecFlag );
+set( handles.checkbox12, 'value',  handles.data.nacfSingleFlag );
+set( handles.checkbox3,  'value',  handles.data.dumpFlag );
+set( handles.checkbox4,  'value',  handles.data.debugFlag );
+set( handles.checkbox5,  'value',  handles.data.debugStepFlag );
+set( handles.checkbox6,  'value',  handles.data.plotFlag );
+set( handles.checkbox7,  'value',  handles.data.plot3dFlag );
+set( handles.checkbox8,  'value',  handles.data.cyclicFlag );
 
-set( handles.edit6,   'String', handles.data.defCsvFileName );
-set( handles.edit7,   'String', handles.data.wavFileName );
-set( handles.edit8,   'String', handles.data.timeS0 );
-set( handles.edit9,   'String', handles.data.timeE0 );
-set( handles.edit12, 'String', handles.data.timeT );
-set( handles.edit25, 'String', handles.data.graphTitle );
-set( handles.edit26, 'String', handles.data.clipVal );
-set( handles.edit27, 'String', handles.data.Fs );
+set( handles.edit6,      'String', handles.data.defCsvFileName );
+set( handles.edit7,      'String', handles.data.wavFileName );
+set( handles.edit8,      'String', handles.data.timeS0 );
+set( handles.edit9,      'String', handles.data.timeE0 );
+set( handles.edit12,     'String', handles.data.timeT );
+set( handles.edit25,     'String', handles.data.graphTitle );
+set( handles.edit26,     'String', handles.data.clipVal );
+set( handles.edit27,     'String', handles.data.Fs );
 
-set( handles.text32, 'String', handles.data.tmpText_chDefs );
+set( handles.text32,     'String', handles.data.tmpText_chDefs );
 
-set( handles.text15, 'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-set( handles.text16, 'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
+set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
+set( handles.text16,     'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
+set( handles.text19,     'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
 
 
 % Update handles structure
@@ -240,85 +193,81 @@ try
 
     handles.data.playSoundFlag      = 0;
 catch err
-    handles.data.funcFlag              = 1;
-    handles.data.normalizeFlag       = 1;
-    handles.data.nacfSingleFlag      = 0;
+    handles.data.funcFlag         = 1;
+    handles.data.normalizeFlag    = 1;
+    handles.data.nacfSingleFlag   = 0;
     handles.data.calcTauE_VecFlag = 0;
-    handles.data.cyclicFlag            = 0;
-    handles.data.dumpFlag             = 0;
-    handles.data.debugFlag            = 1;
-    handles.data.debugStepFlag      = 0;
-    handles.data.plotFlag               = 1;
-    handles.data.plot3dFlag            = 1;
-    handles.data.playSoundFlag      = 0;
-    handles.data.windowFlag          = 0;
-    handles.data.castSignalFlag      = 0;
-    handles.data.exitFlag               = 0;
+    handles.data.cyclicFlag       = 0;
+    handles.data.dumpFlag         = 0;
+    handles.data.debugFlag        = 1;
+    handles.data.debugStepFlag    = 0;
+    handles.data.plotFlag         = 1;
+    handles.data.plot3dFlag       = 1;
+    handles.data.playSoundFlag    = 0;
+    handles.data.windowFlag       = 0;
+    handles.data.castSignalFlag   = 0;
+    handles.data.exitFlag         = 0;
     
-    handles.data.graphTitle            = '';
-    handles.data.timeT                 = 1.0;
-    handles.data.timeS0                     = 0.0;
-    handles.data.timeE0                     = 1.0;
-    handles.data.tauMinus                 = -0.005;
-    handles.data.tauPlus                  = +0.005;
-    handles.data.clipVal                 = 0.2;
-    handles.data.Fs                       = 44100;
+    handles.data.graphTitle       = 'Graph Title';
+    handles.data.timeT            = 1.0;
+    handles.data.timeS0           = 0.0;
+    handles.data.timeE0           = 1.0;
+    handles.data.tauMinus         = -0.005;
+    handles.data.tauPlus          = +0.005;
+    handles.data.clipVal          = 0.2;
+    handles.data.Fs               = 44100;
     
-    handles.data.xLabelStr             = 'Tau';
-    handles.data.yLabelStr             = 'Time';
-    handles.data.xUnitStr              = 'ms';
-    handles.data.yUnitStr              = 'sec';
-    handles.data.xUnitScale   = '1000.0';
-    handles.data.yUnitScale   = '1.0';
+    handles.data.xLabelStr        = 'Tau';
+    handles.data.yLabelStr        = 'Time';
+    handles.data.xUnitStr         = 'ms';
+    handles.data.yUnitStr         = 'sec';
+    handles.data.xUnitScale       = 1000.0;
+    handles.data.yUnitScale       = 1.0;
     
-    handles.data.pname                 = '';
-    handles.data.fname                  = '';
-    handles.data.wavFileName        = '';
-    handles.data.defCsvFileName    = '';
-
-    handles.data.chDefs                = {};
-    handles.data.ch                      = {};
-    handles.data.csvFileNames       = {};
+    handles.data.pname            = '';
+    handles.data.fname            = '';
+    handles.data.wavFileName      = '';
+    handles.data.defCsvFileName   = '';
+    
+    handles.data.chDefs           = {};
+    handles.data.ch               = {};
+    handles.data.csvFileNames     = {};
     handles.data.tmpText_chDefs   = {};
     
-    handles.data.nacfAndoFlag        = 0;
-    handles.data.phiFlag                 = 1;
+    handles.data.nacfAndoFlag     = 0;
+    handles.data.phiFlag          = 1;
     
-    handles.data.numberOfHeaders = 5;
-    
+    handles.data.numberOfHeaders  = 5;
+
     write_history_( handles.data, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
 
-    
-if ( 1 ),
-    
-    set( handles.popupmenu1, 'value', handles.data.funcFlag );
-    set( handles.checkbox1,   'value', handles.data.normalizeFlag );
-    set( handles.checkbox2,   'value', handles.data.calcTauE_VecFlag );
-    set( handles.checkbox12,  'value', handles.data.nacfSingleFlag );
-    set( handles.checkbox3,   'value', handles.data.dumpFlag );
-    set( handles.checkbox4,   'value', handles.data.debugFlag );
-    set( handles.checkbox5,   'value', handles.data.debugStepFlag );
-    set( handles.checkbox6,   'value', handles.data.plotFlag );
-    set( handles.checkbox7,   'value', handles.data.plot3dFlag );
-    set( handles.checkbox8,   'value', handles.data.cyclicFlag );
-    
-    set( handles.edit6,   'String', handles.data.defCsvFileName );
-    set( handles.edit7,   'String', handles.data.wavFileName );
-    set( handles.edit8,   'String', handles.data.timeS0 );
-    set( handles.edit9,   'String', handles.data.timeE0 );
-    set( handles.edit12, 'String', handles.data.timeT );
-    set( handles.edit25, 'String', handles.data.graphTitle );
-    set( handles.edit26, 'String', handles.data.clipVal );
-    set( handles.edit27, 'String', handles.data.Fs );
-    
-    set( handles.text32, 'String', handles.data.tmpText_chDefs );
-    
-    set( handles.text15, 'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-    set( handles.text16, 'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-    set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
 
-end;
+set( handles.popupmenu1, 'value',  handles.data.funcFlag );
+set( handles.checkbox1,  'value',  handles.data.normalizeFlag );
+set( handles.checkbox2,  'value',  handles.data.calcTauE_VecFlag );
+set( handles.checkbox12, 'value',  handles.data.nacfSingleFlag );
+set( handles.checkbox3,  'value',  handles.data.dumpFlag );
+set( handles.checkbox4,  'value',  handles.data.debugFlag );
+set( handles.checkbox5,  'value',  handles.data.debugStepFlag );
+set( handles.checkbox6,  'value',  handles.data.plotFlag );
+set( handles.checkbox7,  'value',  handles.data.plot3dFlag );
+set( handles.checkbox8,  'value',  handles.data.cyclicFlag );
+
+set( handles.edit6,      'String', handles.data.defCsvFileName );
+set( handles.edit7,      'String', handles.data.wavFileName );
+set( handles.edit8,      'String', handles.data.timeS0 );
+set( handles.edit9,      'String', handles.data.timeE0 );
+set( handles.edit12,     'String', handles.data.timeT );
+set( handles.edit25,     'String', handles.data.graphTitle );
+set( handles.edit26,     'String', handles.data.clipVal );
+set( handles.edit27,     'String', handles.data.Fs );
+
+set( handles.text32,     'String', handles.data.tmpText_chDefs );
+
+set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
+set( handles.text16,     'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
+set( handles.text19,     'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
 
 
 % Update handles structure
@@ -487,23 +436,21 @@ handles.data.wavFileName = '';
 
 handles.data.debugFlag = 0;
 
-%handles.data.numberOfHeaders = 5;
 
-
-[ ch, csvFileNames ] = textread( defCsvFileName, '%s %s', 'delimiter', ',' );
+[ ch, csvFileNames ] = textscan( defCsvFileName, '%s %s', 'delimiter', ',' );
 
 
 handles.data.ch = ch;
-handles.data.csvFileNames = csvFileNames;
+handles.data.csvFileNames  = csvFileNames;
 
-handles.data.graphTitle = ch{1};
-handles.data.timeS0          = str2num( ch{2} );
-handles.data.timeE0          = str2num( csvFileNames{2} );
-handles.data.timeT      = str2num( ch{3} );
-handles.data.xLabelStr  = ch{4};
-handles.data.yLabelStr  = csvFileNames{4};
-handles.data.xUnitStr   = ch{5};
-handles.data.yUnitStr   = csvFileNames{5};
+handles.data.graphTitle    = ch{1};
+handles.data.timeS0        = str2double( ch{2} );
+handles.data.timeE0        = str2double( csvFileNames{2} );
+handles.data.timeT         = str2double( ch{3} );
+handles.data.xLabelStr     = ch{4};
+handles.data.yLabelStr     = csvFileNames{4};
+handles.data.xUnitStr      = ch{5};
+handles.data.yUnitStr      = csvFileNames{5};
 
 handles.data.tauMinus      = -handles.data.timeT; % / 2.0;
 handles.data.tauPlus       = +handles.data.timeT; % / 2.0;
@@ -511,7 +458,7 @@ handles.data.tauPlus       = +handles.data.timeT; % / 2.0;
 handles.data.nCsvFileNames = length( csvFileNames );
 
 
-chDefs              = {};
+chDefs = {};
 tmpText_chDefs = {};
 for i = handles.data.numberOfHeaders+1 : length( ch ),
     chDefs{ i - handles.data.numberOfHeaders, 1 } = ch{ i };
@@ -519,30 +466,30 @@ for i = handles.data.numberOfHeaders+1 : length( ch ),
     tmpText_chDefs{ i } = strcat( ch{ i }, ' , ', csvFileNames{ i } );
 end;
 
-handles.data.chDefs              = chDefs;
+handles.data.chDefs = chDefs;
 handles.data.tmpText_chDefs = tmpText_chDefs;
 
-handles.data.Fs                    = 1;
+handles.data.Fs = 1;
 
 
-set( handles.checkbox4,   'value', handles.data.debugFlag );
+set( handles.checkbox4, 'value',  handles.data.debugFlag );
         
-set( handles.edit25, 'String', handles.data.graphTitle );
+set( handles.edit25,    'String', handles.data.graphTitle );
 
-set( handles.text32, 'String', handles.data.tmpText_chDefs );
+set( handles.text32,    'String', handles.data.tmpText_chDefs );
 
-set( handles.text15, 'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text16, 'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
-set( handles.text19, 'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
+set( handles.text15,    'String', [ 'Start ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
+set( handles.text16,    'String', [ 'End ' handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
+set( handles.text19,    'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
 
-set( handles.edit7,   'String', handles.data.wavFileName );
+set( handles.edit7,     'String', handles.data.wavFileName );
 
-set( handles.edit6, 'String', handles.data.defCsvFileName );
-set( handles.edit8, 'String', handles.data.timeS0 );
-set( handles.edit9, 'String', handles.data.timeE0 );
-set( handles.edit12, 'String', handles.data.timeT ); 
+set( handles.edit6,     'String', handles.data.defCsvFileName );
+set( handles.edit8,     'String', handles.data.timeS0 );
+set( handles.edit9,     'String', handles.data.timeE0 );
+set( handles.edit12,    'String', handles.data.timeT ); 
 
-set( handles.edit27, 'String', handles.data.Fs );    
+set( handles.edit27,    'String', handles.data.Fs );    
 
 
 guidata( hObject, handles );
@@ -606,8 +553,8 @@ handles.data.xLabelStr  = 'Tau';
 handles.data.yLabelStr  = 'Time';
 handles.data.xUnitStr   = 'ms';
 handles.data.yUnitStr   = 'sec';
-handles.data.xUnitScale = '1000.0';
-handles.data.yUnitScale = '1.0';
+handles.data.xUnitScale = 1000.0;
+handles.data.yUnitScale = 1.0;
 
 handles.data.chDefs              = {};
 handles.data.ch                    = {};
@@ -638,7 +585,7 @@ function edit8_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit8 as text
 %        str2double(get(hObject,'String')) returns contents of edit8 as a double
 
-handles.data.timeS0 = str2num( get( hObject, 'String' ) );
+handles.data.timeS0 = castNum_( getVal_( get( hObject, 'String' ) ) );
 
 guidata(hObject,handles);
 
@@ -665,7 +612,7 @@ function edit9_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit9 as text
 %        str2double(get(hObject,'String')) returns contents of edit9 as a double
 
-handles.data.timeE0 = str2num( get( hObject, 'String' ) );
+handles.data.timeE0 = str2double( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -692,7 +639,7 @@ function edit10_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit10 as text
 %        str2double(get(hObject,'String')) returns contents of edit10 as a double
 
-handles.data.tauMinus = str2num( get( hObject, 'String' ) );
+handles.data.tauMinus = str2double( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -719,7 +666,7 @@ function edit11_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit11 as text
 %        str2double(get(hObject,'String')) returns contents of edit11 as a double
 
-handles.data.tauPlus = str2num( get( hObject, 'String' ) );
+handles.data.tauPlus = str2double( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -746,7 +693,7 @@ function edit12_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit12 as text
 %        str2double(get(hObject,'String')) returns contents of edit12 as a double
 
-handles.data.timeT = str2num( get( hObject, 'String' ) );
+handles.data.timeT = str2double( get( hObject, 'String' ) );
 %handles.data.timeT = ceil( handles.data.timeE0 / handles.data.timeT ) - 1;
 handles.data.tauMinus = -handles.data.timeT; % / 2.0;
 handles.data.tauPlus  = +handles.data.timeT; % / 2.0;
