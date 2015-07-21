@@ -1,4 +1,4 @@
-function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, strTitleBase, xLabel, yLabel, saveImageName, dateTime, flags )
 
 
 if (flags.castSignalFlag),
@@ -63,7 +63,7 @@ if (flags.iccfFlag),
   end;
 
   resultData = phi_lr; % iccf
-  timeAxis = create_timeAxis_( tStart, tStop, length(resultData), duration );
+  timeAxis = create_timeAxis_( tStart, tStop, length(resultData), duration ) * flags.xUnitScale;
 
   [ICCC, pointiccc] = max( resultData(:) );
   tauICCC = timeAxis( pointiccc );
@@ -122,7 +122,7 @@ if (flags.iccfFlag),
 
                    
     %strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
-    strTitleBase = strcat( xLabel, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
+    strTitleBase = strcat( strTitleBase, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
     strTitle = strcat( strTitleBase, ', ICCC= ', num2str(ICCC), ', tauICCC= ', num2str(tauICCC), ', Wiccc= ', num2str(Wiccc) );
 
     end;

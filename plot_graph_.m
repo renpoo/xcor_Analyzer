@@ -9,7 +9,7 @@ figure(1);
 plot( timeAxis, plotData, 'b');
 %xlabel('tau [ms]');
 %ylabel(funcStr);
-xlabel( yLabel );
+xlabel( xLabel );
 ylabel( funcStr );
 
 Xline = line( [ tStart tStop ], [0 0] );
