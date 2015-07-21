@@ -1,6 +1,8 @@
 function retNum = getVal_( value )
 
-if ( length( value ) > 1 ),
+len = size( value );
+
+if ( len > 1 ),
     retNum = value{ 1 };
 else
     retNum = value;

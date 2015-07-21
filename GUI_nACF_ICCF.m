@@ -542,7 +542,8 @@ handles.data.wavFileName = wavFileName;
 handles.data.Fs = fs;
 handles.data.timeS0 = 0.0;
 handles.data.timeE0  = length(s) / fs;
-handles.data.timeT = str2double( handles.data.timeE0 / 10 - fractionalPart_( handles.data.timeE0 / 10 ) );
+%handles.data.timeT = str2double( handles.data.timeE0 / 10 - fractionalPart_( handles.data.timeE0 / 10 ) );
+handles.data.timeT = 1.0;
 handles.data.tauMinus = -handles.data.timeT;
 handles.data.tauPlus  = +handles.data.timeT;
 
@@ -585,7 +586,7 @@ function edit8_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit8 as text
 %        str2double(get(hObject,'String')) returns contents of edit8 as a double
 
-handles.data.timeS0 = get( hObject, 'String' );
+handles.data.timeS0 = castNum_( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -612,7 +613,7 @@ function edit9_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit9 as text
 %        str2double(get(hObject,'String')) returns contents of edit9 as a double
 
-handles.data.timeE0 = get( hObject, 'String' );
+handles.data.timeE0 = castNum_( get( hObject, 'String' ) );
 
 guidata(hObject,handles);
 
@@ -693,9 +694,9 @@ function edit12_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit12 as text
 %        str2double(get(hObject,'String')) returns contents of edit12 as a double
 
-handles.data.timeT = get( hObject, 'String' );
-handles.data.tauMinus = -handles.data.timeT;
-handles.data.tauPlus  = +handles.data.timeT;
+handles.data.timeT = castNum_( get( hObject, 'String' ) );
+handles.data.tauMinus = castNum_( -handles.data.timeT );
+handles.data.tauPlus  = castNum_( +handles.data.timeT );
 
 guidata(hObject,handles);
 
