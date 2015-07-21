@@ -65,7 +65,7 @@ handles.data = struct(   ...
     'tmpText_chDefs',   {},       ...
     'nacfAndoFlag',     0,        ...
     'phiFlag',          1,        ...
-    'numberOfHeaders',  5   );
+    'numberOfHeaders',  6   );
 
 %{
 handles.data.funcFlag              = 1;
@@ -128,16 +128,15 @@ csvFileNames = {};
 
 while ( 1 ),
     
-    %handles = GUI_nACF_ICCF( args );
-
-    %{}%
     try
-        %handles = GUI_nACF_ICCF( args );
         handles = GUI_nACF_ICCF( handles );
     catch err
         return;
     end;
-    %{%}
+
+    
+    %handles.data.numberOfHeaders = 0;
+
     
     if ( 1 ),
         if ( handles.data.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
@@ -168,14 +167,16 @@ while ( 1 ),
         
         pname = handles.data.pname;
 
-
+        
         if ( strcmp( handles.data.wavFileName, '' ) ),
             chDefs = handles.data.chDefs;
-            ch = chDefs( :, 1 );
-            csvFileNames = chDefs( :, 2 );
+            ch = handles.data.ch;
+            csvFileNames = handles.data.csvFileNames;
+            handles.data.numberOfHeaders = 6;
         else
             ch{ 1 } = 'WAV';
             ch{ 2 } = 'WAV';
+            handles.data.numberOfHeaders = 0;
         end;
         
         args = handles;
@@ -221,7 +222,8 @@ while ( 1 ),
     firstTaSize = 0;
     
     
-    for i = 1 : length(ch),
+    for i = handles.data.numberOfHeaders + 1 : length(ch),
+    %for i = 1 : length(ch),
         %for j = i+1 : length(ch)+1,
         for j = i+1 : length(ch),
             
@@ -231,22 +233,21 @@ while ( 1 ),
             % ICCF:
             % GUARDIAN: to cut the caluculation for the mirror combinations
             if ( handles.data.iccfFlag && (j>i+1) ) break; end;
+            %if ( handles.data.iccfFlag && (j>i) ) break; end;
             % ACF:
             % GUARDIAN: for single channel calculation on STEREO sound
-            if ( handles.data.nacfFlag && (i==2) && handles.data.nacfSingleFlag ) break; end; 
+            if ( handles.data.nacfFlag && (i==2) && handles.data.nacfSingleFlag ) break; end;
             
             
             if ( handles.data.nacfFlag == 1 ),
-                if ( ~strcmp( handles.data.wavFileName, '' ) ),
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
+                    handles.data.numberOfHeaders = 0;
                     
                     R_Label = 'Right';
-                    if ( handles.data.nacfSingleFlag ),
-                        L_Label = 'Right';
-                    else
-                        L_Label = 'Left';
-                    end;
+                    L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
-                else
+                else % For Multiple WAV file by setting .csv
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{i};
@@ -255,13 +256,16 @@ while ( 1 ),
                 funcStr = 'ACF';
                 labelStr = R_Label;
                 strTitleBase = strcat( '[', R_Label, ']' );
+                
+            else
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
+                    handles.data.numberOfHeaders = 0;
 
-            else                
-                if ( ~strcmp( handles.data.wavFileName, '' ) ),
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
-                else
+                else % For Multiple WAV file by setting .csv
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{j};
@@ -302,7 +306,13 @@ while ( 1 ),
                     x0 = strread( cell2mat( x0cell' ) )';
                     fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ x0, fsX ] = audioread( R_CsvFilename );
+                    if ( size( x0, 2) == 2 ),   % STEREO
+                        x0 = x0( :, 2 );
+                    else   % MONO
+                        x0 = x0;
+                    end;
                 end;
                 
                 [ yExtension ] = getFileExtension_( L_CsvFilename );
@@ -311,7 +321,13 @@ while ( 1 ),
                     y0 = strread( cell2mat( y0cell' ) )';
                     fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ y0, fsY ] = audioread( L_CsvFilename );
+                    if ( size( y0, 2) == 2 ),   % STEREO
+                        y0 = y0( :, 1 );
+                    else   % MONO
+                        y0 = y0;
+                    end;
                 end;
                 
             end;

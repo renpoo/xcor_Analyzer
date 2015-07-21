@@ -65,7 +65,7 @@ handles.data = struct(   ...
     'tmpText_chDefs',   {},       ...
     'nacfAndoFlag',     0,        ...
     'phiFlag',          1,        ...
-    'numberOfHeaders',  5   );
+    'numberOfHeaders',  6   );
 
 %{
 handles.data.funcFlag              = 1;
@@ -116,7 +116,7 @@ handles.data.numberOfHeaders = 5;
 %args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
-tInter = 0.0;
+intervalTime = 0.0;
 bufSize = 30;
     
 windowScale = 1;
@@ -128,16 +128,15 @@ csvFileNames = {};
 
 while ( 1 ),
     
-    %handles = GUI_nACF_ICCF( args );
-
-    %{}%
     try
-        %handles = GUI_nACF_ICCF( args );
         handles = GUI_nACF_ICCF( handles );
     catch err
         return;
     end;
-    %{%}
+
+    
+    %handles.data.numberOfHeaders = 0;
+
     
     if ( 1 ),
         if ( handles.data.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
@@ -168,14 +167,20 @@ while ( 1 ),
         
         pname = handles.data.pname;
 
+        
+        handles.data.numberOfHeaders = 0;
 
         if ( strcmp( handles.data.wavFileName, '' ) ),
-            chDefs = handles.data.chDefs;
-            ch = chDefs( :, 1 );
-            csvFileNames = chDefs( :, 2 );
+            %chDefs = handles.data.chDefs;
+            %ch = chDefs( :, 1 );
+            %csvFileNames = chDefs( :, 2 );
+            ch = handles.data.ch;
+            csvFileNames = handles.data.csvFileNames;
+            handles.data.numberOfHeaders = 6;
         else
             ch{ 1 } = 'WAV';
             ch{ 2 } = 'WAV';
+            handles.data.numberOfHeaders = 0;
         end;
         
         args = handles;
@@ -221,7 +226,8 @@ while ( 1 ),
     firstTaSize = 0;
     
     
-    for i = 1 : length(ch),
+    for i = handles.data.numberOfHeaders + 1 : length(ch),
+    %for i = 1 : length(ch),
         %for j = i+1 : length(ch)+1,
         for j = i+1 : length(ch),
             
@@ -231,13 +237,14 @@ while ( 1 ),
             % ICCF:
             % GUARDIAN: to cut the caluculation for the mirror combinations
             if ( handles.data.iccfFlag && (j>i+1) ) break; end;
+            %if ( handles.data.iccfFlag && (j>i) ) break; end;
             % ACF:
             % GUARDIAN: for single channel calculation on STEREO sound
-            if ( handles.data.nacfFlag && (i==2) && handles.data.nacfSingleFlag ) break; end; 
+            if ( handles.data.nacfFlag && (i==2) && handles.data.nacfSingleFlag ) break; end;
             
             
             if ( handles.data.nacfFlag == 1 ),
-                if ( ~strcmp( handles.data.wavFileName, '' ) ),
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
                     
                     R_Label = 'Right';
                     if ( handles.data.nacfSingleFlag ),
@@ -246,7 +253,8 @@ while ( 1 ),
                         L_Label = 'Left';
                     end;
                     R_CsvFilename = handles.data.wavFileName;
-                else
+                else % For Multiple WAV file by setting .csv
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{i};
@@ -255,13 +263,14 @@ while ( 1 ),
                 funcStr = 'ACF';
                 labelStr = R_Label;
                 strTitleBase = strcat( '[', R_Label, ']' );
-
-            else                
-                if ( ~strcmp( handles.data.wavFileName, '' ) ),
+                
+            else
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
-                else
+                else % For Multiple WAV file by setting .csv
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{j};
@@ -302,7 +311,13 @@ while ( 1 ),
                     x0 = strread( cell2mat( x0cell' ) )';
                     fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ x0, fsX ] = audioread( R_CsvFilename );
+                    if ( size( x0, 2) == 2 ),   % STEREO
+                        x0 = x0( :, 2 );
+                    else   % MONO
+                        x0 = x0;
+                    end;
                 end;
                 
                 [ yExtension ] = getFileExtension_( L_CsvFilename );
@@ -311,7 +326,13 @@ while ( 1 ),
                     y0 = strread( cell2mat( y0cell' ) )';
                     fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
+                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ y0, fsY ] = audioread( L_CsvFilename );
+                    if ( size( y0, 2) == 2 ),   % STEREO
+                        y0 = y0( :, 1 );
+                    else   % MONO
+                        y0 = y0;
+                    end;
                 end;
                 
             end;
@@ -360,15 +381,13 @@ while ( 1 ),
             windowSize = timePeriod / nStepIdx;
             timeE = timeS + timeT;
             timeS_Idx = convTime2Index_( timeS, x0, fs );
-            %timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             timeE_Idx = convTime2Index_( timeE, x0, fs );
-            
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
             x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
-            if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
+            if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
                                     
             
             %w = HanningWindow_( length( x ) );
@@ -418,9 +437,7 @@ while ( 1 ),
                 end;
                 
                 
-                %timeS = timeS0 + windowSize * k;
                 timeS = timeS0 + timeT * k;
-                %timeE = timeS + windowSize * windowScale;
                 timeE = timeS + timeT;
                 
                 
@@ -437,7 +454,7 @@ while ( 1 ),
                 y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
 
                 
-                if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
+                if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
                 
 
                 if ( handles.data.windowFlag ),
@@ -448,13 +465,13 @@ while ( 1 ),
             end;
 
             
-            %timeVec = (0:nStepIdx-1) * ( timeE0 - timeS0 + timeT ) / nStepIdx-1 + timeS0;   % CAUTION!!!
-            timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;   % CAUTION!!!
+            % CAUTION!!!
+            timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;
             
 
             % Clipping Plane
             if ( ischar( handles.data.clipVal( 1 ) ) ),
-                clipVal = str2num( handles.data.clipVal );
+                clipVal = str2double( handles.data.clipVal );
             else
                 clipVal = handles.data.clipVal;                
             end;            
@@ -464,7 +481,7 @@ while ( 1 ),
             if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
                 [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
@@ -472,7 +489,7 @@ while ( 1 ),
                 reverseIdx = ( size( subResultDataMat_L, 2 ) : -1 : 1 );
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
-                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs );
+                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
                 [ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
                 grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
             end;
@@ -481,7 +498,7 @@ while ( 1 ),
             if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag  ),
                 subResultDataMat_R = resultDataMat;
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
                 [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
             end;
@@ -572,33 +589,33 @@ while ( 1 ),
                 
                 if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
                 if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
             end;

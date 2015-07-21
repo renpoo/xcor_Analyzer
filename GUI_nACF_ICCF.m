@@ -143,7 +143,7 @@ handles.data.tmpText_chDefs   = {};
 handles.data.nacfAndoFlag     = 0;
 handles.data.phiFlag          = 1;
 
-handles.data.numberOfHeaders  = 5;
+handles.data.numberOfHeaders  = 6;
 
 
 set( handles.popupmenu1, 'value',  handles.data.funcFlag );
@@ -237,7 +237,7 @@ catch err
     handles.data.nacfAndoFlag     = 0;
     handles.data.phiFlag          = 1;
     
-    handles.data.numberOfHeaders  = 5;
+    handles.data.numberOfHeaders  = 6;
 
     write_history_( handles.data, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
@@ -437,33 +437,41 @@ handles.data.wavFileName = '';
 handles.data.debugFlag = 0;
 
 
-[ ch, csvFileNames ] = textscan( defCsvFileName, '%s %s', 'delimiter', ',' );
+fileID = fopen( defCsvFileName );
+[ scanData ] = textscan( fileID, '%s %s', 'delimiter', ',' );
+fclose(fileID);
 
 
-handles.data.ch = ch;
-handles.data.csvFileNames  = csvFileNames;
+handles.data.ch = scanData{ 1, 1 };
+handles.data.csvFileNames  = scanData{ 1, 2 };
 
-handles.data.graphTitle    = ch{1};
-handles.data.timeS0        = str2double( ch{2} );
-handles.data.timeE0        = str2double( csvFileNames{2} );
-handles.data.timeT         = str2double( ch{3} );
-handles.data.xLabelStr     = ch{4};
-handles.data.yLabelStr     = csvFileNames{4};
-handles.data.xUnitStr      = ch{5};
-handles.data.yUnitStr      = csvFileNames{5};
+handles.data.graphTitle    = handles.data.ch{ 1 };
+handles.data.timeS0        = castNum_( handles.data.ch{ 2 } );
+handles.data.timeE0        = castNum_( handles.data.csvFileNames{ 2 } );
+
+%disp( handles.data );
+%pause;
+
+handles.data.timeT         = castNum_( handles.data.ch{ 3 } );
+handles.data.xLabelStr     = handles.data.ch{ 4 };
+handles.data.yLabelStr     = handles.data.csvFileNames{ 4 };
+handles.data.xUnitStr      = handles.data.ch{ 5 };
+handles.data.yUnitStr      = handles.data.csvFileNames{ 5 };
+handles.data.xUnitScale    = castNum_( handles.data.ch{ 6 } );
+handles.data.yUnitScale    = castNum_( handles.data.csvFileNames{ 6 } );
 
 handles.data.tauMinus      = -handles.data.timeT;
 handles.data.tauPlus       = +handles.data.timeT;
 
-handles.data.nCsvFileNames = length( csvFileNames );
+handles.data.nCsvFileNames = length( handles.data.ch );
 
 
 chDefs = {};
 tmpText_chDefs = {};
-for i = handles.data.numberOfHeaders+1 : length( ch ),
-    chDefs{ i - handles.data.numberOfHeaders, 1 } = ch{ i };
-    chDefs{ i - handles.data.numberOfHeaders, 2 } = csvFileNames{ i };
-    tmpText_chDefs{ i } = strcat( ch{ i }, ' , ', csvFileNames{ i } );
+for i = handles.data.numberOfHeaders+1 : length( handles.data.ch ),
+    chDefs{ i - handles.data.numberOfHeaders, 1 } = handles.data.ch{ i };
+    chDefs{ i - handles.data.numberOfHeaders, 2 } = handles.data.csvFileNames{ i };
+    tmpText_chDefs{ i } = strcat( handles.data.ch{ i }, ' , ', handles.data.csvFileNames{ i } );
 end;
 
 handles.data.chDefs = chDefs;
@@ -542,7 +550,7 @@ handles.data.wavFileName = wavFileName;
 handles.data.Fs = fs;
 handles.data.timeS0 = 0.0;
 handles.data.timeE0  = length(s) / fs;
-%handles.data.timeT = str2double( handles.data.timeE0 / 10 - fractionalPart_( handles.data.timeE0 / 10 ) );
+%handles.data.timeT = castNum_( handles.data.timeE0 / 10 - fractionalPart_( handles.data.timeE0 / 10 ) );
 handles.data.timeT = 1.0;
 handles.data.tauMinus = -handles.data.timeT;
 handles.data.tauPlus  = +handles.data.timeT;
@@ -563,6 +571,9 @@ handles.data.csvFileNames     = {};
 handles.data.tmpText_chDefs = {};
     
 handles.data.defCsvFileName   = '';
+
+
+handles.data.numberOfHeaders = 0;
 
 
 set( handles.edit6,   'String', handles.data.defCsvFileName );
