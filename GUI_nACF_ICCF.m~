@@ -143,7 +143,7 @@ handles.data.tmpText_chDefs   = {};
 handles.data.nacfAndoFlag     = 0;
 handles.data.phiFlag          = 1;
 
-handles.data.numberOfHeaders  = 5;
+handles.data.numberOfHeaders  = 6;
 
 
 set( handles.popupmenu1, 'value',  handles.data.funcFlag );
@@ -237,7 +237,7 @@ catch err
     handles.data.nacfAndoFlag     = 0;
     handles.data.phiFlag          = 1;
     
-    handles.data.numberOfHeaders  = 5;
+    handles.data.numberOfHeaders  = 6;
 
     write_history_( handles.data, 'commandHistory_GUI_nACF_ICCF.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
@@ -425,6 +425,9 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
+handles.data.numberOfHeaders = 6;
+
 [ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Definition File' );
 defCsvFileName = strcat( pname, fname );
 
@@ -445,7 +448,7 @@ fclose(fileID);
 handles.data.ch = scanData{ 1, 1 };
 handles.data.csvFileNames  = scanData{ 1, 2 };
 
-handles.data.graphTitle    = ch{ 1 };
+handles.data.graphTitle    = handles.data.ch{ 1 };
 handles.data.timeS0        = castNum_( handles.data.ch{ 2 } );
 handles.data.timeE0        = castNum_( handles.data.csvFileNames{ 2 } );
 
@@ -457,6 +460,8 @@ handles.data.xLabelStr     = handles.data.ch{ 4 };
 handles.data.yLabelStr     = handles.data.csvFileNames{ 4 };
 handles.data.xUnitStr      = handles.data.ch{ 5 };
 handles.data.yUnitStr      = handles.data.csvFileNames{ 5 };
+handles.data.xUnitScale    = castNum_( handles.data.ch{ 6 } );
+handles.data.yUnitScale    = castNum_( handles.data.csvFileNames{ 6 } );
 
 handles.data.tauMinus      = -handles.data.timeT;
 handles.data.tauPlus       = +handles.data.timeT;
@@ -569,6 +574,9 @@ handles.data.csvFileNames     = {};
 handles.data.tmpText_chDefs = {};
     
 handles.data.defCsvFileName   = '';
+
+
+%handles.data.numberOfHeaders = 0;
 
 
 set( handles.edit6,   'String', handles.data.defCsvFileName );
@@ -997,11 +1005,40 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fileID = fopen( strcat( handles.data.pname, handles.data.fname ), 'w+');
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', strrep( handles.data.fname, '.m4a', '.csv' ) ), 'w+');
 
-for m = 1 : handles.data.nCsvFileNames,
-    fprintf( fileID, '%s,%s\n', char( handles.data.ch( m ) ), char( handles.data.csvFileNames( m ) ) );
+if (handles.data.nCsvFileNames),
+    for m = 1 : handles.data.nCsvFileNames,
+        fprintf( fileID, '%s,%s\n', char( handles.data.ch( m ) ), char( handles.data.csvFileNames( m ) ) );
+    end;
+else
+    fprintf( fileID, '%s,%s\n', char( handles.data.graphTtitle ), char( '' ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.timeS0 ), char( handles.data.timeE0 ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.timeT ), char( '' ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.xLabelStr ), char( handles.data.yLabelStr ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.xUnitStr ), char( handles.data.yUnitStr ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.xUnitScale ), char( handles.data.yUnitScale  ) );
+
+    
+    
+    handles.data.graphTitle       = 'Graph Title';
+handles.data.timeT            = 1.0;
+handles.data.timeS0           = 0.0;
+handles.data.timeE0           = 1.0;
+handles.data.tauMinus         = -0.005;
+handles.data.tauPlus          = +0.005;
+handles.data.clipVal          = 0.2;
+handles.data.Fs               = 44100;
+
+handles.data.xLabelStr        = 'Tau';
+handles.data.yLabelStr        = 'Time';
+handles.data.xUnitStr         = 'ms';
+handles.data.yUnitStr         = 'sec';
+handles.data.xUnitScale       = 1000.0;
+handles.data.yUnitScale       = 1.0;
+
 end;
+
 
 fclose( fileID );
 

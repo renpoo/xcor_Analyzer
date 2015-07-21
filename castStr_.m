@@ -1,9 +1,9 @@
-function retNum = castStr_( value )
+function retStr = castStr_( value )
 
 if ( isnumeric( value ) ),
-    retNum = double2str( value );
+    retStr = num2str( value );
 else
-    retNum = value;
+    retStr = value;
 end;
 
 end

@@ -425,6 +425,9 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
+handles.data.numberOfHeaders = 6;
+
 [ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Definition File' );
 defCsvFileName = strcat( pname, fname );
 
@@ -573,7 +576,7 @@ handles.data.tmpText_chDefs = {};
 handles.data.defCsvFileName   = '';
 
 
-handles.data.numberOfHeaders = 0;
+%handles.data.numberOfHeaders = 0;
 
 
 set( handles.edit6,   'String', handles.data.defCsvFileName );
@@ -1002,10 +1005,21 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fileID = fopen( strcat( handles.data.pname, handles.data.fname ), 'w+');
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', strrep( handles.data.fname, '.m4a', '.csv' ) ), 'w+');
 
-for m = 1 : handles.data.nCsvFileNames,
-    fprintf( fileID, '%s,%s\n', char( handles.data.ch( m ) ), char( handles.data.csvFileNames( m ) ) );
+if ( ~isempty( handles.data.ch ) ),
+    for m = 1 : handles.data.nCsvFileNames,
+        fprintf( fileID, '%s,%s\n', char( handles.data.ch( m ) ), char( handles.data.csvFileNames( m ) ) );
+    end;
+else
+    fprintf( fileID, '%s,%s\n', char( handles.data.graphTitle ), char( '' ) );
+    fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ), castStr_( handles.data.timeE0 ) );
+    fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),  char( '' ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.xLabelStr ),  char( handles.data.yLabelStr ) );
+    fprintf( fileID, '%s,%s\n', char( handles.data.xUnitStr ),   char( handles.data.yUnitStr ) );
+    fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
+    fprintf( fileID, '%s,%s\n', char( 'Right' ), char( handles.data.wavFileName ) );
+    fprintf( fileID, '%s,%s\n', char( 'Left' ),  char( handles.data.wavFileName ) );
 end;
 
 fclose( fileID );

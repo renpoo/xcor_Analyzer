@@ -169,11 +169,17 @@ while ( 1 ),
 
         
         if ( strcmp( handles.data.wavFileName, '' ) ),
+            clear chDefs;
+            clear ch;
+            clear csvFileNames;
+
             chDefs = handles.data.chDefs;
             ch = handles.data.ch;
             csvFileNames = handles.data.csvFileNames;
             handles.data.numberOfHeaders = 6;
         else
+            clear ch;
+            
             ch{ 1 } = 'WAV';
             ch{ 2 } = 'WAV';
             handles.data.numberOfHeaders = 0;
@@ -241,12 +247,14 @@ while ( 1 ),
             
             if ( handles.data.nacfFlag == 1 ),
                 if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
-                    handles.data.numberOfHeaders = 0;
+                    %handles.data.numberOfHeaders = 0;
                     
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
                 else % For Multiple WAV file by setting .csv
+                    %handles.data.numberOfHeaders = 6;
+
                     %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
@@ -259,12 +267,14 @@ while ( 1 ),
                 
             else
                 if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
-                    handles.data.numberOfHeaders = 0;
+                    %handles.data.numberOfHeaders = 0;
 
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
                 else % For Multiple WAV file by setting .csv
+                    %handles.data.numberOfHeaders = 6;
+
                     %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );

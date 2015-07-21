@@ -3,6 +3,7 @@ Crude Oil Price List (Comparison),
 10.0,
 time,time
 day,day
-WTI,../_Econo Data/Crude Oil Price List (WTI).csv
-Brent,../_Econo Data/Crude Oil Price List (Brent).csv
-Dubai,../_Econo Data/Crude Oil Price List (Dubai).csv
+1,1
+WTI,../_Econo Data/Crude Oil (WTI).csv
+Brent,../_Econo Data/Crude Oil (Brent).csv
+Dubai,../_Econo Data/Crude Oil (Dubai).csv
