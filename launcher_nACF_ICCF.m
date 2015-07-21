@@ -116,7 +116,7 @@ handles.data.numberOfHeaders = 5;
 %args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
-tInter = 0.0;
+intervalTime = 0.0;
 bufSize = 30;
     
 windowScale = 1;
@@ -155,7 +155,7 @@ while ( 1 ),
         end;
 
         
-        graphTitle = handles.data.graphTitle;         % FORCE to get TITLE name to treat
+        graphTitle = ez_sanitize_( handles.data.graphTitle );    % FORCE to get TITLE name to treat
         timeS0   = castNum_( getVal_( handles.data.timeS0 ) );   % FORCE to get timeS0 (Start) to cut the whole music signals
         timeE0   = castNum_( getVal_( handles.data.timeE0 ) );   % FORCE to get timeE0 (End)   to cut the whole music signals
         tauMinus = castNum_( getVal_( handles.data.tauMinus ) ); % FORCE to get tauMinus to calculate CCF
@@ -356,25 +356,17 @@ while ( 1 ),
             
             % CAUTION!!
             timePeriod = timeE - timeS;
-            
-            %nStepIdx = ceil( ( timeE - timeS ) / timeT ) - 1;
             nStepIdx = ceil( timePeriod / timeT );
-            
             windowSize = timePeriod / nStepIdx;
-            
-            %timeE = timeS + windowSize * windowScale;
             timeE = timeS + timeT;
-            
             timeS_Idx = convTime2Index_( timeS, x0, fs );
-            %timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             timeE_Idx = convTime2Index_( timeE, x0, fs );
-            
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
             x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
-            if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
+            if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
                                     
             
             %w = HanningWindow_( length( x ) );
@@ -424,9 +416,7 @@ while ( 1 ),
                 end;
                 
                 
-                %timeS = timeS0 + windowSize * k;
                 timeS = timeS0 + timeT * k;
-                %timeE = timeS + windowSize * windowScale;
                 timeE = timeS + timeT;
                 
                 
@@ -443,7 +433,7 @@ while ( 1 ),
                 y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
 
                 
-                if ( handles.data.debugStepFlag ) sound( x, fs ); pause( tInter ); end;
+                if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
                 
 
                 if ( handles.data.windowFlag ),
@@ -454,13 +444,13 @@ while ( 1 ),
             end;
 
             
-            %timeVec = (0:nStepIdx-1) * ( timeE0 - timeS0 + timeT ) / nStepIdx-1 + timeS0;   % CAUTION!!!
-            timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;   % CAUTION!!!
+            % CAUTION!!!
+            timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;
             
 
             % Clipping Plane
             if ( ischar( handles.data.clipVal( 1 ) ) ),
-                clipVal = str2num( handles.data.clipVal );
+                clipVal = str2double( handles.data.clipVal );
             else
                 clipVal = handles.data.clipVal;                
             end;            
@@ -470,7 +460,7 @@ while ( 1 ),
             if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
                 [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
@@ -478,7 +468,7 @@ while ( 1 ),
                 reverseIdx = ( size( subResultDataMat_L, 2 ) : -1 : 1 );
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
-                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs );
+                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
                 [ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
                 grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
             end;
@@ -487,7 +477,7 @@ while ( 1 ),
             if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag  ),
                 subResultDataMat_R = resultDataMat;
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
                 [ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
             end;
@@ -578,33 +568,33 @@ while ( 1 ),
                 
                 if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
                 if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
             end;

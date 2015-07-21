@@ -1,9 +1,9 @@
 function retNum = castStr_( value )
 
-if ( isstring( value ) ),
-    retNum = value;
-else
+if ( isnumeric( value ) ),
     retNum = double2str( value );
+else
+    retNum = value;
 end;
 
 end

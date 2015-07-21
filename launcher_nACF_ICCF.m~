@@ -43,16 +43,18 @@ handles.data = struct(   ...
     'exitFlag',         0,        ...
     'graphTitle',       'Graph Title',   ...
     'timeT',            1.0,      ...
-    'timeS0',              0.0,      ...
-    'timeE0',              1.0,      ...
+    'timeS0',           0.0,      ...
+    'timeE0',           1.0,      ...
     'tauMinus',         -0.005,   ...
     'tauPlus',          +0.005,   ...
     'clipVal',          0.2,      ...
     'Fs',               44100,    ...
-    'xLabelStr',        'Time',   ...
+    'xLabelStr',        'Tau',    ...
     'yLabelStr',        'Time',   ...
-    'xUnitStr',         'sec',    ...
+    'xUnitStr',         'ms',     ...
     'yUnitStr',         'sec',    ...
+    'xUnitScale',       1000.0, ...
+    'yUnitScale',       1.0,    ...
     'pname',            '',       ...
     'fname',            '',       ...
     'wavFileName',      '',       ...
@@ -111,7 +113,7 @@ handles.data.phiFlag                 = 1;
 handles.data.numberOfHeaders = 5;
 %}
 
-args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
+%args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
 
 
 tInter = 0.0;
@@ -130,7 +132,8 @@ while ( 1 ),
 
     %{}%
     try
-        handles = GUI_nACF_ICCF( args );
+        %handles = GUI_nACF_ICCF( args );
+        handles = GUI_nACF_ICCF( handles );
     catch err
         return;
     end;
@@ -152,12 +155,12 @@ while ( 1 ),
         end;
 
         
-        graphTitle = handles.data.graphTitle;                        % FORCE to get TITLE name to treat
-        timeS0 = castNumeric_( handles.data.timeS0 );                 % FORCE to get timeS (Start) to cut the whole music signals
-        timeE0 = castNumeric_( handles.data.timeE0 );  % FORCE to get timeE (End)   to cut the whole music signals
-        tauMinus = castNumeric_( handles.data.tauMinus );              % FORCE to get tauMinus to calculate CCF
-        tauPlus  = castNumeric_( handles.data.tauPlus );  % FORCE to get tauPlus  to calculate CCF
-        timeT = castNumeric_( handles.data.timeT );          % FORCE to get windowSize to calculate Realtime CCF
+        graphTitle = ez_sanitize_( handles.data.graphTitle );    % FORCE to get TITLE name to treat
+        timeS0   = castNum_( getVal_( handles.data.timeS0 ) );   % FORCE to get timeS0 (Start) to cut the whole music signals
+        timeE0   = castNum_( getVal_( handles.data.timeE0 ) );   % FORCE to get timeE0 (End)   to cut the whole music signals
+        tauMinus = castNum_( getVal_( handles.data.tauMinus ) ); % FORCE to get tauMinus to calculate CCF
+        tauPlus  = castNum_( getVal_( handles.data.tauPlus ) );  % FORCE to get tauPlus  to calculate CCF
+        timeT    = castNum_( getVal_( handles.data.timeT ) );    % FORCE to get windowSize to calculate Realtime CCF
 
 
         nStepIdx = 0;
@@ -270,7 +273,8 @@ while ( 1 ),
                 
             end;
             
-            xLabelStr = ( [ labelStr ': T [' handles.data.xUnitStr ']' ] );
+            %xLabelStr = ( [ labelStr ': Tau [' handles.data.xUnitStr ']' ] );
+            xLabelStr = ( [ handles.data.xLabelStr ' [' handles.data.xUnitStr ']' ] );
             yLabelStr = ( [ handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
             zLabelStr = ( funcStr );
             
@@ -296,7 +300,7 @@ while ( 1 ),
                 if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
                     [ x0cell ] = textread( R_CsvFilename, '%s', 'delimiter', ',' );
                     x0 = strread( cell2mat( x0cell' ) )';
-                    fsX = castNumeric_( handles.data.Fs );
+                    fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ x0, fsX ] = audioread( R_CsvFilename );
                 end;
@@ -305,7 +309,7 @@ while ( 1 ),
                 if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
                     [ y0cell ] = textread( L_CsvFilename, '%s', 'delimiter', ',' );
                     y0 = strread( cell2mat( y0cell' ) )';
-                    fsY = castNumeric_( handles.data.Fs );
+                    fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ y0, fsY ] = audioread( L_CsvFilename );
                 end;
@@ -326,6 +330,7 @@ while ( 1 ),
             
             timeS_Idx = convTime2Index_( timeS, x0, fs );
             timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
+            %timeE_Idx = convTime2Index_( timeE, x0, fs );
 
             
             x = x0( timeS_Idx : timeE_Idx );
@@ -335,6 +340,7 @@ while ( 1 ),
             if ( handles.data.playSoundFlag ),
                 sound( x, fs );
                 handles.data.playSoundFlag = 0;
+                %continue;
                 break;
             end;
             
@@ -349,15 +355,13 @@ while ( 1 ),
 
             
             % CAUTION!!
-            %nStepIdx = ceil( ( timeE - timeS ) / timeT ) - 1;
-            nStepIdx = ceil( ( timeE - timeS ) / timeT );
-            
-            windowSize = (timeE - timeS) / nStepIdx;
-            
-            timeE = timeS + windowSize * windowScale;
-            
+            timePeriod = timeE - timeS;
+            nStepIdx = ceil( timePeriod / timeT );
+            windowSize = timePeriod / nStepIdx;
+            timeE = timeS + timeT;
             timeS_Idx = convTime2Index_( timeS, x0, fs );
-            timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
+            %timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
+            timeE_Idx = convTime2Index_( timeE, x0, fs );
             
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
@@ -383,7 +387,7 @@ while ( 1 ),
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , 'timeS,', num2str(timeS, '%04.3f'), ',', 'timeE,', num2str(timeE, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f'), ',', graphTitle );
                 
                 
-                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, timeS0, timeE0, timeS, timeE, tauMinus, tauPlus, timeT, windowSize, windowSizeIdx, xLabelStr, yLabelStr, saveImageName, dateTime, handles.data )' ) );
+                [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, timeS0, timeE0, timeS, timeE, tauMinus, tauPlus, timeT, windowSize, windowSizeIdx, strTitleBase, xLabelStr, yLabelStr, saveImageName, dateTime, handles.data )' ) );
                 
                 
                 if ( k == 1 ),
@@ -414,8 +418,10 @@ while ( 1 ),
                 end;
                 
                 
-                timeS = timeS0 + windowSize * k;
-                timeE = timeS + windowSize * windowScale;
+                %timeS = timeS0 + windowSize * k;
+                timeS = timeS0 + timeT * k;
+                %timeE = timeS + windowSize * windowScale;
+                timeE = timeS + timeT;
                 
                 
                 timeS_Idx = convTime2Index_( timeS, x0, fs );
@@ -485,7 +491,9 @@ while ( 1 ),
                 figNumber = 1;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
+                %XYZ = mesh( timeAxisMat( 1,: ), timeVec, resultDataMat );
                 colormap 'jet';
+                %colormap( autumn(5) )
                 
                 grid on;
                 hold on;
@@ -636,8 +644,13 @@ while ( 1 ),
             
             
         end;
+
+        handles.data.playSoundFlag = 0;                
+
     end;
     
+    
+    handles.data.playSoundFlag = 0;                
     %handles.data.exitFlag = 1;
     
 end;

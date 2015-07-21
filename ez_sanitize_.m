@@ -10,9 +10,14 @@ function sanitisedStr = ez_sanitize_( inputStr )
 
 % return '' if($url =~ m|[^;/?:@&=+\$,A-Za-z0-9\-_.!~*'()%]|);
 
+
+if ( isnumeric( inputStr ) ), sanitisedStr = inputStr; return; end;
+
+
 %expression = '[\^;/?:@&=+\$,\-_.!~*''()%]';
 expression = '[\^;/?:@&=+\$,\-_!~*''()%]';
 sanitisedStr = regexprep( inputStr, expression, ' ' );
+
 
 return;
 
