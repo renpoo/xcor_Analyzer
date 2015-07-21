@@ -1005,7 +1005,7 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fileID = fopen( strcat( handles.data.pname, '../_CSVs/', strrep( handles.data.fname, '.m4a', '.csv' ) ), 'w+');
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+');
 
 if ( ~isempty( handles.data.ch ) ),
     for m = 1 : handles.data.nCsvFileNames,

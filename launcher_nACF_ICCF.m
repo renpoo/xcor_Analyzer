@@ -295,9 +295,8 @@ while ( 1 ),
             
             if ( ~strcmp( handles.data.wavFileName, '' ) ), % When single WAV file provided
                 [ s0, fsS ] = audioread( R_CsvFilename );
-                
-                
-                if ( size( s0, 2) == 2 ),   % STEREO
+                                
+                if ( size( s0, 2 ) == 2 ),   % STEREO
                     x0 = s0( :, 2 );
                     y0 = s0( :, 1 );
                 else   % MONO
