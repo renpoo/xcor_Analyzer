@@ -1,4 +1,4 @@
-function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, strTitleBase, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_ICCF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, timeT, windowSize, windowSizeIdx, strTitleBase, xLabel, yLabel, saveImageName, dateTime, flags )
 
 
 if (flags.castSignalFlag),
@@ -75,7 +75,7 @@ if (flags.iccfFlag),
   if (1),  
     [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(resultData2, 1, ~flags.iccfFlag);
     maxIdxs = maxIdxs( 1 : length(maxIdxs) );
-    maxTimes = convIndex2Time_( maxIdxs, x, fs ); % * 1000 ;
+    maxTimes = convIndex2Time_( maxIdxs, x, fs ) * flags.xUnitScale ;
     
     tauAlphaIdx = zeroIdxs(1);
     tauBetaIdx  = zeroIdxs(2);
@@ -121,8 +121,8 @@ if (flags.iccfFlag),
     params( 4, 7 ) = 0;
 
                    
-    %strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
-    strTitleBase = strcat( strTitleBase, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' );
+    %strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']', ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(timeT, '%02.3f'), ' ]' );
+    strTitleBase = strcat( strTitleBase, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(timeT, '%02.3f'), ' ]' );
     strTitle = strcat( strTitleBase, ', ICCC= ', num2str(ICCC), ', tauICCC= ', num2str(tauICCC), ', Wiccc= ', num2str(Wiccc) );
 
     end;
@@ -131,7 +131,7 @@ end;
 
 
 if (flags.plotFlag),
-  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE );
+  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE, timeT );
 end;
 
 

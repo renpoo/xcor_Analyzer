@@ -1,4 +1,4 @@
-function plot_graph_( plotData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE )
+function plot_graph_( plotData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, timeS0, timeE0, tS, tE, timeT )
 
 tStart = timeAxis( 1 );
 tStop  = timeAxis( length(timeAxis) );
@@ -42,10 +42,11 @@ end;
 title( strTitle );
 
 
-pname = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(tStop/1000.0, '%04.3f') );
-if ( exist( pname, 'dir' ) == 0 ),
-  mkdir( pname );
+pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f') );
+%pname = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'tS0,', num2str(tS0, '%04.3f'), ',', 'tE0,', num2str(tE0, '%04.3f'), ',', 'T,', num2str(tStop/1000.0, '%04.3f') );
+if ( exist( pnameImg, 'dir' ) == 0 ),
+  mkdir( pnameImg );
 end;
 fname = strcat( saveImageName, '.jpg');
-outputDataFileName = strcat( pname, '/', fname );
+outputDataFileName = strcat( pnameImg, '/', fname );
 saveas( 1, strcat( outputDataFileName ) );

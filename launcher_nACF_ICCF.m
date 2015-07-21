@@ -362,10 +362,12 @@ while ( 1 ),
             
             windowSize = timePeriod / nStepIdx;
             
-            timeE = timeS + windowSize * windowScale;
+            %timeE = timeS + windowSize * windowScale;
+            timeE = timeS + timeT;
             
             timeS_Idx = convTime2Index_( timeS, x0, fs );
-            timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
+            %timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
+            timeE_Idx = convTime2Index_( timeE, x0, fs );
             
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
@@ -422,8 +424,10 @@ while ( 1 ),
                 end;
                 
                 
-                timeS = timeS0 + windowSize * k;
-                timeE = timeS + windowSize * windowScale;
+                %timeS = timeS0 + windowSize * k;
+                timeS = timeS0 + timeT * k;
+                %timeE = timeS + windowSize * windowScale;
+                timeE = timeS + timeT;
                 
                 
                 timeS_Idx = convTime2Index_( timeS, x0, fs );

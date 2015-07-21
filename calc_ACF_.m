@@ -1,4 +1,4 @@
-function [ results ] = calc_ACF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, time_T, windowSize, windowSizeIdx, strTitleBase, xLabel, yLabel, saveImageName, dateTime, flags )
+function [ results ] = calc_ACF_(graphTitle, x, y, fs, bits, tS0, tE0, tS, tE, tStart, tStop, timeT, windowSize, windowSizeIdx, strTitleBase, xLabel, yLabel, saveImageName, dateTime, flags )
 
 %pkg load signal;
 %pkg load io;
@@ -59,9 +59,9 @@ if (flags.nacfFlag),
   [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( resultData, 0, 1 );
   maxValues = maxValues( 2 : length(maxValues) );
   maxIdxs = maxIdxs( 2 : length(maxIdxs) );
-  maxTimes = convIndex2Time_( maxIdxs, x, fs ); % * 1000 ;
+  maxTimes = convIndex2Time_( maxIdxs, x, fs ) * flags.xUnitScale ;
 
-  strTitleBase = [ strTitleBase, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(time_T, '%02.3f'), ' ]' ];
+  strTitleBase = [ strTitleBase, ' (' ,  num2str(tS, '%02.3f'), '-', num2str(tE, '%02.3f'), '), [T : ', num2str(timeT, '%02.3f'), ' ]' ];
   strTitle = strTitleBase;
       
   params = zeros( length(maxValues), 7 );
@@ -84,7 +84,7 @@ end;
 
 
 if (flags.plotFlag),
-  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE );
+  plot_graph_( resultData, timeAxis, saveImageName, funcStr, strTitle, xLabel, yLabel, params, graphTitle, dateTime, tS0, tE0, tS, tE, timeT );
 end;
 
 
