@@ -487,12 +487,10 @@ while ( 1 ),
             a = ones( 1, nStepIdx ) .* clipVal;
 
             
-            %Fnorm = 75/(fs/2);
-            %Fnorm = 8000/(fs/2);
-            Fnorm = 1000/(fs/2);
+            Fnorm = 75/(fs/2);
             df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',Fnorm);
-            grpdelay(df,2048,fs);
-            D = mean(grpdelay(df));
+            grpdelay(df,2048,fs)
+            D = mean(grpdelay(df))
             
             
             if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
@@ -500,7 +498,6 @@ while ( 1 ),
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
                 env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
-                env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
                 %[ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
@@ -510,7 +507,6 @@ while ( 1 ),
                 
                 [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
                 env_tauE_Vec_L = filter(df,[tauE_Vec_L'; zeros(D,1)]);
-                env_tauE_Vec_L = env_tauE_Vec_L( 1 + D : length( tauE_Vec_L ) + D );
                 %[ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
                 grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
             end;
@@ -521,14 +517,13 @@ while ( 1 ),
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
                 env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
-                env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
                 %[ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
             end;
             
             
             if (handles.data.plot3dFlag),
-                figNumber = 2;
+                figNumber = 1;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','flat','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
@@ -556,11 +551,9 @@ while ( 1 ),
 
                         if ( 1 ),
                             lc = '-or';
-                            lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                             
                             lc = '-ob';
-                            lc = '-ow';
                             plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
@@ -577,18 +570,14 @@ while ( 1 ),
                 
                 if ( handles.data.nacfFlag ),
                     if ( handles.data.calcTauE_VecFlag ),
-                        if ( 0 ),
-                            lc = '-ow';
-                            plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                        end;
+                        if ( 0 
+                        lc = '-ow';
+                        plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         
-                        if ( 1 ),
-                            lc = '-or';
-                            lc = '-ow';
-                            plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                        end;
-                            
                         if ( 0 ),
+                            lc = '-or';
+                            plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                            
                             lc = '-oy';
                             plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
