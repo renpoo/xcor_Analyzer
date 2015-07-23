@@ -233,12 +233,17 @@ while ( 1 ),
         %for j = i+1 : length(ch)+1,
         for j = i+1 : length(ch),
             
+            %disp(i);
+            %disp(j);
+            %continue;
+            
+            
             % ACF:
             % GUARDIAN: to cut the caluculation for the other combinations
             if ( handles.data.nacfFlag && (j>i+1) ) break; end;
             % ICCF:
             % GUARDIAN: to cut the caluculation for the mirror combinations
-            if ( handles.data.iccfFlag && (j>i+1) ) break; end;
+            %%%%%if ( handles.data.iccfFlag && (j>i+1) ) break; end;
             %if ( handles.data.iccfFlag && (j>i) ) break; end;
             % ACF:
             % GUARDIAN: for single channel calculation on STEREO sound
@@ -512,6 +517,7 @@ while ( 1 ),
                 figNumber = 1;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
+                %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','flat','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 %XYZ = mesh( timeAxisMat( 1,: ), timeVec, resultDataMat );
                 colormap 'jet';
                 %colormap( autumn(5) )
