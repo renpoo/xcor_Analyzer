@@ -67,54 +67,6 @@ handles.data = struct(   ...
     'phiFlag',          1,        ...
     'numberOfHeaders',  6   );
 
-%{
-handles.data.funcFlag              = 1;
-handles.data.normalizeFlag       = 1;
-handles.data.nacfSingleFlag      = 0;
-handles.data.calcTauE_VecFlag = 0;
-handles.data.cyclicFlag            = 0;
-handles.data.dumpFlag             = 0;
-handles.data.debugFlag            = 1;
-handles.data.debugStepFlag      = 0;
-handles.data.plotFlag               = 1;
-handles.data.plot3dFlag            = 1;
-handles.data.playSoundFlag      = 0;
-handles.data.windowFlag          = 0;
-handles.data.castSignalFlag      = 0;
-handles.data.exitFlag               = 0;
-
-handles.data.graphTitle            = 'Graph Title';
-handles.data.timeT                 = 1.0;
-handles.data.timeS0                     = 0.0;
-handles.data.timeE0                     = 1.0;
-handles.data.tauMinus                 = -0.005;
-handles.data.tauPlus                  = +0.005;
-handles.data.clipVal                 = 0.2;
-handles.data.Fs                       = 44100;
-
-handles.data.xLabelStr             = 'Time';
-handles.data.yLabelStr             = 'Time';
-handles.data.xUnitStr              = 'sec';
-handles.data.yUnitStr              = 'sec';
-
-handles.data.pname                 = '';
-handles.data.fname                  = '';
-handles.data.wavFileName        = '';
-handles.data.defCsvFileName    = '';
-
-handles.data.chDefs                = {};
-handles.data.ch                      = {};
-handles.data.csvFileNames       = {};
-handles.data.tmpText_chDefs   = {};
-
-handles.data.nacfAndoFlag        = 0;
-handles.data.phiFlag                 = 1;
-
-handles.data.numberOfHeaders = 5;
-%}
-
-%args = handles;  % input args for GUI_nACF_ICCF() for repeating calc.
-
 
 intervalTime = 0.0;
 bufSize = 30;
@@ -127,15 +79,14 @@ csvFileNames = {};
 
 
 while ( 1 ),
-    
+        
     try
         handles = GUI_nACF_ICCF( handles );
     catch err
         return;
     end;
 
-    
-    %handles.data.numberOfHeaders = 0;
+    close all;
 
     
     if ( 1 ),
@@ -229,13 +180,7 @@ while ( 1 ),
     
     
     for i = handles.data.numberOfHeaders + 1 : length(ch),
-    %for i = 1 : length(ch),
-        %for j = i+1 : length(ch)+1,
         for j = i+1 : length(ch),
-            
-            %disp(i);
-            %disp(j);
-            %continue;
             
             
             % ACF:
@@ -251,16 +196,11 @@ while ( 1 ),
             
             
             if ( handles.data.nacfFlag == 1 ),
-                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
-                    %handles.data.numberOfHeaders = 0;
-                    
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file                    
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
                 else % For Multiple WAV file by setting .csv
-                    %handles.data.numberOfHeaders = 6;
-
-                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{i};
@@ -272,15 +212,10 @@ while ( 1 ),
                 
             else
                 if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
-                    %handles.data.numberOfHeaders = 0;
-
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
                 else % For Multiple WAV file by setting .csv
-                    %handles.data.numberOfHeaders = 6;
-
-                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     R_Label = ch{i};
                     R_CsvFilename = strcat( pname, csvFileNames{i} );
                     L_Label = ch{j};
@@ -320,7 +255,6 @@ while ( 1 ),
                     x0 = strread( cell2mat( x0cell' ) )';
                     fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
-                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ x0, fsX ] = audioread( R_CsvFilename );
                     if ( size( x0, 2) == 2 ),   % STEREO
                         x0 = x0( :, 2 );
@@ -335,7 +269,6 @@ while ( 1 ),
                     y0 = strread( cell2mat( y0cell' ) )';
                     fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
-                    %if ( handles.data.numberOfHeaders + 1 > i ) break; end;
                     [ y0, fsY ] = audioread( L_CsvFilename );
                     if ( size( y0, 2) == 2 ),   % STEREO
                         y0 = y0( :, 1 );
@@ -390,7 +323,7 @@ while ( 1 ),
             windowSize = timePeriod / nStepIdx;
             timeE = timeS + timeT;
             timeS_Idx = convTime2Index_( timeS, x0, fs );
-            timeE_Idx = convTime2Index_( timeE, x0, fs );
+            timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
             x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
@@ -487,9 +420,12 @@ while ( 1 ),
             a = ones( 1, nStepIdx ) .* clipVal;
 
             
-            %Fnorm = 75/(fs/2);
+            Fnorm = 75/(fs/2);
             %Fnorm = 8000/(fs/2);
-            Fnorm = 1000/(fs/2);
+            %Fnorm = 1000/(fs/2);
+
+            if ( Fnorm > 1.0 ) Fnorm = 0.01; end;
+            
             df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',Fnorm);
             grpdelay(df,2048,fs);
             D = mean(grpdelay(df));
@@ -498,20 +434,20 @@ while ( 1 ),
             if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
                 env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
                 env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
-                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
+                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
                 subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
                 reverseIdx = ( size( subResultDataMat_L, 2 ) : -1 : 1 );
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
-                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = substitute_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
+                [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
                 env_tauE_Vec_L = filter(df,[tauE_Vec_L'; zeros(D,1)]);
                 env_tauE_Vec_L = env_tauE_Vec_L( 1 + D : length( tauE_Vec_L ) + D );
-                %[ env_tauE_Vec_L, env_tauE_Idx_L ] = calc_env_tauE( tauE_Vec_L );
+                %[ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
                 grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
             end;
             
@@ -519,10 +455,10 @@ while ( 1 ),
             if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag  ),
                 subResultDataMat_R = resultDataMat;
                 
-                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = substitute_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
+                [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
                 env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
                 env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
-                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = calc_env_tauE( tauE_Vec_R );
+                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
             end;
             
