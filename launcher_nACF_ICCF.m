@@ -426,18 +426,20 @@ while ( 1 ),
 
             if ( Fnorm > 1.0 ) Fnorm = 0.01; end;
             
-            df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',Fnorm);
-            grpdelay(df,2048,fs);
-            D = mean(grpdelay(df));
+            if ( 0 ),
+                df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',Fnorm);
+                grpdelay(df,2048,fs);
+                D = mean(grpdelay(df));
+            end;
             
             
             if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
-                env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
-                env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
-                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
+                %env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
+                %env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
+                [ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
                 
                 subResultDataMat_L = resultDataMat( : , 1 : floor ( 1 + size( resultDataMat, 2 ) / 2 ) );
@@ -445,9 +447,9 @@ while ( 1 ),
                 subResultDataMat_L = subResultDataMat_L( : , reverseIdx );
                 
                 [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( clipVal, subResultDataMat_L, x0, fs, handles.data.xUnitScale );
-                env_tauE_Vec_L = filter(df,[tauE_Vec_L'; zeros(D,1)]);
-                env_tauE_Vec_L = env_tauE_Vec_L( 1 + D : length( tauE_Vec_L ) + D );
-                %[ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
+                %env_tauE_Vec_L = filter(df,[tauE_Vec_L'; zeros(D,1)]);
+                %env_tauE_Vec_L = env_tauE_Vec_L( 1 + D : length( tauE_Vec_L ) + D );
+                [ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
                 grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
             end;
             
@@ -456,15 +458,16 @@ while ( 1 ),
                 subResultDataMat_R = resultDataMat;
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
-                env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
-                env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
-                %[ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
+                %env_tauE_Vec_R = filter(df,[tauE_Vec_R'; zeros(D,1)]);
+                %env_tauE_Vec_R = env_tauE_Vec_R( 1 + D : length( tauE_Vec_R ) + D );
+                [ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
                 grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
             end;
             
             
             if (handles.data.plot3dFlag),
-                figNumber = 2;
+                figNumber = 1;
+                %figNumber = 2;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
                 %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','flat','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
@@ -484,13 +487,13 @@ while ( 1 ),
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
                     if ( handles.data.calcTauE_VecFlag ),
-                        if ( 0 ),
+                        if ( 1 ),
                             lc = '-ow';
                             plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                             plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
 
-                        if ( 1 ),
+                        if ( 0 ),
                             lc = '-or';
                             lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
@@ -513,12 +516,12 @@ while ( 1 ),
                 
                 if ( handles.data.nacfFlag ),
                     if ( handles.data.calcTauE_VecFlag ),
-                        if ( 0 ),
+                        if ( 1 ),
                             lc = '-ow';
                             plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
-                        if ( 1 ),
+                        if ( 0 ),
                             lc = '-or';
                             lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
@@ -592,41 +595,41 @@ while ( 1 ),
             
             
             if ( handles.data.dumpFlag ),
-                dump_data_( resultDataMat, 'resultDataMat',  funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( timeAxisMat,    'timeAxis',         funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( maxValuesMat, 'maxValuesMat', funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( maxIdxsMat,     'maxIdxsMat',     funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( zeroIdxsMat,    'zeroIdxsMat',     funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( maxTimesMat,  'maxTimesMat',  funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( timeSMat,            'timeSMat',             funcStr, saveImageName, graphTitle, dateTime );
-                dump_data_( timeEMat,            'timeEMat',              funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( resultDataMat, 'resultDataMat', funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeAxisMat,   'timeAxis',      funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( maxValuesMat,  'maxValuesMat',  funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( maxIdxsMat,    'maxIdxsMat',    funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( zeroIdxsMat,   'zeroIdxsMat',   funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( maxTimesMat,   'maxTimesMat',   funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeSMat,      'timeSMat',      funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeEMat,      'timeEMat',      funcStr, saveImageName, graphTitle, dateTime );
                 
                 if ( handles.data.calcTauE_VecFlag ),
-                    dump_data_( tauE_Vec_R,              'tauE_Vec_R',              funcStr, saveImageName, graphTitle, dateTime );
-                    dump_data_( env_tauE_Vec_R,        'env_tauE_Vec_R',        funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( tauE_Vec_R,          'tauE_Vec_R',          funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( env_tauE_Vec_R,      'env_tauE_Vec_R',      funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( grad_env_tauE_Vec_R, 'grad_env_tauE_Vec_R', funcStr, saveImageName, graphTitle, dateTime );
                 end;
                 
                 if ( handles.data.iccfFlag ),
                     if (handles.data.phiFlag),
-                        dump_data_( PHI_ll_0Mat,   'PHI_ll_0Mat',     funcStr, saveImageName, graphTitle, dateTime );
-                        dump_data_( PHI_rr_0Mat,  'PHI_rr_0Mat',    funcStr, saveImageName, graphTitle, dateTime );
-                        dump_data_( PHI_lrMat,     'PHI_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
-                        dump_data_( phi_lrMat,      'phi_lrMat',       funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( PHI_ll_0Mat, 'PHI_ll_0Mat', funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( PHI_rr_0Mat, 'PHI_rr_0Mat', funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( PHI_lrMat,   'PHI_lrMat',   funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( phi_lrMat,   'phi_lrMat',   funcStr, saveImageName, graphTitle, dateTime );
                     end;
-                    dump_data_( ICCCMat,       'ICCCMat',       funcStr, saveImageName, graphTitle, dateTime );
-                    dump_data_( tauICCCMat,   'tauICCCMat',  funcStr, saveImageName, graphTitle, dateTime );
-                    dump_data_( WicccMat,      'WicccMat',      funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( ICCCMat,    'ICCCMat',    funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( tauICCCMat, 'tauICCCMat', funcStr, saveImageName, graphTitle, dateTime );
+                    dump_data_( WicccMat,   'WicccMat',   funcStr, saveImageName, graphTitle, dateTime );
                     
                     if ( handles.data.calcTauE_VecFlag ),
-                        dump_data_( tauE_Vec_L,              'tauE_Vec_L',              funcStr, saveImageName, graphTitle, dateTime );
-                        dump_data_( env_tauE_Vec_L,        'env_tauE_Vec_L',        funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( tauE_Vec_L,          'tauE_Vec_L',          funcStr, saveImageName, graphTitle, dateTime );
+                        dump_data_( env_tauE_Vec_L,      'env_tauE_Vec_L',      funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( grad_env_tauE_Vec_L, 'grad_env_tauE_Vec_L', funcStr, saveImageName, graphTitle, dateTime );
                     end;
                 end;
                 
                 
-                dump_data_( timeVec,        'timeVec',        funcStr, saveImageName, graphTitle, dateTime );
+                dump_data_( timeVec, 'timeVec', funcStr, saveImageName, graphTitle, dateTime );
             end;
             
             
