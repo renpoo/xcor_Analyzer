@@ -26,7 +26,7 @@ if ( strcmp( tokens{1,1}, 'nACF' ) == 1 ),
   graphTitle = tokens{10,1};
 else
   xLabel = tokens{3,1}; 
-  yLabel = tokens{2,1}
+  yLabel = tokens{2,1};
 
   labelStr = strcat( yLabel, ',', xLabel );
   strTitleBase = strcat( '[', yLabel, ' <-> ', xLabel, ']' );

@@ -1,17 +1,22 @@
-function s=GenerateWhiteNoise_(f, fs, d, outputWavFileName)
-#f = 100;              % frequency
-#fs = 44100;        % sampling rate
-#d = 0.2;              % duration 
-N = round(fs*d);  % #samples
+function S = generateWhiteNoise_( fs, d, outputWavFileName )
 
-#N = 100000; # Force sampling points Number to be 100000
+n = round( fs * d );
+if mod( n, 2 ) == 1, n = n + 1; end;
 
-noise = randn(N, 1);
+s = randn( 1, n );
+s = s / max( abs(s) );
 
-#t = (1:N)'/fs;        % time vector
-#s = sin(2*pi*f*t);   % sinusoid
-#wavwrite(s, fs, outputWavFileName);
+% Fil = ( 1 : n/2 ) / (n/2);
+% Fil = [ fliplr( Fil ) Fil ];
+
+% S = fft( s );
+% S = S .* Fil;
+% S = ifft( S );
+% S = real( S )';
+
+S = s';
+
+audiowrite( outputWavFileName, S, fs );
+sound( S, fs );
 
 
-wavwrite(noise, fs, outputWavFileName);
-s = noise;
