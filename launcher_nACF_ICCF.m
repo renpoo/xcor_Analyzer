@@ -484,7 +484,7 @@ while ( 1 ),
                 if ( handles.data.iccfFlag ),
                     lc = 'ow';
                     
-                    %plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
                     if ( handles.data.calcTauE_VecFlag ),
                         if ( 1 ),
@@ -562,33 +562,33 @@ while ( 1 ),
                 
                 if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
                 if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, env_tauE_Vec_R, 'time [s]', 'env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, tauE_Vec_L, 'time [s]', 'tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, env_tauE_Vec_L, 'time [s]', 'env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                     
                     figNumber = figNumber + 1;
-                    [ outputGraphFileName ] = plot2dGraph( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
+                    [ outputGraphFileName ] = plot2D_( timeVec, grad_env_tauE_Vec_L, 'time [s]', 'grad env tauE Vec L [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
             end;

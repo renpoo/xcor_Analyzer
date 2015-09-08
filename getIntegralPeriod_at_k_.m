@@ -1,4 +1,4 @@
-function [ xSubS, xSubE, ySubS, ySubE ] = calcIntegralPeriod_at_k_( k, T_Idx )
+function [ xSubS, xSubE, ySubS, ySubE ] = getIntegralPeriod_at_k_( k, T_Idx )
 
 if (k < 0),
   xSubS = 1;

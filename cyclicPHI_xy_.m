@@ -23,7 +23,7 @@ PHI = [];
 %PHI = 0.0;
 
 for k = startIdx : stopIdx,
-  [ xSubS, xSubE, ySubS, ySubE ] = calcIntegralPeriod_at_k_( k, T_Idx );
+  [ xSubS, xSubE, ySubS, ySubE ] = getIntegralPeriod_at_k_( k, T_Idx );
   indexVecX1 = ( xSubS : xSubE );
   indexVecX2 = ( xSubE+1 : length( x ) );
   indexVecY1 = ( ySubS : ySubE );

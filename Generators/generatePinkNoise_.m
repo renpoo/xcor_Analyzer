@@ -1,4 +1,4 @@
-function S = generatePinkNoise_( fs, d, outputWavFileName )
+function S = generatePinkNoise_( fs, d, Pow, outputWavFileName )
 
 n = round( fs * d );
 if mod( n, 2 ) == 1, n = n + 1; end;
@@ -13,6 +13,8 @@ S = fft( s );
 S = S .* Fil;
 S = ifft( S );
 S = real( S )';
+
+S = S * Pow;
 
 audiowrite( outputWavFileName, S, fs );
 sound( S, fs );

@@ -24,7 +24,7 @@ PHI = [];
 %PHI = 0.0;
 
 for k = startIdx : stopIdx,
-  [ xSubS, xSubE, ySubS, ySubE ] = calcIntegralPeriod_at_k_( k, T_Idx );
+  [ xSubS, xSubE, ySubS, ySubE ] = getIntegralPeriod_at_k_( k, T_Idx );
   xSub = x( xSubS:xSubE );
   ySub = y( ySubS:ySubE );
   
