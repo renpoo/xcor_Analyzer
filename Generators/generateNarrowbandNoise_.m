@@ -1,4 +1,13 @@
-function S = generateNarrowbandNoise_( fMin, fMax, fs, d, Pow, outputWavFileName )
+function S = generateNarrowbandNoise_( fMin, fMax, fs, d, Pow )
+
+%{
+d = 3.0;
+fMin = 1024;
+fMax = 1152;
+fs = 44100;
+Pow = 2^2;
+%}
+
 
 n = round( fs * d );  
 if mod( n, 2 ) == 1, n = n + 1; end;
@@ -6,25 +15,16 @@ if mod( n, 2 ) == 1, n = n + 1; end;
 s = randn( 1, n );
 s = s / max( abs(s) );
 
-S = fft( s );
-
-%{
-FilPink = ( 1 : n/2 ) / (n/2);
-FilPink = [ fliplr( FilPink ) FilPink ];
-
-S = S .* FilPink;
-%}
+fftS = fft( s );
 
 FilBand = zeros( 1, n/2 );
-for ( i = fMin : fMax ), FilBand( i ) = 1.0; end;
+for ( i = round(fMin * d) : round(fMax * d) ), FilBand( i ) = 1.0; end;
 FilBand = [ FilBand fliplr( FilBand ) ];
 
-S = S .* FilBand;
+bandfilFftS = fftS .* FilBand;
 
-S = ifft( S );
-S = real( S )';
+S = real( ifft( bandfilFftS ) )' * Pow;
 
-S = S * Pow;
 
-audiowrite( outputWavFileName, S, fs );
-sound( S, fs );
+%audiowrite( outputWavFileName, S, fs );
+%sound( S, fs );

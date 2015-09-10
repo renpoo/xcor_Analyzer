@@ -3,7 +3,7 @@ duration = 3.0;
 fs = 44100;
 interval = 0.1;
 
-
+%{
 sine400Hz_0deg   = generateSinWave_( A, 400, fs, duration,    0 ); audiowrite( './_Sounds/sine400Hz_0deg.wav'   , sine400Hz_0deg,   fs);  sound( sine400Hz_0deg,   fs ); pause( duration + interval );
 sine400Hz_15deg  = generateSinWave_( A, 400, fs, duration, pi/12); audiowrite( './_Sounds/sine400Hz_15deg.wav'  , sine400Hz_15deg,  fs);  sound( sine400Hz_15deg,  fs ); pause( duration + interval );
 sine400Hz_30deg  = generateSinWave_( A, 400, fs, duration, pi/6 ); audiowrite( './_Sounds/sine400Hz_30deg.wav'  , sine400Hz_30deg,  fs);  sound( sine400Hz_30deg,  fs ); pause( duration + interval );
@@ -37,3 +37,13 @@ sine4224Hz_0deg  = generateSinWave_( A,4224, fs, duration,    0 ); audiowrite( '
 sine8192Hz_0deg  = generateSinWave_( A,8192, fs, duration,    0 ); audiowrite( './_Sounds/sine8192Hz_0deg.wav'  , sine8192Hz_0deg,  fs);  sound( sine8192Hz_0deg,  fs ); pause( duration + interval );
 sine8292Hz_0deg  = generateSinWave_( A,8292, fs, duration,    0 ); audiowrite( './_Sounds/sine8292Hz_0deg.wav'  , sine8292Hz_0deg,  fs);  sound( sine8292Hz_0deg,  fs ); pause( duration + interval );
 sine8320Hz_0deg  = generateSinWave_( A,8320, fs, duration,    0 ); audiowrite( './_Sounds/sine8320Hz_0deg.wav'  , sine8320Hz_0deg,  fs);  sound( sine8320Hz_0deg,  fs ); pause( duration + interval );
+%}
+
+sine512Hz_0deg   = generateSinWave_( A, 512, fs, duration,    0 ); audiowrite( './_Sounds/sine512Hz_0deg.wav'   , sine512Hz_0deg,   fs);  sound( sine512Hz_0deg,   fs ); pause( duration + interval );
+sine576Hz_0deg   = generateSinWave_( A, 576, fs, duration,    0 ); audiowrite( './_Sounds/sine576Hz_0deg.wav'   , sine576Hz_0deg,   fs);  sound( sine576Hz_0deg,   fs ); pause( duration + interval );
+sine640Hz_0deg   = generateSinWave_( A, 640, fs, duration,    0 ); audiowrite( './_Sounds/sine640Hz_0deg.wav'   , sine640Hz_0deg,   fs);  sound( sine640Hz_0deg,   fs ); pause( duration + interval );
+sine682_6Hz_0deg = generateSinWave_( A, 682.6, fs, duration,  0 ); audiowrite( './_Sounds/sine682.6Hz_0deg.wav' , sine682_6Hz_0deg, fs);  sound( sine682_6Hz_0deg, fs ); pause( duration + interval );
+sine768Hz_0deg   = generateSinWave_( A, 768, fs, duration,    0 ); audiowrite( './_Sounds/sine768Hz_0deg.wav'   , sine768Hz_0deg,   fs);  sound( sine768Hz_0deg,   fs ); pause( duration + interval );
+sine864Hz_0deg   = generateSinWave_( A, 864, fs, duration,    0 ); audiowrite( './_Sounds/sine864Hz_0deg.wav'   , sine864Hz_0deg,   fs);  sound( sine864Hz_0deg,   fs ); pause( duration + interval );
+sine960Hz_0deg   = generateSinWave_( A, 960, fs, duration,    0 ); audiowrite( './_Sounds/sine960Hz_0deg.wav'   , sine960Hz_0deg,   fs);  sound( sine960Hz_0deg,   fs ); pause( duration + interval );
+sine1023Hz_0deg  = generateSinWave_( A, 1023, fs, duration,   0 ); audiowrite( './_Sounds/sine1023Hz_0deg.wav'  , sine1023Hz_0deg,  fs);  sound( sine1023Hz_0deg,  fs ); pause( duration + interval );

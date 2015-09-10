@@ -25,7 +25,7 @@ power = y .* conj(y) / n;    % Power of the DFT
 figure(); plot( f( 1 : floor(n/2) ), power( 1 : floor(n/2) ) );
 %axis([0,2500,0,2000]);
 xlabel('Frequency (Hz)');
-ylabel('Power');
+ylabel('Power (dB)');
 title('{\bf Periodogram}');
 
 return;
