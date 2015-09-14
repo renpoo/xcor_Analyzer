@@ -45,4 +45,8 @@ generateCombinationalSounds( './_Sounds', 'sine1023Hz_0deg.wav',  'sine1024Hz_0d
 %generateCombinationalSounds( './_Sounds', 'sine19450Hz_0deg.wav',  'sine20000Hz_0deg.wav' );
 %generateCombinationalSounds( './_Sounds', 'sine19257_5Hz_0deg.wav',  'sine20000Hz_0deg.wav' );
 %generateCombinationalSounds( './_Sounds', 'sine19175Hz_0deg.wav',  'sine20000Hz_0deg.wav' );
-generateCombinationalSounds( './_Sounds', 'sine19120Hz_0deg.wav',  'sine20000Hz_0deg.wav' );
+%generateCombinationalSounds( './_Sounds', 'sine19120Hz_0deg.wav',  'sine20000Hz_0deg.wav' );
+
+
+nb = makeSineWave_( A, 768, pi/8, fs, duration, interval );
+generateCombinationalSounds( './_Sounds', 'sine768Hz_0.3927deg.wav',  'sine1024Hz_0deg.wav' );

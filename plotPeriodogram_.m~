@@ -26,11 +26,9 @@ figure(); plot( f( 1 : floor(n/2) ), power( 1 : floor(n/2) ) );
 %axis([0,2500,0,2000]);
 xlabel('Frequency (Hz)');
 ylabel('Power (dB)');
-title( strcat( '{\bf Periodogram} ', fname , '' ));
+title( strcat( '{\bf Periodogram', fname , '}' ));
 
 
-saveas( 1, strcat( pname, '/', fname, '.fig' ) );
 saveas( 1, strcat( pname, '/', fname, '.jpg' ) );
-
 
 return;
