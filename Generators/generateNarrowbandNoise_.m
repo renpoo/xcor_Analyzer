@@ -12,7 +12,10 @@ Pow = 2^2;
 n = round( fs * d );  
 if mod( n, 2 ) == 1, n = n + 1; end;
 
-s = randn( 1, n );
+%rng('shuffle');
+
+%s = randn( 1, n );
+s = rand( [ 1 n ] );
 s = s / max( abs(s) );
 
 fftS = fft( s );

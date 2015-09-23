@@ -1,7 +1,7 @@
-%clear;
-%close all;
+clear;
+close all;
 
-fs = 44100;
+fs = 96000;
 d = 3.0;
 p = 2^4;
 interval = 1.0;
@@ -50,7 +50,7 @@ S = generateNarrowbandNoise_(  1010, 1024, fs, d, p ); audiowrite( './_Sounds/na
 %S = generateNarrowbandNoise_(  27.5, 880, fs, d, p ); audiowrite( './_Sounds/narrowbandNoize_27_5Hz_880Hz.wav',    S, fs);  sound( S, fs ); pause( d + interval );
 %S = generateNarrowbandNoise_(  13.75, 880, fs, d, p ); audiowrite( './_Sounds/narrowbandNoize_13_75Hz_880Hz.wav',    S, fs);  sound( S, fs ); pause( d + interval );
 %S = generateNarrowbandNoise_(  6.875, 880, fs, d, p ); audiowrite( './_Sounds/narrowbandNoize_6_875Hz_880Hz.wav',    S, fs);  sound( S, fs ); pause( d + interval );
-S = generateNarrowbandNoise_(  1, 880, fs, d, p ); audiowrite( './_Sounds/narrowbandNoize_1Hz_880Hz.wav',    S, fs);  sound( S, fs ); pause( d + interval );
+%S = generateNarrowbandNoise_(  1, 880, fs, d, p ); audiowrite( './_Sounds/narrowbandNoize_1Hz_880Hz.wav',    S, fs);  sound( S, fs ); pause( d + interval );
 
 
 %{
@@ -61,20 +61,35 @@ end;
 %}
 
 
-%{
+
 a = [440 550 660 880];
-a = [330 550 660 880];
+%a = [330 550 660 880];
 step = 110;
+%for (i = 1:3),
 for (i = 1:4),
     disp( i );
-    S = generateNarrowbandNoise_(  a(i)-step, a(i), fs, d, p ); audiowrite( strcat('./_Sounds/narrowbandNoize_',a(i)-step,'Hz_',a(i),'Hz.wav'),    S, fs);  sound( S, fs ); pause( d + interval );
+    S = generateNarrowbandNoise_( a(i)-step, a(i), fs, d, p ); audiowrite( strcat('./_Sounds/narrowbandNoize_',a(i)-step,'Hz_',a(i),'Hz.wav'),    S, fs);  sound( S, fs ); pause( d + interval );
     B(i,:) = S;
 end;
 %sound(B(1,:)+B(2,:)+B(3,:)+B(4,:),fs);
-
-
+%audiowrite( strcat('tmp1.wav'), B(1,:)+B(2,:)+B(3,:)+B(4,:), fs);
+%{
+i = 4;
 step = 220;
-    S = generateNarrowbandNoise_(  a(i)-step, a(i), fs, d, p ); audiowrite( strcat('./_Sounds/narrowbandNoize_',a(i)-step,'Hz_',a(i),'Hz.wav'),    S, fs);  sound( S, fs ); pause( d + interval );
-    B(i,:) = S;
+S = generateNarrowbandNoise_(  a(i)-step, a(i), fs, d, p ); audiowrite( strcat('./_Sounds/narrowbandNoize_',a(i)-step,'Hz_',a(i),'Hz.wav'),    S, fs);  sound( S, fs ); pause( d + interval );
+B(i,:) = S;
 sound(B(1,:)+B(2,:)+B(3,:)+B(4,:),fs);
+%}
+
+
+%{
+a = [220 330 550 660 880];
+%step = 110;
+for (i = 2:5),
+    disp( i );
+    S = generateNarrowbandNoise_(  a(i-1), a(i), fs, d, p ); audiowrite( strcat('./_Sounds/narrowbandNoize_',a(i-1),'Hz_',a(i),'Hz.wav'),    S, fs);  sound( S, fs ); pause( d + interval );
+    B(i,:) = S;
+end;
+sound(B(5,:)+B(2,:)+B(3,:)+B(4,:),fs);
+audiowrite( strcat('tmp2.wav'), B(5,:)+B(2,:)+B(3,:)+B(4,:), fs );
 %}
