@@ -484,7 +484,7 @@ while ( 1 ),
                 if ( handles.data.iccfFlag ),
                     lc = 'ow';
                     
-                    %plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                    plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
                     if ( handles.data.calcTauE_VecFlag ),
                         if ( 1 ),
