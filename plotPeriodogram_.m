@@ -1,6 +1,6 @@
 function plotPeriodogram_( S, fs )
 
-%close all; 
+%close all;
 %clear;
 
 % --- Audio File open and read
@@ -26,8 +26,14 @@ power = y .* conj(y) / n;    % Power of the DFT
 
 lw = 1;
 ms = 2;
-lc = '-ok';
-figure(); plot( fAxis( 1 : floor(n/2) ), power( 1 : floor(n/2) ), lc, 'LineWidth', lw, 'MarkerSize', ms );
+figure();
+plot( fAxis( 1 : floor(n/2) ), power( 1 : floor(n/2) ) );
+
+grid on;
+hold on;
+lc = 'ok';
+plot( fAxis( 1 : floor(n/2) ), power( 1 : floor(n/2) ), lc, 'LineWidth', lw, 'MarkerSize', ms );
+
 %axis([ min(fAxis), max(fAxis)+10, 0, max(power)*1.1 ]);
 xlabel('Frequency (Hz)');
 ylabel('Power (dB)');

@@ -25,64 +25,38 @@ fMax = [ 1024 ];
 %fMax = [ 16384 ];
 
 %fMin = [ 1018 ];
-%fMin = fMax - ORDER;
+fMin = fMax - ORDER;
 
-Z = zeros( 2^19, 1 );
+Z = zeros( round(duration*fs), 1 );
+S = zeros( 1, 1 );
 
-%{
-for l = 1 : ORDER,
-    N = DIV * l;
-    fMin = fMax - l;
-    
-    for k = N : N,
-        S = Z;
-%}        
-        for j = 1 : length(fMax),
-            %disp( strcat( '##### k =  ', num2str(k) ) );
-            %{%}
-            %f = zeros( ceil(k + 1), 1 );
-            f = zeros( ceil(N + 1), 1 );
-            for i = 1 : length(f),
-                %f(i) = fMax - length(f) + i;
-                f(i) = fMax(j) - N + i - 1;
-                %f(i) = ( fMax( j ) - fMin( j ) ) * (i-1) / k + fMin( j );
-            end;
-            %{%}
-            
-            %return;
-            
-            
-            %for i = length(f) : -1 : 1,
-            for i = length(f)-1 : -1 : 1,
-                disp( strcat( 'index# =  ', num2str(i), '  :  ', num2str( f(i) ), 'Hz ', '  ~  ', num2str( fMax(j) ), 'Hz' ) );
-                
-                %s = makeSineWave_( A, f(i), 0, fs, duration, interval );
-                
-                %s = generateCombinationalSounds( './_Sounds', strcat('sine', num2str(f(i)), 'Hz_0deg.wav'), strcat('sine', num2str(fMax), 'Hz_0deg.wav') );
-                
-                %A= 2^4;
-                s = makeNarrowbandNoise_( A, f(i), fMax( j ), fs, duration, interval )';
-                %s = makeNarrowbandNoise_( A, f(i), f(i+1), fs, duration, interval )';
-                s = s / max( abs(s) );
-                
-                %S = S + s;
-                %S = horzcat( S, s, Z );
+for j = 1 : length(fMax),
 
-                %plotPeriodogram_( s, fs );
-                audiowrite( strcat( './_Sounds/nbNoise_', num2str(f(i)), 'Hz_', num2str(fMax(j)), 'Hz.wav'), s, fs);
-                %sound( s, fs ); pause( duration + interval );
-                
-            end;
-            
-            
-        end;
+    f = zeros( ceil(N + 1), 1 );    
+    for i = 1 : length(f),
+        f(i) = fMax(j) - N + i - 1;
+        %f(i) = ( fMax( j ) - fMin( j ) ) * (i-1) / k + fMin( j );
+    end;
+
+    for i = length(f)-1 : -1 : 1,    
+    %for i = length(f) : -1 : 1,
+        disp( strcat( 'index# =  ', num2str(i), '  :  ', num2str( f(i) ), 'Hz ', '  ~  ', num2str( fMax(j) ), 'Hz' ) );
         
-        %S = S / max( abs(S) );
-        %plotPeriodogram_( S, fs );
-        %audiowrite( strcat( './_Sounds/pNoise_', num2str(fMin(j)), 'Hz_to_', num2str(fMax(j)), 'Hz.wav'), S, fs);
-        %sound( S, fs ); pause( duration + interval );
-%{
+        %s = generateSinWave_( A, f(i), fs, duration, 0 );
+        
+        s = makeNarrowbandNoise_( A, f(i), fMax( j ), fs, duration, interval )';
+        %s = makeNarrowbandNoise_( A, f(i), f(i+1), fs, duration, interval )';
+        
+        s = s / max( abs(s) );
+        
+        %plotPeriodogram_( s, fs );
+        %audiowrite( strcat( './_Sounds/nbNoise_', num2str(f(i)), 'Hz_', num2str(fMax(j)), 'Hz.wav'), s, fs);
+        
+        S = vertcat( S, s, Z );
     end;
     
+    
 end;
-%} 
+
+
+sound( S, fs );
