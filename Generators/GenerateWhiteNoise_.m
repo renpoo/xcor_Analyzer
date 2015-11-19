@@ -6,7 +6,7 @@ if (mod( n, 2 ) == 1),
     n = n + 1;
 end;
 
-s = randn( 1, n );
+s = rand( 1, n );
 s = s / max( abs(s) );
 
 S = s';

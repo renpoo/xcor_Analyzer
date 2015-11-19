@@ -1,6 +1,6 @@
 %function launcher_nACF_ICCF( handles )
 
-close all;
+%close all;
 clear;
 
 

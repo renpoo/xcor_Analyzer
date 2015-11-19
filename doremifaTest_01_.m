@@ -16,7 +16,7 @@ ORDER = 32;
 %ORDER = 128;
 N = DIV * ORDER;
 
-%f = [ 512, 576, 640, 682.6, 768, 864, 960, 1023 ];
+f = [ 512, 576, 640, 682.6, 768, 864, 960, 1023 ];
 
 %fMax = [ 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
 %fMax = [ 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 ];
@@ -37,7 +37,7 @@ for j = 1 : length(fMax),
         f(i) = fMax(j) - N + i - 1;
         %f(i) = ( fMax( j ) - fMin( j ) ) * (i-1) / k + fMin( j );
     end;
-
+    
     for i = length(f)-1 : -1 : 1,    
     %for i = length(f) : -1 : 1,
         disp( strcat( 'index# =  ', num2str(i), '  :  ', num2str( f(i) ), 'Hz ', '  ~  ', num2str( fMax(j) ), 'Hz' ) );
