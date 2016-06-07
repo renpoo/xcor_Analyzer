@@ -19,7 +19,7 @@ interval = 0.5;
 
 
 % Change "n" for number of iteration on fibonatch series
-n = 10;
+n = 5;
 %n = 2; % Special Number for Skipping Fibonacci Generator 
 
 
@@ -70,7 +70,7 @@ for j = 1 : length(Fibo)-2,
     for k = 1 : length(r),
         
         f = f0 / r(k);
-        fprintf( 'Scale: %s (%04.2f Hz)\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f );
+        fprintf( 'Scale: %s (%4d Hz)\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f );
         
         s = generateSinWave_(A, f, fs, duration, theta );
         S = S + s;

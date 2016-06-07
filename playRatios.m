@@ -20,7 +20,7 @@ r = [];
 f0 = 1 / L;
 
 
-Max = 100;
+Max = 30;
 
 
 for l = 1 : Max,
@@ -33,13 +33,22 @@ A = ( A - 0.01 ) / length(r) ;
 
 for k = 1 : length(r),
     
-    f = f0 / r(k);
-    disp(f);
+    f1 = f0 / r(k);
+    f2 = f0 / (1 - r(k));
+    fprintf( 'Scale: %s (%04.2f Hz)\n', ConvertScaleToString_( ConvertHertzToScale_(f1) ), f1 );
+    fprintf( 'Scale: %s (%04.2f Hz)\n', ConvertScaleToString_( ConvertHertzToScale_(f2) ), f2 );
     
-    s = generateSinWave_(A, f, fs, duration, theta );
+    s1 = generateSinWave_(A, f1, fs, duration, theta );
+    s2 = generateSinWave_(A, f2, fs, duration, theta );
     
-    sound( s, fs );
+    S = s1 + s2;
+    
+    %sound( s1, fs );
+    %sound( s2, fs );
+    sound( S, fs );
     pause( duration + interval );
+    
+    disp(' ');
     
 end;
 
