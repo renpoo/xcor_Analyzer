@@ -11,16 +11,18 @@ A = 0.3;
 theta = 0.0;
 %fs = 44100;
 fs = 96000;
-duration = 3.0;
+duration1 = 0.5;
+duration2 = 3.0;
 %duration = 0.5;
 %duration = 2^19/fs;
 %interval = duration;
-interval = 0.5;
+interval1 = 0.05;
+interval2 = 0.5;
 
 
 % Change "n" for number of iteration on fibonatch series
-n = 10;
-%n = 2; % Special Number for Skipping Fibonacci Generator 
+n = 10 + 1;
+%n = 2; % Special Number for Skipping Fibonacci Generator
 
 
 a = 1;
@@ -43,7 +45,7 @@ f0 = 1 / L;
 
 for j = 1 : length(Fibo)-2,
     fprintf( 'Iteration: %d times\n', j );
-        
+    
     
     r = [ Fibo(j+2), Fibo(j+1), Fibo(j) ] / ( Fibo(j) + Fibo(j+1) + Fibo(j+2) ) * 2;
     
@@ -53,7 +55,7 @@ for j = 1 : length(Fibo)-2,
     %r = [ 8/21, 5/21, 5/21, 3/21 ];
     
     %r = [ 30/30, 24/30, 20/30, 15/30 ]; % C,E,G,C
-
+    
     
     %{
     Max = 30;
@@ -65,18 +67,34 @@ for j = 1 : length(Fibo)-2,
     
     %A = ( A - 0.01 ) / length(r) ;
     
-    S = zeros( round( fs * duration ), 1 );
+    S = zeros( round( fs * duration2 ), 1 );
     
     for k = 1 : length(r),
         
         f = f0 / r(k);
-        fprintf( 'Scale: %s (%04.2f Hz)\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f );
+        fprintf( 'Scale: %s (%04.2f Hz) for ratio "%d/%d"\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f, Fibo( j+3-k ), Fibo( j+2 ) );
         
-        s = generateSinWave_(A, f, fs, duration, theta );
+        s = generateSinWave_(A, f, fs, duration2, theta );
+        
+        
+        
         S = S + s;
         
-        sound( s, fs );
-        pause( duration + interval );
+        s_tmp = generateSinWave_(A, f, fs, duration1, theta );
+        
+        if ( 1 ),
+            w1 = HanningWindow_( length( s ) );
+            s = s .* w1';
+            S = S .* w1';
+
+            w2 = HanningWindow_( length( s_tmp ) );
+            s_tmp = s_tmp .* w2';
+        end;
+        
+        if ( 1 ),
+            sound( s_tmp, fs );
+            pause( duration1 + interval1 );
+        end;
         
         %{
         if ( k == 2 ),
@@ -86,7 +104,7 @@ for j = 1 : length(Fibo)-2,
     end;
     
     sound( S, fs );
-    pause( duration + interval );
+    pause( duration2 + interval2 );
     
     disp(' ');
     

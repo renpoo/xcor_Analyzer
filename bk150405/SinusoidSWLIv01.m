@@ -437,7 +437,7 @@ for templ=1:nSstring,
 end;
 
 
-
+%{
 % --- Strings Summation
 FlagOfsumS = 0;
 for templ=1:nSstring,
@@ -465,5 +465,5 @@ if(WavFileWrite),
 end;
 
 
-
+%}
 return;

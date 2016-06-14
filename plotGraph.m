@@ -22,7 +22,7 @@ function varargout = plotGraph(varargin)
 
 % Edit the above text to modify the response to help plotGraph
 
-% Last Modified by GUIDE v2.5 07-Jun-2016 11:53:59
+% Last Modified by GUIDE v2.5 07-Jun-2016 17:30:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,6 +62,11 @@ guidata(hObject, handles);
 handles = struct( 'data', [] );
 
 
+if isfield(handles, 'data'),
+    return;
+end;
+
+
 handles.data.editParamX = '';
 handles.data.editXlabel = 'X Label';
 handles.data.editXmin   = 0.0;
@@ -72,9 +77,26 @@ handles.data.editYlabel = 'Y Label';
 handles.data.editYmin   = 0.0;
 handles.data.editYmax   = 100.0;
 
+handles.data.editTitle  = 'Title';
+
+
+set( handles.editParamX,      'String', handles.data.editParamX );
+set( handles.editXlabel,      'String', handles.data.editXlabel );
+set( handles.editXmin,        'String', handles.data.editXmin );
+set( handles.editXmax,        'String', handles.data.editXmax );
+
+set( handles.editParamY,      'String', handles.data.editParamY );
+set( handles.editYlabel,      'String', handles.data.editYlabel );
+set( handles.editYmin,        'String', handles.data.editYmin );
+set( handles.editYmax,        'String', handles.data.editYmax );
+
+set( handles.editTitle,        'String', handles.data.editTitle );
+
+guidata( hObject, handles );
+
 
 % UIWAIT makes plotGraph wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+%uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -316,6 +338,33 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+function editTitle_Callback(hObject, eventdata, handles)
+% hObject    handle to editTitle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editTitle as text
+%        str2double(get(hObject,'String')) returns contents of editTitle as a double
+
+handles.data.editTitle = get( hObject, 'String' );
+set( handles.editTitle, 'String',  handles.data.editTitle );
+
+guidata( hObject, handles );
+
+
+% --- Executes during object creation, after setting all properties.
+function editTitle_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editTitle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 % --- Executes on button press in pushbuttonPlotGraph.
 function pushbuttonPlotGraph_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbuttonPlotGraph (see GCBO)
@@ -335,3 +384,6 @@ ylabel( handles.data.editYlabel );
 
 axis( [ handles.data.editXmin handles.data.editXmax ...
         handles.data.editYmin handles.data.editYmax ] );
+
+
+title( handles.data.editTitle );
