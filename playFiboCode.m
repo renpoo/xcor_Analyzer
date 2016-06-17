@@ -2,29 +2,33 @@ clear;
 close all;
 
 
-L = 0.00383; % = 1 / 261.6255653005986 : C
-L = 1 / 440;
+%L = 1 / 261.6255653005986; % : C
+L = 1 / 440; % : A : 440 Hz
 
 
 %A = 1.0;
 A = 0.3;
+
 theta = 0.0;
-%fs = 44100;
-fs = 96000;
-duration1 = 0.5;
+
+fs = 44100;
+%fs = 96000;
+
+duration1 = 0.3;
 duration2 = 3.0;
 %duration = 0.5;
 %duration = 2^19/fs;
+
 %interval = duration;
-interval1 = 0.05;
+interval1 = 0.1;
 interval2 = 0.5;
 
 
 % Change "n" for number of iteration on fibonatch series
-n = 10 + 1;
+n = 10 + 2;
 %n = 2; % Special Number for Skipping Fibonacci Generator
 
-
+%{
 a = 1;
 b = 1;
 
@@ -37,6 +41,11 @@ for ( i = 2 : n ),
     b = tmp + b;
     Fibo = [ Fibo b ];
 end;
+%}
+
+
+Fibo = [ lucas_Un( 1, -1, (1:n) ) ];
+%Fibo = [ lucas_Vn( 3, 2, (1:n) ) ];
 
 
 r = [];
@@ -72,7 +81,7 @@ for j = 1 : length(Fibo)-2,
     for k = 1 : length(r),
         
         f = f0 / r(k);
-        fprintf( 'Scale: %s (%04.2f Hz) for ratio "%d/%d"\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f, Fibo( j+3-k ), Fibo( j+2 ) );
+        fprintf( 'Scale: %s (%04.2f Hz) for ratio "%02.1f/%02.1f"\n', ConvertScaleToString_( ConvertHertzToScale_(f) ), f, Fibo( j+3-k ), Fibo( j+2 ) );
         
         s = generateSinWave_(A, f, fs, duration2, theta );
         
@@ -91,7 +100,7 @@ for j = 1 : length(Fibo)-2,
             s_tmp = s_tmp .* w2';
         end;
         
-        if ( 1 ),
+        if ( 0 ),
             sound( s_tmp, fs );
             pause( duration1 + interval1 );
         end;
@@ -110,5 +119,3 @@ for j = 1 : length(Fibo)-2,
     
     %f0 = fTmp;
 end;
-
-

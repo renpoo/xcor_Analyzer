@@ -2,18 +2,23 @@ clear;
 close all;
 
 
-L = 0.00383; % = 1 / 261.6255653005986 : C
-
+L = 1 / 261.6255653005986; % : C
+%L = 1 / 440;
 
 A = 1.0;
+
 theta = 0.0;
+
 %fs = 44100;
 fs = 96000;
+
 %duration = 3.0;
-duration = 0.5;
+%duration = 0.5;
+duration = 1.0;
 %duration = 2^19/fs;
+
 %interval = duration;
-interval = 0.0;
+interval = 0.5;
 
 
 r = [];
@@ -36,31 +41,49 @@ for k = 1 : length(r),
     
     f1 = f0 / r(k);
     f2 = f0 / (1 - r(k));
-    %fprintf( 'Scale: %s (%04.2f Hz) for ratio "%01.3f"\n', ConvertScaleToString_( ConvertHertzToScale_(f0) ), f0, 1.0 );
+
+    if ( 1 ),
+        fprintf( 'Scale: %s (%04.2f Hz) for ratio "%01.3f"\n', ConvertScaleToString_( ConvertHertzToScale_(f0) ), f0, 1.0 );
+        s0 = generateSinWave_(A, f0, fs, duration, theta );
+    end;
+    
     fprintf( 'Scale: %s (%04.2f Hz) for ratio "%01.3f"\n', ConvertScaleToString_( ConvertHertzToScale_(f1) ), f1, r(k) );
-    fprintf( 'Scale: %s (%04.2f Hz) for ratio "%01.3f"\n', ConvertScaleToString_( ConvertHertzToScale_(f2) ), f2, 1-r(k) );
-    
-    
-    %s0 = generateSinWave_(A, f0, fs, duration, theta );
     s1 = generateSinWave_(A, f1, fs, duration, theta );
+
+    fprintf( 'Scale: %s (%04.2f Hz) for ratio "%01.3f"\n', ConvertScaleToString_( ConvertHertzToScale_(f2) ), f2, 1-r(k) );
     s2 = generateSinWave_(A, f2, fs, duration, theta );
     
     if ( 1 ),
         w = HanningWindow_( length( s1 ) );
+        
+        if ( 1 ),
+            s0 = s0 .* w';
+        end;
+        
         s1 = s1 .* w';
         s2 = s2 .* w';
     end;
+
     
-    S = s1 + s2; % + s0;
+    if ( 1 ),
+        S = s1 + s2 + s0;
+    else
+        S = s1 + s2; % + s0;
+    end;
+
     
-    %sound( s1, fs );
-    %sound( s2, fs );
+    if ( 0 ),
+        sound( s0, fs );
+        pause( duration + interval );
+        sound( s1, fs );
+        pause( duration + interval );
+        sound( s2, fs );
+        pause( duration + interval );
+    end;
+    
     sound( S, fs );
     pause( duration + interval );
     
     disp(' ');
     
 end;
-
-
-
