@@ -1,12 +1,22 @@
 clear;
 
-[t,xyz] = ode45('lorenz',[0,30],[5;3;1]);
+[t,xyz] = ode45('lorenz',[0,30],[5;3;1]); % Ver.A
+[t,xyz] = ode45('lorenz',[0,30],[30;3;1]); % Ver.B
+[t,xyz] = ode45('lorenz',[0,30],[100;0;1]); % Ver.C
+[t,xyz] = ode45('lorenz',[0,30],[0;100;1]); % Ver.D
+[t,xyz] = ode45('lorenz',[0,30],[5;3;100]); % Ver.E
 
 
 
 figure();
 plot3(xyz(:,1), xyz(:,2), xyz(:,3));
-grid on;
+grid on; hold on;
+xlabel('x');
+ylabel('y');
+zlabel('z');
+hold off;
+
+
 pause( 2.0 );
 
 
