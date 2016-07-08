@@ -1,9 +1,9 @@
 clear;
 
-[t,xyz] = ode45('lorenz',[0,30],[5;3;1]); % Ver.A
-[t,xyz] = ode45('lorenz',[0,30],[30;3;1]); % Ver.B
-[t,xyz] = ode45('lorenz',[0,30],[100;0;1]); % Ver.C
-[t,xyz] = ode45('lorenz',[0,30],[0;100;1]); % Ver.D
+%[t,xyz] = ode45('lorenz',[0,30],[5;3;1]); % Ver.A
+%[t,xyz] = ode45('lorenz',[0,30],[30;3;1]); % Ver.B
+%[t,xyz] = ode45('lorenz',[0,30],[100;0;1]); % Ver.C
+%[t,xyz] = ode45('lorenz',[0,30],[0;100;1]); % Ver.D
 [t,xyz] = ode45('lorenz',[0,30],[5;3;100]); % Ver.E
 
 
@@ -90,7 +90,7 @@ for i = 1 : 600,
         sL = ( sL1 + sL2 + sL3 ) / 8;
         sR = ( sR1 + sR2 + sR3 ) / 8;
                 
-        w = HanningWindow_( length( sL ) );
+        w = hann( length( sL ) );
 
         s = [ sL.*w', sR.*w' ];
     end;

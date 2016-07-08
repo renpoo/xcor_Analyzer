@@ -21,7 +21,7 @@ results = struct(      ...
     'PHI_ll_0',    0,  ...
     'PHI_rr_0',    0,  ...
     'PHI_lr',     [],  ...
-    'phi_lr',     []  );  
+    'phi_lr',     []  );
 
 
 handles = struct( 'data', [] );
@@ -70,7 +70,7 @@ handles.data = struct(   ...
 
 intervalTime = 0.0;
 bufSize = 30;
-    
+
 windowScale = 1;
 
 chDefs = {};
@@ -79,19 +79,19 @@ csvFileNames = {};
 
 
 while ( 1 ),
-        
+    
     try
         handles = GUI_nACF_ICCF( handles );
     catch err
         return;
     end;
-
+    
     %close all;
-
+    
     
     if ( 1 ),
         if ( handles.data.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
-
+        
         
         if ( handles.data.funcFlag == 1 ),
             handles.data.nacfFlag = 1 ;
@@ -103,7 +103,7 @@ while ( 1 ),
             handles.data.nacfFlag = 1 ;
             handles.data.iccfFlag = 0 ;
         end;
-
+        
         
         graphTitle = ez_sanitize_( handles.data.graphTitle );    % FORCE to get TITLE name to treat
         timeS0   = castNum_( getVal_( handles.data.timeS0 ) );   % FORCE to get timeS0 (Start) to cut the whole music signals
@@ -111,19 +111,19 @@ while ( 1 ),
         tauMinus = castNum_( getVal_( handles.data.tauMinus ) ); % FORCE to get tauMinus to calculate CCF
         tauPlus  = castNum_( getVal_( handles.data.tauPlus ) );  % FORCE to get tauPlus  to calculate CCF
         timeT    = castNum_( getVal_( handles.data.timeT ) );    % FORCE to get windowSize to calculate Realtime CCF
-
-
+        
+        
         nStepIdx = 0;
-
+        
         
         pname = handles.data.pname;
-
+        
         
         if ( strcmp( handles.data.wavFileName, '' ) ),
             clear chDefs;
             clear ch;
             clear csvFileNames;
-
+            
             chDefs = handles.data.chDefs;
             ch = handles.data.ch;
             csvFileNames = handles.data.csvFileNames;
@@ -140,7 +140,7 @@ while ( 1 ),
         
     end;
     
- 
+    
     [ temp, dateTime ] = system('date +%y%m%d%H%M%S');
     dateTime = dateTime( 1 : length(dateTime)-1 );
     
@@ -196,7 +196,7 @@ while ( 1 ),
             
             
             if ( handles.data.nacfFlag == 1 ),
-                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file                    
+                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
@@ -235,7 +235,7 @@ while ( 1 ),
             
             if ( ~strcmp( handles.data.wavFileName, '' ) ), % When single WAV file provided
                 [ s0, fsS ] = audioread( R_CsvFilename );
-                                
+                
                 if ( size( s0, 2 ) == 2 ),   % STEREO
                     x0 = s0( :, 2 );
                     y0 = s0( :, 1 );
@@ -282,23 +282,23 @@ while ( 1 ),
             
             fs = fsX;
             bits = 0;
-
+            
             lenX0 = length(x0);
             lenY0 = length(y0);
             
             
             timeS = timeS0;
             timeE = timeE0;
-
+            
             
             timeS_Idx = convTime2Index_( timeS, x0, fs );
             timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             %timeE_Idx = convTime2Index_( timeE, x0, fs );
-
+            
             
             x = x0( timeS_Idx : timeE_Idx );
             y = y0( timeS_Idx : timeE_Idx );
-                        
+            
             
             if ( handles.data.playSoundFlag ),
                 sound( x, fs );
@@ -315,7 +315,7 @@ while ( 1 ),
             
             lenX = length(x);
             lenY = length(y);
-
+            
             
             % CAUTION!!
             timePeriod = timeE - timeS;
@@ -330,15 +330,14 @@ while ( 1 ),
             y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
             if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
-                                    
             
-            %w = HanningWindow_( length( x ) );
-            w = HammingWindow_( length( x ) );
-            %w = BlackmanWindow_( length( x ) );
-            %w = RectangularWindow_( length( x ) );
-
             
             if (handles.data.windowFlag),
+                %w = HanningWindow_( length( x ) );
+                w = HammingWindow_( length( x ) );
+                %w = BlackmanWindow_( length( x ) );
+                %w = RectangularWindow_( length( x ) );
+                
                 x = x .* w';
                 y = y .* w';
             end;
@@ -355,7 +354,7 @@ while ( 1 ),
                     firstRdSize = size( results.resultData );
                     firstTaSize = size( results.timeAxis );
                 end;
-
+                
                 resultDataMat( k, : ) = arraySubstitute_( results.resultData, firstRdSize( 1,2 ) );
                 timeAxisMat( k, : )   = arraySubstitute_( results.timeAxis,   firstTaSize( 1,2 ) );
                 
@@ -390,40 +389,40 @@ while ( 1 ),
                 if ( length(x0) <= timeE_Idx ),
                     timeE_Idx = length(x0) - 1;
                 end;
-
+                
                 
                 x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
                 y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
-
+                
                 
                 if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
                 
-
+                
                 if ( handles.data.windowFlag ),
                     x = x .* w';
                     y = y .* w';
                 end;
                 
             end;
-
+            
             
             % CAUTION!!!
             timeVec = ( 0 : nStepIdx-1 ) * ( timeE0 - timeS0 + timeT ) / nStepIdx + timeS0;
             
-
+            
             % Clipping Plane
             if ( ischar( handles.data.clipVal( 1 ) ) ),
                 clipVal = str2double( handles.data.clipVal );
             else
-                clipVal = handles.data.clipVal;                
-            end;            
+                clipVal = handles.data.clipVal;
+            end;
             a = ones( 1, nStepIdx ) .* clipVal;
-
+            
             
             Fnorm = 75/(fs/2);
             %Fnorm = 8000/(fs/2);
             %Fnorm = 1000/(fs/2);
-
+            
             if ( Fnorm > 1.0 ) Fnorm = 0.01; end;
             
             if ( 0 ),
@@ -492,7 +491,7 @@ while ( 1 ),
                             plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                             plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
-
+                        
                         if ( 0 ),
                             lc = '-or';
                             lc = '-ow';
@@ -526,7 +525,7 @@ while ( 1 ),
                             lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
-                            
+                        
                         if ( 0 ),
                             lc = '-oy';
                             plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
@@ -544,18 +543,18 @@ while ( 1 ),
                 title( strTitle );
                 
                 hold off;
-
+                
                 
                 
                 % Save the 3D surf graph
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f'), ',', graphTitle );
                 fname = strcat( saveImageName, '.fig');
                 pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(tauPlus, '%04.3f') );
-
+                
                 if ( exist( pnameImg, 'dir' ) == 0 ),
                     mkdir( pnameImg );
                 end;
-
+                
                 outputGraphFileName = strcat( pnameImg, '/', fname );
                 saveas( figNumber, strcat( outputGraphFileName ) );
                 
@@ -634,13 +633,13 @@ while ( 1 ),
             
             
         end;
-
-        handles.data.playSoundFlag = 0;                
-
+        
+        handles.data.playSoundFlag = 0;
+        
     end;
     
     
-    handles.data.playSoundFlag = 0;                
+    handles.data.playSoundFlag = 0;
     %handles.data.exitFlag = 1;
     
 end;
