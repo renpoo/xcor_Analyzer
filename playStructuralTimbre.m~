@@ -28,12 +28,10 @@ theta = zeros( N, 1 );
 AAvg = 1.0;
 
 
-nTest = 5;
-%nTest = 1;
+nTest = 6;
 
 
 fBase = 110;
-%fBase = 110 * 2^6;
 
 for i = 1 : nTest,
     fAvg( i ) = fBase * 2^i;
@@ -56,12 +54,12 @@ for i = 1 : length( fAvg ),
     end;
     
     
-    fScale( i ) = 2^( j-4 );
+    fScale( i ) = 2^( j- );
     fDelta( i ) = fUpper( j ) - fLower( j );
     fSigma( i ) = fAvg( i ) / fDelta( i ) * fScale( i );
     
     
-    flagAmplitude = true;
+    flagAmplitude = false;
     flagFrequency = true;
     flagPhase = false;
     
