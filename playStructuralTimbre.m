@@ -15,8 +15,8 @@ interval = 0.5;
 %N = 1;
 %N = 3;
 %N = 30;
-%N = 100;
-N = 300;
+N = 100;
+%N = 300;
 %N = 3000;
 
 
@@ -26,15 +26,19 @@ theta = zeros( 1, N );
 
 AMin = 0.7;
 AMax = 1.0;
+Aavg = 1.0;
 A = A .* AMax; 
 
 %fMin = 1024 - (1024 - 992) / 2;
 %fMax = 1024;
-fMin = 440 - (440 - 420) / 2;
-fMax = 440;
+%fMin = 440 - (440 - 420) / 2;
+%fMax = 440;
+fAvg = 1024;
+
+thetaAvg = 0.0;
 
 
-flagAmplitude = true;
+flagAmplitude = false;
 flagFrequency = true;
 flagPhase = false;
 
@@ -43,17 +47,20 @@ flagSort = true;
 
 if ( flagAmplitude ),
     %A = rand( 1, N ) * AMax;
-    A = ( randn( 1, N ) + 1.0 ) * ( AMax - AMin ) + AMin;
+    %A = ( randn( 1, N ) + 1.0 ) * ( AMax - AMin ) + AMin;
+    A = pearsrnd( Aavg, 1, 0, 3, N, 1);
 end;
 
 if ( flagFrequency ),
     %f = rand( 1, N ) * ( fMax - fMin ) + fMin;
-    f = ( randn( 1, N ) + 1.0 ) * ( fMax - fMin ) + fMin;
+    %f = ( randn( 1, N ) + 1.0 ) * ( fMax - fMin ) + fMin;
+    f = pearsrnd( fAvg, 10, 0, 3, N, 1);
 end;
 
 if ( flagPhase ),
     %theta = rand( 1, N ) * 2 * pi;
-    theta = randn( 1, N ) * 2 * pi;
+    %theta = randn( 1, N ) * 2 * pi;
+    theta = pearsrnd( thetaAvg, 1, 0, 3, N, 1) * pi;
 end;
 
 %{
@@ -67,9 +74,9 @@ S1 = S;
 
 
 if ( flagSort ),
-    A = sort(A);
-    f = sort(f);
-    theta = sort(theta);
+    A = sort( A );
+    f = sort( f );
+    theta = sort( theta );
 end;
 
 
