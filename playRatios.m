@@ -54,7 +54,8 @@ for k = 1 : length(r),
     s2 = generateSinWave_(A, f2, fs, duration, theta );
     
     if ( 1 ),
-        w = HanningWindow_( length( s1 ) );
+        %w = HanningWindow_( length( s1 ) );
+        w = hann( length( s1 ) )';
         
         if ( 1 ),
             s0 = s0 .* w';

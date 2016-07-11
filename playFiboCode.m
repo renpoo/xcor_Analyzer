@@ -92,11 +92,13 @@ for j = 1 : length(Fibo)-2,
         s_tmp = generateSinWave_(A, f, fs, duration1, theta );
         
         if ( 1 ),
-            w1 = HanningWindow_( length( s ) );
+            %w1 = HanningWindow_( length( s ) );
+            w1 = hann( length( s ) )';
             s = s .* w1';
             S = S .* w1';
 
-            w2 = HanningWindow_( length( s_tmp ) );
+            %w2 = HanningWindow_( length( s_tmp ) );
+            w2 = hann( length( s_tmp ) )';
             s_tmp = s_tmp .* w2';
         end;
         
