@@ -123,8 +123,13 @@ for i = 1 : length( fAvg ),
     S = S .* w;
     
     
+    g = loud_weight( fAvg );
+    S = S / g( i ) / 2.0;
+    
+    
     sound( S, fs );
     pause( duration + interval );
+    audiowrite( strcat('./_Sounds/ST_',num2str( fAvg( i ) ),'Hz.wav'), S, fs );
     
     
     if ( flagSortAfter ),
@@ -136,6 +141,6 @@ for i = 1 : length( fAvg ),
 
     ARec( i, : ) = A; 
     fRec( i, : ) = f; 
-    thetaRec( i, : ) = theta; 
+    thetaRec( i, : ) = theta;
     
 end;

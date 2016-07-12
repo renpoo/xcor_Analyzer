@@ -28,10 +28,12 @@ theta = zeros( N, 1 );
 AAvg = 1.0;
 
 
-nTest = 6;
+nTest = 5;
+%nTest = 1;
 
 
 fBase = 110;
+%fBase = 110 * 2^6;
 
 for i = 1 : nTest,
     fAvg( i ) = fBase * 2^i;
@@ -54,12 +56,12 @@ for i = 1 : length( fAvg ),
     end;
     
     
-    fScale( i ) = 2^( j- );
+    fScale( i ) = 2^( j-4 );
     fDelta( i ) = fUpper( j ) - fLower( j );
     fSigma( i ) = fAvg( i ) / fDelta( i ) * fScale( i );
     
     
-    flagAmplitude = false;
+    flagAmplitude = true;
     flagFrequency = true;
     flagPhase = false;
     
@@ -119,6 +121,10 @@ for i = 1 : length( fAvg ),
     S = S / max( S );
     %w = hann( length( S ) );
     S = S .* w;
+    
+    
+    g = loud_weight( fAvg( i ) );
+    S = S * g;
     
     
     sound( S, fs );
