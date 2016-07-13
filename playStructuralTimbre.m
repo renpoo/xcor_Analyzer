@@ -15,7 +15,8 @@ interval = 1.0;
 %N = 1;
 %N = 3;
 %N = 30;
-N = 100;
+N = 60;
+%N = 100;
 %N = 300;
 %N = 3000;
 
@@ -32,8 +33,9 @@ nTest = 5;
 %nTest = 1;
 
 
-fBase = 110;
-%fBase = 110 * 2^6;
+%fBase = 261 * 2^(-2);
+fBase = 440 * 2^(-2);
+
 
 for i = 1 : nTest,
     fAvg( i ) = fBase * 2^i;
@@ -44,6 +46,7 @@ thetaAvg = 0.0;
 
 fCentre = 10^3 * (2 .^ [-6:4]);
 fD = 2^(1/2);
+%fD = 2^(1/6);
 fUpper = fCentre * fD;
 fLower = fCentre / fD;
 
@@ -66,7 +69,7 @@ for i = 1 : length( fAvg ),
     flagPhase = false;
     
     flagSort = false;
-    flagSortAfter = true;
+    flagSortAfter = false;
     
     
     if ( flagAmplitude ),
@@ -90,8 +93,8 @@ for i = 1 : length( fAvg ),
     
     
     if ( flagSort ),
-        parfor i = 1 : N,
-            s = generateSinWave_( A(i), f(i), fs, duration, theta(i) );
+        parfor k = 1 : N,
+            s = generateSinWave_( A(k), f(k), fs, duration, theta(k) );
             S = S + s;
         end;
         S1 = S;
@@ -105,8 +108,8 @@ for i = 1 : length( fAvg ),
     end;
     
     
-    parfor i = 1 : N,
-        s = generateSinWave_( A(i), f(i), fs, duration, theta(i) );
+    parfor k = 1 : N,
+        s = generateSinWave_( A(k), f(k), fs, duration, theta(k) );
         S = S + s;
     end;
     
@@ -123,8 +126,10 @@ for i = 1 : length( fAvg ),
     S = S .* w;
     
     
-    g = loud_weight( fAvg );
+    g = loud_weight( fAvg, 65 );
+    %g = loud_weight( fAvg, 80 );
     S = S / g( i ) / 2.0;
+    %S = S / g( i );
     
     
     sound( S, fs );
