@@ -15,8 +15,8 @@ interval = 1.0;
 %N = 1;
 %N = 3;
 %N = 30;
-N = 60;
-%N = 100;
+%N = 60;
+N = 100;
 %N = 300;
 %N = 3000;
 
@@ -134,7 +134,7 @@ for i = 1 : length( fAvg ),
     
     sound( S, fs );
     pause( duration + interval );
-    audiowrite( strcat('./_Sounds/ST_',num2str( fAvg( i ) ),'Hz.wav'), S, fs );
+    audiowrite( strcat('./_Sounds/ST__',num2str( fAvg( i ) ),'Hz.wav'), S, fs );
     
     
     if ( flagSortAfter ),

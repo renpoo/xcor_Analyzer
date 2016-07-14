@@ -326,8 +326,8 @@ while ( 1 ),
             timeE_Idx = convTime2Index_( timeE, x0, fs ) - 1;
             windowSizeIdx = timeE_Idx - timeS_Idx + 1;
             
-            x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
-            y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+            x = vectorReshape_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+            y = vectorReshape_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
             if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
             
@@ -355,21 +355,21 @@ while ( 1 ),
                     firstTaSize = size( results.timeAxis );
                 end;
                 
-                resultDataMat( k, : ) = arraySubstitute_( results.resultData, firstRdSize( 1,2 ) );
-                timeAxisMat( k, : )   = arraySubstitute_( results.timeAxis,   firstTaSize( 1,2 ) );
+                resultDataMat( k, : ) = vectorReshape_( results.resultData, firstRdSize( 1,2 ) );
+                timeAxisMat( k, : )   = vectorReshape_( results.timeAxis,   firstTaSize( 1,2 ) );
                 
                 
-                maxValuesMat( k, : )  = arraySubstitute_( results.maxValues, bufSize );
-                maxIdxsMat( k, : )    = arraySubstitute_( results.maxIdxs,   bufSize );
-                zeroIdxsMat( k, : )   = arraySubstitute_( results.zeroIdxs,  bufSize );
-                maxTimesMat( k, : )   = arraySubstitute_( results.maxTimes,  bufSize );
+                maxValuesMat( k, : )  = vectorReshape_( results.maxValues, bufSize );
+                maxIdxsMat( k, : )    = vectorReshape_( results.maxIdxs,   bufSize );
+                zeroIdxsMat( k, : )   = vectorReshape_( results.zeroIdxs,  bufSize );
+                maxTimesMat( k, : )   = vectorReshape_( results.maxTimes,  bufSize );
                 timeSMat( k, : )         = timeS;
                 timeEMat( k, : )         = timeE;
                 if (handles.data.iccfFlag && handles.data.phiFlag),
                     PHI_ll_0Mat( k, : ) = results.PHI_ll_0;
                     PHI_rr_0Mat( k, : ) = results.PHI_rr_0;
-                    PHI_lrMat( k, : )   = arraySubstitute_( results.PHI_lr,   firstRdSize( 1,2 ) );
-                    phi_lrMat( k, : )   = arraySubstitute_( results.phi_lr,   firstRdSize( 1,2 ) );
+                    PHI_lrMat( k, : )   = vectorReshape_( results.PHI_lr,   firstRdSize( 1,2 ) );
+                    phi_lrMat( k, : )   = vectorReshape_( results.phi_lr,   firstRdSize( 1,2 ) );
                 end;
                 if (handles.data.iccfFlag),
                     ICCCMat( k, : )       = results.ICCC;
@@ -391,8 +391,8 @@ while ( 1 ),
                 end;
                 
                 
-                x = arraySubstitute_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
-                y = arraySubstitute_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+                x = vectorReshape_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
+                y = vectorReshape_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
                 
                 
                 if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
@@ -488,8 +488,8 @@ while ( 1 ),
                     if ( handles.data.calcTauE_VecFlag ),
                         if ( 1 ),
                             lc = '-ow';
-                            plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
-                            plot3( arraySubstitute_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                            plot3( vectorReshape_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                            plot3( vectorReshape_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
                         if ( 0 ),
@@ -517,7 +517,7 @@ while ( 1 ),
                     if ( handles.data.calcTauE_VecFlag ),
                         if ( 1 ),
                             lc = '-ow';
-                            plot3( arraySubstitute_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
+                            plot3( vectorReshape_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
                         if ( 0 ),

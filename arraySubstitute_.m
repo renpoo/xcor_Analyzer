@@ -1,8 +1,8 @@
-function [ resultArray ] = arraySubstitute_( inputArray, bufSize )
+function [ resultvector ] = vectorSubstitute_( inputvector, bufSize )
 
-resultArray = zeros(bufSize, 1);
-%resultArray = {0};
-len = length( inputArray );
+resultvector = zeros(bufSize, 1);
+%resultvector = {0};
+len = length( inputvector );
 
 if ( len == 0 ) return; end;
 
@@ -15,8 +15,8 @@ end;
 
 %{%}
 for (i = 1 : n ),
-  resultArray( i ) = inputArray( i );
+  resultvector( i ) = inputvector( i );
 end;
 %{%}
 
-%resultArray = inputArray( 1 : n )';
+%resultvector = inputArray( 1 : n )';
