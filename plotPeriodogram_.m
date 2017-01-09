@@ -1,14 +1,14 @@
-function plotPeriodogram_( S, fs )
+%function plotPeriodogram_( S, fs )
 
 %close all;
 %clear;
 
 % --- Audio File open and read
-%[ fname, pname ] = uigetfile( '*.wav', 'SELECT WAV FILE' );
-%audFileName = strcat( pname, '/', fname );
-%samples = [ 1, inf ];
+[ fname, pname ] = uigetfile( '*.wav', 'SELECT WAV FILE' );
+audFileName = strcat( pname, '/', fname );
+samples = [ 1, inf ];
 %[ s0, fs ] = audioread( audFileName, samples );
-%[ S, fs ] = audioread( audFileName );
+[ S, fs ] = audioread( audFileName );
 
 %sound( S, fs );
 

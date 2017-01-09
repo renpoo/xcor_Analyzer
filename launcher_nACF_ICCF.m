@@ -1,7 +1,7 @@
 %function launcher_nACF_ICCF( handles )
 
 %close all;
-clear;
+%clear;
 
 
 %pkg load signal;

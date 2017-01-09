@@ -51,6 +51,9 @@ pause( duration + interval );
 audiowrite( strcat('./_Sounds/ST__', num2str( N ), 'spikes__', num2str( fMean ), 'Hz_', num2str( fSigma ), '_', num2str( fSkew ), '_', num2str( fKurt ), '.wav'), S, fs );
 
 
+%plotPeriodogram_( S, fs );
+
+
 if ( flagSortAfter ),
     A = sort( A );
     f = sort( f );
