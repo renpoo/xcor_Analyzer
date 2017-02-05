@@ -110,8 +110,8 @@ for t_Idx = timeS_Idx : tau_Idx : timeE_Idx
     tauAlphaIdx = zeroIdxs(1);
     tauBetaIdx  = zeroIdxs(2);
     
-    tauAlpha = timeAxis( tauAlphaIdx );
-    tauBeta  = timeAxis( tauBetaIdx  );
+    tauAlpha = tauAxis( tauAlphaIdx );
+    tauBeta  = tauAxis( tauBetaIdx  );
     
     Wiccc = tauBeta - tauAlpha;
     
