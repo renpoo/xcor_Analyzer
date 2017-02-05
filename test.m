@@ -1,11 +1,23 @@
 clear;
 
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% 
+
+timeS = 0.0;
+timeE = 10.0;
+
+tau = 0.01;
+%tau = 0.1;
+%tau = 1.0;
+
+
 wavFilename = 'Nippon.m4a';
 
 
-LRflag = 'L';
-LRflag = 'R';
+%LRflag = 'L';
+%LRflag = 'R';
 LRflag = 'C';
+
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% 
 
 
 if (LRflag == 'C')
@@ -21,12 +33,6 @@ end
 x0 = s( :, 2 );  % L channel
 y0 = s( :, 1 );  % R channel
 
-
-timeS = 0.0;
-timeE = 10.0;
-
-tau = 0.01;
-%tau = 0.1;
 
 duration = length(x0) / fs;
 
@@ -50,6 +56,7 @@ k = 0;
 
 timeAxis = ( timeS_Idx : tau_Idx : timeE_Idx ) / fs;
 
+
 if (LRflag == 'L')
     tauAxis  = ( -tau_Idx : 0 ) / fs;
 elseif (LRflag == 'R')
@@ -57,6 +64,7 @@ elseif (LRflag == 'R')
 else
     tauAxis  = ( -tau_Idx : tau_Idx ) / fs;
 end
+
 
 lenTimeAxis = length( timeAxis );
 lenTauAxis  = length( tauAxis );
@@ -176,6 +184,7 @@ figure;
 XYZ = surf( tauAxis, timeAxis, phi_lr_Mat, 'FaceColor','interp', 'LineStyle', 'none' );
 colormap 'jet';
 
+
 if (LRflag == 'L')
     xmax = 0;
     xmin = -max( abs( tauAxis ) );
@@ -188,6 +197,7 @@ else
 end
 
 xlim([xmin xmax]);
+
 
 grid on;
 

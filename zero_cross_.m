@@ -10,15 +10,15 @@ small = 1;
 big   = length(x);
 
 
-if length( zeroIdxs ) > 1,
+if length( zeroIdxs ) > 1
   maxValues = zeros( floor( length(zeroIdxs)/2 ), 1 );
   maxIdxs   = zeros( floor( length(zeroIdxs)/2 ), 1 );
-  for i = 1 : 1 :length(zeroIdxs)-1 ,
+  for i = 1 : 1 :length(zeroIdxs)-1
     [ maxVal, maxIdx ]  = max( x( zeroIdxs( i ) : zeroIdxs( i+1 ) ) );
-    if ( mod( i, 2 ) == 1 && skipFlag), continue; end;
+    if ( mod( i, 2 ) == 1 && skipFlag ), continue; end;
     maxValues( floor(i/2)+1 ) = maxVal;
     maxIdxs( floor(i/2)+1 )   = maxIdx + zeroIdxs( i ) - 1 ;
-    if ( maxV <= maxValues( floor(i/2)+1 ) ),
+    if ( maxV <= maxValues( floor(i/2)+1 ) )
       maxV  = maxValues( floor(i/2)+1 );
       maxI  = maxIdxs( floor(i/2)+1 );
       small = zeroIdxs( i ) ;
@@ -28,7 +28,7 @@ if length( zeroIdxs ) > 1,
 end;  
 
 
-if (wholeFlag),
+if (wholeFlag)
   maxValues = [];
   maxIdxs   = [];
   zeroIdxs  = [];
