@@ -78,7 +78,7 @@ ch = {};
 csvFileNames = {};
 
 
-while ( 1 ),
+while ( 1 )
     
     try
         handles = GUI_nACF_ICCF( handles );
@@ -89,14 +89,14 @@ while ( 1 ),
     %close all;
     
     
-    if ( 1 ),
+    if ( 1 )
         if ( handles.data.exitFlag == 1 ) break; end; % Exit from infinite loop of this main procedure
         
         
-        if ( handles.data.funcFlag == 1 ),
+        if ( handles.data.funcFlag == 1 )
             handles.data.nacfFlag = 1 ;
             handles.data.iccfFlag = 0 ;
-        elseif ( handles.data.funcFlag == 2 ),
+        elseif ( handles.data.funcFlag == 2 )
             handles.data.nacfFlag = 0 ;
             handles.data.iccfFlag = 1 ;
         else
@@ -119,7 +119,7 @@ while ( 1 ),
         pname = handles.data.pname;
         
         
-        if ( strcmp( handles.data.wavFileName, '' ) ),
+        if ( strcmp( handles.data.wavFileName, '' ) )
             clear chDefs;
             clear ch;
             clear csvFileNames;
@@ -179,8 +179,8 @@ while ( 1 ),
     firstTaSize = 0;
     
     
-    for i = handles.data.numberOfHeaders + 1 : length(ch),
-        for j = i+1 : length(ch),
+    for i = handles.data.numberOfHeaders + 1 : length(ch)
+        for j = i+1 : length(ch)
             
             
             % ACF:
@@ -195,8 +195,8 @@ while ( 1 ),
             if ( handles.data.nacfFlag && (i==2) && handles.data.nacfSingleFlag ) break; end;
             
             
-            if ( handles.data.nacfFlag == 1 ),
-                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
+            if ( handles.data.nacfFlag == 1 )
+                if ( ~strcmp( handles.data.wavFileName, '' ) ) % For single WAV file
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
@@ -211,7 +211,7 @@ while ( 1 ),
                 strTitleBase = strcat( '[', R_Label, ']' );
                 
             else
-                if ( ~strcmp( handles.data.wavFileName, '' ) ), % For single WAV file
+                if ( ~strcmp( handles.data.wavFileName, '' ) ) % For single WAV file
                     R_Label = 'Right';
                     L_Label = 'Left';
                     R_CsvFilename = handles.data.wavFileName;
@@ -233,10 +233,10 @@ while ( 1 ),
             zLabelStr = ( funcStr );
             
             
-            if ( ~strcmp( handles.data.wavFileName, '' ) ), % When single WAV file provided
+            if ( ~strcmp( handles.data.wavFileName, '' ) ) % When single WAV file provided
                 [ s0, fsS ] = audioread( R_CsvFilename );
                 
-                if ( size( s0, 2 ) == 2 ),   % STEREO
+                if ( size( s0, 2 ) == 2 )   % STEREO
                     x0 = s0( :, 2 );
                     y0 = s0( :, 1 );
                 else   % MONO
@@ -250,13 +250,13 @@ while ( 1 ),
             else % When setting CSV file provided
                 
                 [ xExtension ] = getFileExtension_( R_CsvFilename );
-                if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) ),
+                if ( strcmp( xExtension, 'csv' ) || strcmp( xExtension, 'CSV' ) )
                     [ x0cell ] = textread( R_CsvFilename, '%s', 'delimiter', ',' );
                     x0 = strread( cell2mat( x0cell' ) )';
                     fsX = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ x0, fsX ] = audioread( R_CsvFilename );
-                    if ( size( x0, 2) == 2 ),   % STEREO
+                    if ( size( x0, 2) == 2 )   % STEREO
                         x0 = x0( :, 2 );
                     else   % MONO
                         x0 = x0;
@@ -264,13 +264,13 @@ while ( 1 ),
                 end;
                 
                 [ yExtension ] = getFileExtension_( L_CsvFilename );
-                if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) ),
+                if ( strcmp( yExtension, 'csv' ) || strcmp( yExtension, 'CSV' ) )
                     [ y0cell ] = textread( L_CsvFilename, '%s', 'delimiter', ',' );
                     y0 = strread( cell2mat( y0cell' ) )';
                     fsY = castNum_( getVal_( handles.data.Fs ) );
                 else
                     [ y0, fsY ] = audioread( L_CsvFilename );
-                    if ( size( y0, 2) == 2 ),   % STEREO
+                    if ( size( y0, 2) == 2 )   % STEREO
                         y0 = y0( :, 1 );
                     else   % MONO
                         y0 = y0;
@@ -300,7 +300,7 @@ while ( 1 ),
             y = y0( timeS_Idx : timeE_Idx );
             
             
-            if ( handles.data.playSoundFlag ),
+            if ( handles.data.playSoundFlag )
                 sound( x, fs );
                 handles.data.playSoundFlag = 0;
                 %continue;
@@ -308,7 +308,7 @@ while ( 1 ),
             end;
             
             
-            if ( handles.data.debugFlag ),
+            if ( handles.data.debugFlag )
                 sound( x, fs );
             end;
             
@@ -329,10 +329,10 @@ while ( 1 ),
             x = vectorReshape_( x0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             y = vectorReshape_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
             
-            if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
+            if ( handles.data.debugStepFlag ) sound( x, fs ); pause( intervalTime ); end;
             
             
-            if (handles.data.windowFlag),
+            if (handles.data.windowFlag)
                 %w = HanningWindow_( length( x ) );
                 w = HammingWindow_( length( x ) );
                 %w = BlackmanWindow_( length( x ) );
@@ -343,14 +343,14 @@ while ( 1 ),
             end;
             
             
-            for (k = 1 : nStepIdx ),
+            for (k = 1 : nStepIdx )
                 saveImageName = strcat( funcStr, ',', labelStr, ',' , 'timeS,', num2str(timeS, '%04.3f'), ',', 'timeE,', num2str(timeE, '%04.3f'), ',', 'T,', num2str(timeT, '%04.3f'), ',', graphTitle );
                 
                 
                 [ results ] = eval( strcat( 'calc_', funcStr, '_(graphTitle, x, y, fs, bits, timeS0, timeE0, timeS, timeE, tauMinus, tauPlus, timeT, windowSize, windowSizeIdx, strTitleBase, xLabelStr, yLabelStr, saveImageName, dateTime, handles.data )' ) );
                 
                 
-                if ( k == 1 ),
+                if ( k == 1 )
                     firstRdSize = size( results.resultData );
                     firstTaSize = size( results.timeAxis );
                 end;
@@ -365,13 +365,13 @@ while ( 1 ),
                 maxTimesMat( k, : )   = vectorReshape_( results.maxTimes,  bufSize );
                 timeSMat( k, : )         = timeS;
                 timeEMat( k, : )         = timeE;
-                if (handles.data.iccfFlag && handles.data.phiFlag),
+                if (handles.data.iccfFlag && handles.data.phiFlag)
                     PHI_ll_0Mat( k, : ) = results.PHI_ll_0;
                     PHI_rr_0Mat( k, : ) = results.PHI_rr_0;
                     PHI_lrMat( k, : )   = vectorReshape_( results.PHI_lr,   firstRdSize( 1,2 ) );
                     phi_lrMat( k, : )   = vectorReshape_( results.phi_lr,   firstRdSize( 1,2 ) );
                 end;
-                if (handles.data.iccfFlag),
+                if (handles.data.iccfFlag)
                     ICCCMat( k, : )       = results.ICCC;
                     tauICCCMat( k, : )    = results.tauICCC;
                     WicccMat( k, : )      = results.Wiccc;
@@ -386,7 +386,7 @@ while ( 1 ),
                 timeE_Idx = convTime2Index_( timeE, x0, fs );
                 
                 
-                if ( length(x0) <= timeE_Idx ),
+                if ( length(x0) <= timeE_Idx )
                     timeE_Idx = length(x0) - 1;
                 end;
                 
@@ -395,10 +395,10 @@ while ( 1 ),
                 y = vectorReshape_( y0( timeS_Idx : timeE_Idx ), windowSizeIdx );
                 
                 
-                if ( handles.data.debugStepFlag ), sound( x, fs ); pause( intervalTime ); end;
+                if ( handles.data.debugStepFlag ) sound( x, fs ); pause( intervalTime ); end;
                 
                 
-                if ( handles.data.windowFlag ),
+                if ( handles.data.windowFlag )
                     x = x .* w';
                     y = y .* w';
                 end;
@@ -411,7 +411,7 @@ while ( 1 ),
             
             
             % Clipping Plane
-            if ( ischar( handles.data.clipVal( 1 ) ) ),
+            if ( ischar( handles.data.clipVal( 1 ) ) )
                 clipVal = str2double( handles.data.clipVal );
             else
                 clipVal = handles.data.clipVal;
@@ -425,14 +425,14 @@ while ( 1 ),
             
             if ( Fnorm > 1.0 ) Fnorm = 0.01; end;
             
-            if ( 0 ),
+            if ( 0 )
                 df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',Fnorm);
                 grpdelay(df,2048,fs);
                 D = mean(grpdelay(df));
             end;
             
             
-            if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
+            if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag )
                 subResultDataMat_R = resultDataMat( : , floor ( 1 + size( resultDataMat, 2 ) / 2 ) : size( resultDataMat, 2 ) );
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale );
@@ -453,7 +453,7 @@ while ( 1 ),
             end;
             
             
-            if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag  ),
+            if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag  )
                 subResultDataMat_R = resultDataMat;
                 
                 [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipVal, subResultDataMat_R, x0, fs, handles.data.xUnitScale  );
@@ -464,13 +464,13 @@ while ( 1 ),
             end;
             
             
-            if (handles.data.plot3dFlag),
+            if (handles.data.plot3dFlag)
                 figNumber = 1;
                 %figNumber = 2;
                 figure( figNumber );
                 XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','interp','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
-                %XYZ = surf( timeAxisMat( 1,: ), timeVec, resultDataMat, 'FaceColor','flat','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
-                %XYZ = mesh( timeAxisMat( 1,: ), timeVec, resultDataMat );
+                %XYZ = surf( timeAxisMat( 1,: ) timeVec, resultDataMat, 'FaceColor','flat','FaceLighting','phong', 'LineWidth', 0.01, 'EdgeAlpha', 0.01 );
+                %XYZ = mesh( timeAxisMat( 1,: ) timeVec, resultDataMat );
                 colormap 'jet';
                 %colormap( autumn(5) )
                 
@@ -480,19 +480,19 @@ while ( 1 ),
                 lw = 3;
                 ms = 4;
                 
-                if ( handles.data.iccfFlag ),
+                if ( handles.data.iccfFlag )
                     lc = 'ow';
                     
                     plot3( tauICCCMat, timeVec, ICCCMat, lc, 'LineWidth', lw, 'MarkerSize', ms );
                     
-                    if ( handles.data.calcTauE_VecFlag ),
-                        if ( 1 ),
+                    if ( handles.data.calcTauE_VecFlag )
+                        if ( 1 )
                             lc = '-ow';
                             plot3( vectorReshape_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                             plot3( vectorReshape_( -tauE_Vec_L, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
-                        if ( 0 ),
+                        if ( 0 )
                             lc = '-or';
                             lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
@@ -502,7 +502,7 @@ while ( 1 ),
                             plot3( -env_tauE_Vec_L, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
-                        if ( 0 ),
+                        if ( 0 )
                             lc = '-oy';
                             plot3( grad_env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                             
@@ -513,20 +513,20 @@ while ( 1 ),
                     
                 end;
                 
-                if ( handles.data.nacfFlag ),
-                    if ( handles.data.calcTauE_VecFlag ),
-                        if ( 1 ),
+                if ( handles.data.nacfFlag )
+                    if ( handles.data.calcTauE_VecFlag )
+                        if ( 1 )
                             lc = '-ow';
                             plot3( vectorReshape_( tauE_Vec_R, length(timeVec) ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
-                        if ( 0 ),
+                        if ( 0 )
                             lc = '-or';
                             lc = '-ow';
                             plot3( env_tauE_Vec_R, timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
                         
-                        if ( 0 ),
+                        if ( 0 )
                             lc = '-oy';
                             plot3( gradient( env_tauE_Vec_R ), timeVec, a, lc, 'LineWidth', lw, 'MarkerSize', ms );
                         end;
@@ -539,7 +539,7 @@ while ( 1 ),
                 zlabel( zLabelStr );
                 
                 
-                strTitle = strcat( strTitleBase, ' (' ,  num2str(timeS0, '%04.3f'), '-', num2str(timeE0, '%04.3f'), '), [T : ', num2str(timeT, '%04.3f'), ' ], ', graphTitle);
+                strTitle = strcat( strTitleBase, ' (' ,  num2str(timeS0, '%04.3f'), '-', num2str(timeE0, '%04.3f'), ') [T : ', num2str(timeT, '%04.3f'), ' ], ', graphTitle);
                 title( strTitle );
                 
                 hold off;
@@ -551,7 +551,7 @@ while ( 1 ),
                 fname = strcat( saveImageName, '.fig');
                 pnameImg = strcat( '_Output Images', '/', graphTitle, '_', funcStr , '_', dateTime, '_', 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(tauPlus, '%04.3f') );
                 
-                if ( exist( pnameImg, 'dir' ) == 0 ),
+                if ( exist( pnameImg, 'dir' ) == 0 )
                     mkdir( pnameImg );
                 end;
                 
@@ -559,7 +559,7 @@ while ( 1 ),
                 saveas( figNumber, strcat( outputGraphFileName ) );
                 
                 
-                if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag ),
+                if ( handles.data.nacfFlag && handles.data.calcTauE_VecFlag )
                     figNumber = figNumber + 1;
                     [ outputGraphFileName ] = plot2D_( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
@@ -570,7 +570,7 @@ while ( 1 ),
                     [ outputGraphFileName ] = plot2D_( timeVec, grad_env_tauE_Vec_R, 'time [s]', 'grad env tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                 end;
                 
-                if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag ),
+                if ( handles.data.iccfFlag && handles.data.calcTauE_VecFlag )
                     figNumber = figNumber + 1;
                     [ outputGraphFileName ] = plot2D_( timeVec, tauE_Vec_R, 'time [s]', 'tauE Vec R [ms]', figNumber, pnameImg, saveImageName);
                     
@@ -593,7 +593,7 @@ while ( 1 ),
             end;
             
             
-            if ( handles.data.dumpFlag ),
+            if ( handles.data.dumpFlag )
                 dump_data_( resultDataMat, 'resultDataMat', funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( timeAxisMat,   'timeAxis',      funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( maxValuesMat,  'maxValuesMat',  funcStr, saveImageName, graphTitle, dateTime );
@@ -603,14 +603,14 @@ while ( 1 ),
                 dump_data_( timeSMat,      'timeSMat',      funcStr, saveImageName, graphTitle, dateTime );
                 dump_data_( timeEMat,      'timeEMat',      funcStr, saveImageName, graphTitle, dateTime );
                 
-                if ( handles.data.calcTauE_VecFlag ),
+                if ( handles.data.calcTauE_VecFlag )
                     dump_data_( tauE_Vec_R,          'tauE_Vec_R',          funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( env_tauE_Vec_R,      'env_tauE_Vec_R',      funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( grad_env_tauE_Vec_R, 'grad_env_tauE_Vec_R', funcStr, saveImageName, graphTitle, dateTime );
                 end;
                 
-                if ( handles.data.iccfFlag ),
-                    if (handles.data.phiFlag),
+                if ( handles.data.iccfFlag )
+                    if (handles.data.phiFlag)
                         dump_data_( PHI_ll_0Mat, 'PHI_ll_0Mat', funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( PHI_rr_0Mat, 'PHI_rr_0Mat', funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( PHI_lrMat,   'PHI_lrMat',   funcStr, saveImageName, graphTitle, dateTime );
@@ -620,7 +620,7 @@ while ( 1 ),
                     dump_data_( tauICCCMat, 'tauICCCMat', funcStr, saveImageName, graphTitle, dateTime );
                     dump_data_( WicccMat,   'WicccMat',   funcStr, saveImageName, graphTitle, dateTime );
                     
-                    if ( handles.data.calcTauE_VecFlag ),
+                    if ( handles.data.calcTauE_VecFlag )
                         dump_data_( tauE_Vec_L,          'tauE_Vec_L',          funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( env_tauE_Vec_L,      'env_tauE_Vec_L',      funcStr, saveImageName, graphTitle, dateTime );
                         dump_data_( grad_env_tauE_Vec_L, 'grad_env_tauE_Vec_L', funcStr, saveImageName, graphTitle, dateTime );
