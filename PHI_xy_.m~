@@ -6,7 +6,7 @@ Ny = length(y);
 if (Nx ~= Ny)
     P = NaN;
     return;
-end
+end;
 
 
 N2 = 2 * Nx - 1;
@@ -31,11 +31,11 @@ detXY = normX * normY;
 
 for m = -Nx+1 : -1
     P(Nx+m) = rowCC_(y, x, -m, Nx);
-end
+end;
 
 for m = 0 : Nx-1
     P(Nx+m) = rowCC_(x, y, m, Nx);
-end
+end;
 
 P = P / detXY;
 

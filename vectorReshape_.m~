@@ -1,0 +1,11 @@
+function [ resultVec ] = vectorReshape_( inputVec, bufSize )
+
+resultVec = zeros(1, bufSize);
+
+N_buf = ceil(bufSize / 2);
+Len = length(inputVec)
+N_input
+
+for i = 1 : Len
+  resultVec( i ) = inputVec( i );
+end
