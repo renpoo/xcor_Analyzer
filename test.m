@@ -13,13 +13,15 @@ tau = 0.01;
 %tau = 0.1;
 %tau = 1.0;
 
+unitScale = 1000;
+
 
 wavFilename = 'Nippon.m4a';
 
 
-LRflag = 'L';
+%LRflag = 'L';
 %LRflag = 'R';
-%LRflag = 'C';
+LRflag = 'C';
 
 
 [ temp, dateTime ] = system('date +%y%m%d%H%M%S');
@@ -67,13 +69,14 @@ timeAxis = ( timeS0_Idx : tau_Idx : timeE0_Idx ) / fs;
 
 
 if (LRflag == 'L')
-    %tauAxis  = ( -tau_Idx : 0 ) / fs;
-    tauAxis  = ( 0 : +tau_Idx ) / fs;
+    tauAxis  = ( -tau_Idx : 0 );
+    %tauAxis  = ( 0 : +tau_Idx );
 elseif (LRflag == 'R')
-    tauAxis  = ( 0 : +tau_Idx ) / fs;
+    tauAxis  = ( 0 : +tau_Idx );
 else
-    tauAxis  = ( -tau_Idx : tau_Idx ) / fs;
+    tauAxis  = ( -tau_Idx : tau_Idx );
 end
+tauAxis = tauAxis / fs * unitScale;
 
 
 lenTimeAxis = length( timeAxis );
@@ -131,6 +134,11 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         maxValues = maxValues( 2 : length( maxValues ) );
         maxIdxs = maxIdxs( 2 : length( maxIdxs ) );
         maxTimes = convIndex2Time_( maxIdxs, fs );
+        if (LRflag == 'L')
+            maxTimes = maxTimes - tau;
+        end
+        maxTimes = maxTimes * unitScale;
+        
         
         ICCC = NaN;
         tauICCC = NaN;
@@ -214,10 +222,6 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     maxValuesMat( k, : ) = vectorReshape_( maxValues, bufSize );
     maxIdxsMat(   k, : ) = vectorReshape_( maxIdxs,   bufSize );
     maxTimesMat(  k, : ) = vectorReshape_( maxTimes,  bufSize );
-%     zeroIdxsMat(  k, : ) = { zeroIdxs };
-%     maxValuesMat( k, : ) = { maxValues };
-%     maxIdxsMat(   k, : ) = { maxIdxs };
-%     maxTimesMat(  k, : ) = { maxTimes };
     
     timeS_IdxMat( k, : ) = timeS_Idx_now;
     timeE_IdxMat( k, : ) = timeE_Idx_now;
@@ -270,8 +274,8 @@ if ( LRflag == 'C' )
 end
 
 
-xLabelStr = 'tau';
-yLabelStr = 'time';
+xLabelStr = 'tau [ms]';
+yLabelStr = 'time [s]';
 zLabelStr = funcStr;
 
 if ( strcmp( funcStr, 'ACF' ) )
@@ -289,7 +293,8 @@ hold off;
 
 
 
-
-for i = 1 : k
-    plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
+if ( 0 )
+    for i = 1 : k
+        plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
+    end
 end

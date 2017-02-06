@@ -44,7 +44,7 @@ end
 graphTitle = strcat( '(', graphTitle, '),', yLabelStr , ',' );
 
 
-title( strcat( graphTitle, 't[', num2str(t, '%04.3f'), ']' ) );
+title( strcat( graphTitle, 't[', num2str(t, '%04.2f'), ' - ', num2str(t + tau, '%04.2f'), ']' ) );
 
 
 hold off;
@@ -53,14 +53,17 @@ hold off;
 
 
 
-pnameImg = strcat( '_Output Images', '/', graphTitle, dateTime, ',', 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 'T,', num2str(tau, '%04.3f') );
+pnameImg = strcat( '_Output Images', '/', graphTitle, dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'T,', num2str(tau, '%04.2f') );
 if ( exist( pnameImg, 'dir' ) == 0 )
     mkdir( pnameImg );
 end
 
-saveImageName = strcat( graphTitle, 'timeS0,', num2str(timeS0, '%04.3f'), ',', 'timeE0,', num2str(timeE0, '%04.3f'), ',', 't,', num2str(t, '%04.3f') );
+saveImageName = strcat( graphTitle, 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 't,', num2str(t, '%04.2f') );
 
 fname = strcat( saveImageName, '.jpg');
 outputDataFileName = strcat( pnameImg, '/', fname );
 saveas( 1, strcat( outputDataFileName ) );
+
+
+end
 
