@@ -1,13 +1,16 @@
-function [ resultVec ] = vectorReshape_( inputVec, bufSize )
+function [ resultVector ] = vectorReshape_( inputVector, bufSize )
 
-resultVec = zeros(1, bufSize);
+resultVector = zeros(bufSize, 1);
+len = length( inputVector );
 
-N_half_res = ceil(bufSize / 2);
-Len = length(inputVec);
-N_half_inp = ceil(Len / 2);
+if ( len == 0 )
+    return;
+end
 
-N_base = N_half_res - N_half_inp;
 
-for i = 1 : Len
-  resultVec( i + N_base ) = inputVec( i );
+n = min( len, bufSize );
+
+
+for i = 1 : n
+  resultVector( i ) = inputVector( i );
 end

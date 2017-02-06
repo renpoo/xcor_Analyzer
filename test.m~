@@ -2,8 +2,8 @@ clear;
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
-timeS0 = 1.0;
-timeE0 = 2.0;
+timeS0 = 0.0;
+timeE0 = 1.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
@@ -45,8 +45,7 @@ y0 = s( :, 1 );  % R channel
 duration = length(x0) / fs;
 
 timeS0_Idx = convTime2Index_( timeS0, fs );
-timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
-%timeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
+timeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
 tau_Idx   = convTime2Index_( tau, fs );
 
 xCut = x0( timeS0_Idx : timeE0_Idx )';
@@ -67,8 +66,7 @@ timeAxis = ( timeS0_Idx : tau_Idx : timeE0_Idx ) / fs;
 
 
 if (LRflag == 'L')
-    %tauAxis  = ( -tau_Idx : 0 ) / fs;
-    tauAxis  = ( 0 : +tau_Idx ) / fs;
+    tauAxis  = ( -tau_Idx : 0 ) / fs;
 elseif (LRflag == 'R')
     tauAxis  = ( 0 : +tau_Idx ) / fs;
 else
@@ -127,23 +125,13 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     
     if (LRflag == 'L' || LRflag == 'R' )
-        [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr, 0, 1 );
-        maxValues = maxValues( 2 : length( maxValues ) );
-        maxIdxs = maxIdxs( 2 : length( maxIdxs ) );
-        maxTimes = convIndex2Time_( maxIdxs, fs );
-        
-        ICCC = NaN;
-        tauICCC = NaN;
-        Wiccc = NaN;        
-        tauAlpha = NaN;
-        tauBeta = NaN;
+        [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr_subtracted, 0, 1 );
+        maxValues = maxValues( 2 : length(maxValues) );
+        maxIdxs = maxIdxs( 2 : length(maxIdxs) );
+        maxTimes = convIndex2Time_( maxIdxs, x, fs ) * tau ;
         
         params = zeros( length( maxValues ), 7 );
         for i = 1 : length( maxValues )
-            if ( i > 5 )
-                continue;
-            end
-
             params( i, 1 ) = maxTimes( i );
             params( i, 2 ) = maxTimes( i );
             params( i, 3 ) = 0;
@@ -151,11 +139,15 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
             params( i, 5 ) = 1;
             params( i, 6 ) = 0;
             params( i, 7 ) = 0;
+            
+            if ( i > 3 ) continue; end;
+            %             strTmp =  [ ', [max', num2str( i ), ']= ', num2str( maxValues( i ), '%02.3f' ),  ' (', num2str( maxTimes( i ), '%02.3f' )  ' )' ];
+            %             strTitle = strcat( strTitle, strTmp );
         end
     else
-        [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr_subtracted, 1, 0 );
-        maxIdxs = maxIdxs( 1 : length( maxIdxs ) );
-        maxTimes = convIndex2Time_( maxIdxs, fs );
+        [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_(phi_lr_subtracted, 1, 0 );
+        maxIdxs = maxIdxs( 1 : length(maxIdxs) );
+        maxTimes = convIndex2Time_( maxIdxs, fs ) * tau ;
         
         tauAlphaIdx = zeroIdxs(1);
         tauBetaIdx  = zeroIdxs(2);
@@ -209,15 +201,10 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     PHI_rr_0Mat(  k, : ) = init_PHI_( ySub );
     PHI_lrMat(    k, : ) = PHI_lr;
     
-    bufSize = 10;
-    zeroIdxsMat(  k, : ) = vectorReshape_( zeroIdxs,  bufSize );
-    maxValuesMat( k, : ) = vectorReshape_( maxValues, bufSize );
-    maxIdxsMat(   k, : ) = vectorReshape_( maxIdxs,   bufSize );
-    maxTimesMat(  k, : ) = vectorReshape_( maxTimes,  bufSize );
-%     zeroIdxsMat(  k, : ) = { zeroIdxs };
-%     maxValuesMat( k, : ) = { maxValues };
-%     maxIdxsMat(   k, : ) = { maxIdxs };
-%     maxTimesMat(  k, : ) = { maxTimes };
+    maxValuesMat( k, : ) = maxValues;
+    maxIdxsMat(   k, : ) = maxIdxs;
+    zeroIdxsMat(  k, : ) = zeroIdxs;
+    maxTimesMat(  k, : ) = maxTimes;
     
     timeS_IdxMat( k, : ) = timeS_Idx_now;
     timeE_IdxMat( k, : ) = timeE_Idx_now;
@@ -229,7 +216,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     tauAlphaMat(  k, : ) = tauAlpha;
     tauBetaMat(   k, : ) = tauBeta;
     
-    paramsMat(    k, : ) = { params };
+    paramsMat(    k, : ) = {params};
 end
 
 

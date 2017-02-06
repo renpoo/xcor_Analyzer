@@ -28,8 +28,11 @@ detXY = normX * normY;
 
 if ( LRflag == 'L' )
     P = zeros(1, Nx);
-    for m = -Nx+1 : 0
-        P(Nx+m) = rowCC_(y, x, -m, Nx);
+%     for m = -Nx+1 : 0
+%         P(Nx+m) = rowCC_(y, x, -m, Nx);
+%     end
+    for m = 0 : Ny-1
+        P(m+1) = rowCC_(x, y, m, Ny);
     end
 elseif ( LRflag == 'R' )
     P = zeros(1, Ny);
