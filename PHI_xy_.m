@@ -2,29 +2,7 @@ function P = PHI_xy_( x, y, LRflag )
 
 Nx = length(x);
 Ny = length(y);
-%
-% if (Nx ~= Ny)
-%     P = NaN;
-%     return;
-% end
 
-
-%{
-normX = sqrt(x * x');
-if (normX == 0.0)
-    P = NaN(1, N2, 'double');
-    return;
-end
-
-normY = sqrt(y * y');
-if (normY == 0.0)
-    P = NaN(1, N2, 'double');
-    return;
-end
-
-
-detXY = normX * normY;
-%}
 
 if ( LRflag == 'L' )
     P = zeros(1, Nx);
@@ -49,19 +27,6 @@ else
         P(Nx+m) = rowCC_(x, y, m, Nx);
     end
 end
-
-
-% P = zeros(1, 2 * Nx - 1);
-% 
-% for m = -Nx+1 : -1
-%     P(Nx+m) = rowCC_(y, x, -m, Nx);
-% end
-% 
-% for m = 0 : Nx-1
-%     P(Nx+m) = rowCC_(x, y, m, Nx);
-% end
-
-%P = P / detXY;
 
 
 end
