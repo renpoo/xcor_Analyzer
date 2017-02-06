@@ -3,7 +3,7 @@
 %%%% Laplace_Analyzer() : author : TAISO, Renpoo (170205)
 %%%%
 
-function results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
+%function result = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
@@ -11,7 +11,6 @@ function results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale
 %%%% Temporary Starter
 %%%%
 
-%{
 clear;
 
 timeS0 = 1.0;
@@ -26,7 +25,7 @@ wavFilename = 'Nippon.m4a';
 %LRflag = 'L';
 %LRflag = 'R';
 LRflag = 'C';
-%}
+
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
 %%%%
@@ -34,24 +33,36 @@ LRflag = 'C';
 %%%%
 
 results = struct(      ...
-    'PHI_ll_0Mat',   [],  ...
-    'PHI_rr_0Mat',   [],  ...
+    'PHI_ll_0Mat',    0,  ...
+    'PHI_rr_0Mat',    0,  ...
     'PHI_lrMat',     [],  ...
     'phi_lrMat',     [],  ...
-    'timeAxis',      [],  ...
-    'tauAxis',       [],  ...
-    'maxValuesMat',  [],  ...
-    'maxIdxsMat',    [],  ...
-    'maxTimesMat',   [],  ...
-    'zeroIdxsMat',   [],  ...
-    'ICCCMat',        0,  ...
-    'tauICCCMat',     0,  ...
-    'WicccMat',       0,  ...
-    'tauAlphaMat',   [],  ...
-    'tauBetaMat',    [],  ...
-    'dateTime',       ''  ...
+    'timeAxisMat',   [],  ...
+    'tauAxisMat',    [],  ...
+    'maxValues',  [],  ...
+    'maxIdxs',    [],  ...
+    'maxTimes',   [],  ...
+    'zeroIdxs',   [],  ...
+    'ICCC',        0,  ...
+    'tauICCC',     0,  ...
+    'Wiccc',       0,  ...
+    'dateTime',    ''  ...
     );
 
+results.PHI_ll_0Mat  = PHI_ll_0Mat;
+results.PHI_rr_0Mat  = PHI_rr_0Mat;
+results.PHI_lrMat    = PHI_lrMat;
+results.phi_lrMat    = phi_lrMat;
+results.tauAxisMat   = tauAxisMat;
+results.timeAxisMat  = timeAxisMat;
+results.maxValuesMat = maxValuesMat;
+results.maxIdxsMat   = maxIdxsMat;
+results.maxTimesMat  = maxTimesMat;
+results.zeroIdxsMat  = zeroIdxsMat;
+results.ICCCMat      = ICCCMat;
+results.tauICCCMat   = tauICCCMat;
+results.WicccMat     = WicccMat;
+results.dateTime     = dateTime;
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
 %%%%
@@ -79,7 +90,7 @@ x0 = s( :, 2 );  % L channel
 y0 = s( :, 1 );  % R channel
 
 
-%duration = length(x0) / fs;
+duration = length(x0) / fs;
 
 timeS0_Idx = convTime2Index_( timeS0, fs );
 timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
@@ -87,17 +98,15 @@ timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
 tau_Idx   = convTime2Index_( tau, fs );
 
 xCut = x0( timeS0_Idx : timeE0_Idx )';
-%yCut = y0( timeS0_Idx : timeE0_Idx )';
-
+yCut = y0( timeS0_Idx : timeE0_Idx )';
 
 sound( xCut, fs );
 
+timeS_Idx_now = timeS0_Idx;
+timeE_Idx_now = timeS_Idx_now + tau_Idx;
 
-%timeS_Idx_now = timeS0_Idx;
-%timeE_Idx_now = timeS_Idx_now + tau_Idx;
-
-%xSub = x0( timeS_Idx_now : timeE_Idx_now )';
-%ySub = y0( timeS_Idx_now : timeE_Idx_now )';
+xSub = x0( timeS_Idx_now : timeE_Idx_now )';
+ySub = y0( timeS_Idx_now : timeE_Idx_now )';
 
 
 k = 0;
@@ -140,6 +149,8 @@ WicccMat     = zeros( lenTimeAxis, 1 );
 
 tauAlphaMat  = zeros( lenTimeAxis, 1 );
 tauBetaMat   = zeros( lenTimeAxis, 1 );
+
+paramsMat    = zeros( lenTimeAxis, 1 );
 
 
 %detXY = initial_PHI_xy_( xSub, ySub );
@@ -203,7 +214,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         
         params = zeros( length( maxValues ), 7 );
         for i = 1 : length( maxValues )
-            if ( i > 4 )
+            if ( i > 5 )
                 continue;
             end
 
@@ -286,7 +297,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     tauAlphaMat(  k, 1 ) = tauAlpha;
     tauBetaMat(   k, 1 ) = tauBeta;
     
-    paramsMat(    k, : ) = { params };
+    paramsMat(    k, 1 ) = { params };
 end
 
 
@@ -308,8 +319,6 @@ results.zeroIdxsMat  = zeroIdxsMat;
 results.ICCCMat      = ICCCMat;
 results.tauICCCMat   = tauICCCMat;
 results.WicccMat     = WicccMat;
-results.tauAlphaMat  = tauAlphaMat;
-results.tauBetaMat   = tauBetaMat;
 results.dateTime     = dateTime;
 
 
@@ -398,4 +407,4 @@ end
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
 
-end
+%end
