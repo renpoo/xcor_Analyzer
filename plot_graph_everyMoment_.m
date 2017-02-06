@@ -53,12 +53,12 @@ hold off;
 
 
 
-pnameImg = strcat( '_Output Images', '/', graphTitle, dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'T,', num2str(tau, '%04.2f') );
+pnameImg = strcat( '_Output Images', '/', graphTitle, dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
 if ( exist( pnameImg, 'dir' ) == 0 )
     mkdir( pnameImg );
 end
 
-saveImageName = strcat( graphTitle, 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 't,', num2str(t, '%04.2f') );
+saveImageName = strcat( graphTitle, 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 't,', num2str(t, '%04.3f') );
 
 fname = strcat( saveImageName, '.jpg');
 outputDataFileName = strcat( pnameImg, '/', fname );

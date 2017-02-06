@@ -2,11 +2,11 @@ clear;
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
-timeS0 = 1.0;
-timeE0 = 2.0;
+timeS0 = 0.0;
+%timeE0 = 2.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
-%timeE0 = 30.0;
+timeE0 = 30.0;
 
 %tau = 0.001;
 tau = 0.01;
@@ -24,10 +24,13 @@ wavFilename = 'Nippon.m4a';
 LRflag = 'C';
 
 
-[ temp, dateTime ] = system('date +%y%m%d%H%M%S');
-dateTime = dateTime( 1 : length( dateTime ) - 1 );
+result = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag );
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
+
+%{
+[ temp, dateTime ] = system('date +%y%m%d%H%M%S');
+dateTime = dateTime( 1 : length( dateTime ) - 1 );
 
 
 if (LRflag == 'C')
@@ -125,10 +128,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     phi_lr_subtracted = phi_lr - 0.9 * ICCC;
     
-    
-    
-    
-    
+        
     if (LRflag == 'L' || LRflag == 'R' )
         [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr, 0, 1 );
         maxValues = maxValues( 2 : length( maxValues ) );
@@ -269,8 +269,6 @@ if ( LRflag == 'C' )
     ms = 3;
     
     plot3( tauICCCMat', timeAxis, ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
-    
-    
 end
 
 
@@ -286,10 +284,27 @@ xlabel( xLabelStr );
 ylabel( yLabelStr );
 zlabel( zLabelStr );
 
-strTitle = strcat( zLabelStr, ' "', wavFilename, '" ' );
+strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0, '%04.2f'), ' - ', num2str(timeE0, '%04.2f'), ']' );
+
 title( strTitle );
 
+
+
+
 hold off;
+
+
+pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+if ( exist( pnameImg, 'dir' ) == 0 )
+    mkdir( pnameImg );
+end
+
+saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+
+fname = strcat( saveImageName, '.fig');
+outputDataFileName = strcat( pnameImg, '/', fname );
+saveas( 1, strcat( outputDataFileName ) );
+
 
 
 
@@ -298,3 +313,4 @@ if ( 0 )
         plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
     end
 end
+%}

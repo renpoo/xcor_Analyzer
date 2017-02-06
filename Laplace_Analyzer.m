@@ -1,7 +1,8 @@
-clear;
+function result = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
+%{
 timeS0 = 0.0;
 %timeE0 = 2.0;
 %timeE0 = 10.0;
@@ -22,7 +23,7 @@ wavFilename = 'Nippon.m4a';
 %LRflag = 'L';
 %LRflag = 'R';
 LRflag = 'C';
-
+%}
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
@@ -309,4 +310,6 @@ if ( 0 )
     for i = 1 : k
         plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
     end
+end
+
 end
