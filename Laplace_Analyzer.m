@@ -1,21 +1,21 @@
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% Laplace_Analyzer() : author : TAISO, Renpoo (170205)
 %%%%
 
-function results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
+%function results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
 
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% Temporary Starter
 %%%%
 
-%{
 clear;
 
-timeS0 = 1.0;
-timeE0 = 2.0;
+
+timeS0 = 0.0;
+timeE0 = 3.0;
 
 tau = 0.01;
 
@@ -24,11 +24,23 @@ unitScale = 1000;
 wavFilename = 'Nippon.m4a';
 
 %LRflag = 'L';
-%LRflag = 'R';
-LRflag = 'C';
-%}
+LRflag = 'R';
+%LRflag = 'C';
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+
+clipVal = 0.2;
+
+eps = 1.0 * 10^(-2);
+%eps = 2.0 * 10^(-3);
+%eps = 1.0 * 10^(-3);
+%eps = 1.0 * 10^(-4);
+%eps = 1.0 * 10^(-5);
+%eps = 6.0 * 10^(-6);
+%eps = 5.0 * 10^(-6);
+%eps = 2.0 * 10^(-6);
+
+
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% Define the results structure
 %%%%
@@ -44,16 +56,16 @@ results = struct(      ...
     'maxIdxsMat',    [],  ...
     'maxTimesMat',   [],  ...
     'zeroIdxsMat',   [],  ...
-    'ICCCMat',        0,  ...
-    'tauICCCMat',     0,  ...
-    'WicccMat',       0,  ...
+    'ICCCMat',       [],  ...
+    'tauICCCMat',    [],  ...
+    'WicccMat',      [],  ...
     'tauAlphaMat',   [],  ...
     'tauBetaMat',    [],  ...
     'dateTime',       ''  ...
     );
 
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% MAIN Procedure
 %%%%
@@ -183,7 +195,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     phi_lr_subtracted = phi_lr - 0.9 * ICCC;
     
-        
+    
     if (LRflag == 'L' || LRflag == 'R' )
         [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr, 0, 1 );
         maxValues = maxValues( 2 : length( maxValues ) );
@@ -197,7 +209,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         
         ICCC = NaN;
         tauICCC = NaN;
-        Wiccc = NaN;        
+        Wiccc = NaN;
         tauAlpha = NaN;
         tauBeta = NaN;
         
@@ -206,7 +218,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
             if ( i > 4 )
                 continue;
             end
-
+            
             params( i, 1 ) = maxTimes( i );
             params( i, 2 ) = maxTimes( i );
             params( i, 3 ) = 0;
@@ -290,9 +302,34 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
 end
 
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
-%%%% Plot Each time dependent ACF or ICCF surface for entire resutls
+%%%% Calculate The Meta Information from the obtained resutls
+%%%%
+
+
+if ( LRflag == 'R' || LRflag == 'C' )
+    rightHalf_phi_lrMat = phi_lrMat( : , floor ( 1 + size( phi_lrMat, 2 ) / 2 ) : size( phi_lrMat, 2 ) );
+    
+    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
+    [ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
+    grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
+end
+
+if ( LRflag == 'L' || LRflag == 'C' )
+    leftHalf_phi_lrMat = phi_lrMat( : , 1 : floor ( 1 + size( phi_lrMat, 2 ) / 2 ) );
+    reverseIdx = ( size( leftHalf_phi_lrMat, 2 ) : -1 : 1 );
+    leftHalf_phi_lrMat = leftHalf_phi_lrMat( : , reverseIdx );
+    
+    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
+    [ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
+    grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
+end;
+
+
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
+%%%%
+%%%% For returning the results
 %%%%
 
 results.PHI_ll_0Mat  = PHI_ll_0Mat;
@@ -313,9 +350,9 @@ results.tauBetaMat   = tauBetaMat;
 results.dateTime     = dateTime;
 
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
-%%%% Plot Each time dependent ACF or ICCF surface for entire resutls
+%%%% Plot Each time dependent ACF or ICCF surface for entire results
 %%%%
 
 figure;
@@ -344,11 +381,12 @@ grid on;
 hold on;
 
 
+lc = 'ow';
+lw = 2;
+ms = 3;
+
+
 if ( LRflag == 'C' )
-    lc = 'ow';
-    lw = 2;
-    ms = 3;
-    
     plot3( tauICCCMat', timeAxis, ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
@@ -369,7 +407,53 @@ strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0,
 
 title( strTitle );
 
+
+clipValVec = ones( 1, lenTimeAxis ) * clipVal;
+
+if ( 0 )
+    lc = '-ow';
+    
+    if ( LRflag == 'R' || LRflag == 'C' )
+        plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRflag == 'L' || LRflag == 'C' )
+        plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
+
+if ( 1 )
+    if ( LRflag == 'R' || LRflag == 'C' )
+        lc = '-or';
+        lc = '-ow';
+        plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRflag == 'L' || LRflag == 'C' )
+        lc = '-ob';
+        lc = '-ow';
+        plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
+
+if ( 0 )
+    if ( LRflag == 'R' || LRflag == 'C' )
+        lc = '-oy';
+        lc = '-ow';
+        plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRflag == 'L' || LRflag == 'C' )
+        lc = '-og';
+        lc = '-ow';
+        plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
+
+
 hold off;
+
+
 
 
 pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
@@ -384,7 +468,7 @@ outputDataFileName = strcat( pnameImg, '/', fname );
 saveas( 1, strcat( outputDataFileName ) );
 
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% Plot Each ACF or ICCF graph at every moments
 %%%%
@@ -396,6 +480,6 @@ if ( 0 )
     end
 end
 
-%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% 
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 
-end
+%end
