@@ -26,21 +26,25 @@ unitScale = 1000;
 wavFilename = 'Nippon.m4a';
 
 
-LRCflag = 'L';
-%LRCflag = 'R';
+%LRCflag = 'L';
+LRCflag = 'R';
 %LRCflag = 'C';
 
+
 LPFflag = 1;
+
 
 clipVal = 0.2;
 
 
 %eps = 1.0 * 10^-4;
+%eps = 5.0 * 10^-4;
 %eps = 1.0 * 10^-3;
 %eps = 1.0 * 10^-2;
-eps = 5.0 * 10^-2;
+%eps = 5.0 * 10^-2;
 %eps = 1.0 * 10^-1;
 
+eps = tau;
 
 [ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
 
@@ -85,19 +89,22 @@ results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale
 %%%%
 
 if ( LPFflag )
-    %cutFreq = 2; % Hz
-    cutFreq = 3; % Hz
-    %cutFreq = 10; % Hz
-    %cutFreq = 50; % Hz
-    %cutFreq = 100; % Hz
-    %cutFreq = 200; % Hz
-    %cutFreq = 250; % Hz
-    %cutFreq = 500; % Hz
-    %cutFreq = 1000; % Hz
-    %cutFreq = 5000; % Hz
-    %cutFreq = 10000; % Hz
-
-    fNorm = cutFreq / ( fs / 2 );
+    %cutOffFreq = 1; % Hz
+    %cutOffFreq = 2; % Hz
+    %cutOffFreq = 3; % Hz
+    %cutOffFreq = 10; % Hz
+    %cutOffFreq = 50; % Hz
+    %cutOffFreq = 100; % Hz
+    %cutOffFreq = 200; % Hz
+    %cutOffFreq = 250; % Hz
+    %cutOffFreq = 500; % Hz
+    %cutOffFreq = 1000; % Hz
+    %cutOffFreq = 5000; % Hz
+    %cutOffFreq = 10000; % Hz
+    
+    cutOffFreq = 1.0 / tau; % Hz
+    
+    fNorm = cutOffFreq / ( fs / 2 );
     df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',fNorm);
     %grpdelay( df, 2048, fs );
     D = mean( grpdelay( df ) );
@@ -160,10 +167,18 @@ ms = 3;
 lc = '-ow';
 
 if ( LRCflag == 'R' || LRCflag == 'C' )
+    lc = '-w';
+    plot3(  tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+
+    lc = '-r';
     plot3(  env_tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
 if ( LRCflag == 'L' || LRCflag == 'C' )
+    lc = '-w';
+    plot3( -tauE_Vec_L * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+
+    lc = '-b';
     plot3( -env_tauE_Vec_L * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 

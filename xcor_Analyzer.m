@@ -394,23 +394,23 @@ end
 %%%%
 
 
-if ( LRCflag == 'R' || LRCflag == 'C' )
-    rightHalf_phi_lrMat = phi_lrMat( : , floor ( 1 + size( phi_lrMat, 2 ) / 2 ) : size( phi_lrMat, 2 ) );
-    
-    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
-    [ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
-    grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
-end
-
-if ( LRCflag == 'L' || LRCflag == 'C' )
-    leftHalf_phi_lrMat = phi_lrMat( : , 1 : floor ( 1 + size( phi_lrMat, 2 ) / 2 ) );
-    reverseIdx = ( size( leftHalf_phi_lrMat, 2 ) : -1 : 1 );
-    leftHalf_phi_lrMat = leftHalf_phi_lrMat( : , reverseIdx );
-    
-    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
-    [ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
-    grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
-end;
+% if ( LRCflag == 'R' || LRCflag == 'C' )
+%     rightHalf_phi_lrMat = phi_lrMat( : , floor ( 1 + size( phi_lrMat, 2 ) / 2 ) : size( phi_lrMat, 2 ) );
+%     
+%     [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
+%     [ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
+%     grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
+% end
+% 
+% if ( LRCflag == 'L' || LRCflag == 'C' )
+%     leftHalf_phi_lrMat = phi_lrMat( : , 1 : floor ( 1 + size( phi_lrMat, 2 ) / 2 ) );
+%     reverseIdx = ( size( leftHalf_phi_lrMat, 2 ) : -1 : 1 );
+%     leftHalf_phi_lrMat = leftHalf_phi_lrMat( : , reverseIdx );
+%     
+%     [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
+%     [ env_tauE_Vec_L, env_tauE_Idx_L ] = getEnvelope_( tauE_Vec_L );
+%     grad_env_tauE_Vec_L = gradient( env_tauE_Vec_L );
+% end;
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
@@ -496,45 +496,45 @@ title( strTitle );
 
 clipValVec = ones( 1, lenTimeAxis ) * clipVal;
 
-if ( 0 )
-    lc = '-ow';
-    
-    if ( LRCflag == 'R' || LRCflag == 'C' )
-        plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRCflag == 'L' || LRCflag == 'C' )
-        plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
-
-if ( 0 )
-    if ( LRCflag == 'R' || LRCflag == 'C' )
-        lc = '-or';
-        lc = '-ow';
-        plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRCflag == 'L' || LRCflag == 'C' )
-        lc = '-ob';
-        lc = '-ow';
-        plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
-
-if ( 0 )
-    if ( LRCflag == 'R' || LRCflag == 'C' )
-        lc = '-oy';
-        lc = '-ow';
-        plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRCflag == 'L' || LRCflag == 'C' )
-        lc = '-og';
-        lc = '-ow';
-        plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
+% if ( 0 )
+%     lc = '-ow';
+%     
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
+% 
+% if ( 0 )
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         lc = '-or';
+%         lc = '-ow';
+%         plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         lc = '-ob';
+%         lc = '-ow';
+%         plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
+% 
+% if ( 0 )
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         lc = '-oy';
+%         lc = '-ow';
+%         plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         lc = '-og';
+%         lc = '-ow';
+%         plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
 
 
 hold off;
