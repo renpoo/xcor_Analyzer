@@ -1,6 +1,6 @@
-function [ env_inputVec, env_inputVec_Idx ] = getEnvelope_( inputVec )
+function [ env_inputVec, env_inputVec_Idx ] = getEnvelope_( inputVec, minPeakDist )
 
-[ pks, idx ] = findpeaks( inputVec, 'MINPEAKDISTANCE', 1 );
+[ ~, idx ] = findpeaks( inputVec, 'MINPEAKDISTANCE', minPeakDist );
 idx = [ 1 idx length(inputVec) ];
 env_inputVec_Idx = 1 : length(inputVec);
 

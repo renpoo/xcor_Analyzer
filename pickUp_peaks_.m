@@ -16,7 +16,7 @@ for i = 1 : m
         if ( 0 )
             [ minVal, minIdx ] = min( dataMat( i, : ) );
         else
-            if ( dataMat( i, j ) < eps )
+            if ( dataMat( i, j ) > eps )
                 minVal = dataMat( i, j );
                 minIdx = j;
                 break;
