@@ -11,7 +11,7 @@ timeS0 = 0.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
-timeE0 = 120.0;
+timeE0 = 60.0;
 %timeE0 = 110.0;
 %timeE0 = 240.0;
 
@@ -67,4 +67,4 @@ sound( sCut, fs );
 
 %results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRCflag );
 
-results = xcor_Analyzer( wavFilename, xCut, yCut, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal );
+results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal );
