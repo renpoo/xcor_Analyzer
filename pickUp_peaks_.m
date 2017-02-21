@@ -1,32 +1,34 @@
-function [ minValVec, envVec, envVecIdx ] = pickUp_peaks_( dataMat, eps, fs )
+function [ maxValVec, envVec, envVecIdx ] = pickUp_peaks_( dataMat, eps, fs, unitScale )
 
 m = size( dataMat, 1 );
 n = size( dataMat, 2 );
 
-minVal = 0.0;
-minIdx = 0;
+maxVal = 0.0;
+maxIdx = 0;
 
-minValVec = zeros( 1, m );
+maxValVec = zeros( 1, m );
 envVecIdx = zeros( 1, m );
 envVec = zeros( 1, m );
 
 
 for i = 1 : m
-    for j = n : -1 : 1
+    %for j = n : -1 : 1
+    for j = 1 : +1 : n
         if ( 0 )
-            [ minVal, minIdx ] = min( dataMat( i, : ) );
+            [ maxVal, maxIdx ] = max( dataMat( i, : ) );
         else
             if ( dataMat( i, j ) > eps )
-                minVal = dataMat( i, j );
-                minIdx = j;
-                break;
+                maxVal = dataMat( i, j );
+                maxIdx = j;
+                %break;
+                continue;
             end
         end
     end
     
-    minValVec( i ) = minVal;
-    envVecIdx( i ) = minIdx;
-    envVec( i ) = convIndex2Time_( envVecIdx( i ), fs );
+    maxValVec( i ) = maxVal;
+    envVecIdx( i ) = maxIdx;
+    envVec( i ) = convIndex2Time_( envVecIdx( i ), fs ) * unitScale;
 end
 
 end

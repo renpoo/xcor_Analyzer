@@ -7,6 +7,10 @@ clear;
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
+
+unitScale = 1000;
+duration = 234.2400;
+
 timeS0 = 0.0;
 %timeS0 = 100.0;
 %timeS0 = 200.0;
@@ -26,8 +30,10 @@ LRCflag = 'R';
 tau = 0.01;
 eps = tau * 0.1;
 cutOffFreq = 10.0 / tau; % Hz
-LPFflag = 1;
-minPeakDist = 1;
+LPFflag = 0;
+minPeakDist = 8;
+pickUpScale = duration * tau;
+
 
 % LRCflag = 'C';
 % tau = 0.01;
@@ -35,15 +41,16 @@ minPeakDist = 1;
 % cutOffFreq = 10.0 / tau; % Hz
 % LPFflag = 0;
 % minPeakDist = 8;
+% pickUpScale = 1.0;
 
 
-%LRCflag = 'L';
-LRCflag = 'R';
-tau = 0.1;
-eps = tau * 0.01;
-cutOffFreq = 100.0 / tau; % Hz
-LPFflag = 1;
-minPeakDist = 1;
+% %LRCflag = 'L';
+% LRCflag = 'R';
+% tau = 0.1;
+% eps = tau * 0.01;
+% cutOffFreq = 100.0 / tau; % Hz
+% LPFflag = 1;
+% minPeakDist = 1;
 
 % tau = 1.0;
 % eps = tau * 0.1;
@@ -51,9 +58,6 @@ minPeakDist = 1;
 
 
 
-
-
-unitScale = 1000;
 
 
 wavFilename = 'Nippon.m4a';
@@ -154,21 +158,21 @@ end
 
 if ( LRCflag == 'R' || LRCflag == 'C' )
     rightHalf_phi_lrMat = results.phi_lrMat( : , floor ( 1 + size( results.phi_lrMat, 2 ) / 2 ) : size( results.phi_lrMat, 2 ) );
-    clipped_rightHalf_phi_lrMat = ( rightHalf_phi_lrMat - clipVal );
+    clipped_rightHalf_phi_lrMat = ( rightHalf_phi_lrMat );
     
-%     m = size( clipped_rightHalf_phi_lrMat, 1 );
-%     n = size( clipped_rightHalf_phi_lrMat, 2 );
-%     
-%     for i = 1 : m
-%         for j = n : -1 : 1
-%             if ( clipped_rightHalf_phi_lrMat( i, j ) < eps )
-%                 clipped_rightHalf_phi_lrMat( i, j ) = 0.0;
-%             end
-%         end
-%     end
+    m = size( clipped_rightHalf_phi_lrMat, 1 );
+    n = size( clipped_rightHalf_phi_lrMat, 2 );
+    
+    for i = 1 : m
+        for j = n : -1 : 1
+            if ( clipped_rightHalf_phi_lrMat( i, j ) <= eps + clipVal )
+                clipped_rightHalf_phi_lrMat( i, j ) = 0.0;
+            end
+        end
+    end
     
     %[ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
-    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipped_rightHalf_phi_lrMat, eps, fs );
+    [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( clipped_rightHalf_phi_lrMat, eps, fs, pickUpScale );
     
     if ( LPFflag == 1 )
         env_tauE_Vec_R = filter( df, [ tauE_Vec_R'; zeros(D,1) ] );
@@ -189,20 +193,20 @@ if ( LRCflag == 'L' || LRCflag == 'C' )
     leftHalf_phi_lrMat = leftHalf_phi_lrMat( : , reverseIdx );
     clipped_leftHalf_phi_lrMat = ( leftHalf_phi_lrMat - clipVal );
 
-%     m = size( clipped_leftHalf_phi_lrMat, 1 );
-%     n = size( clipped_leftHalf_phi_lrMat, 2 );
-%     
-%     for i = 1 : m
-%         for j = n : -1 : 1
-%             if ( clipped_leftHalf_phi_lrMat( i, j ) < eps )
-%                 clipped_leftHalf_phi_lrMat( i, j ) = 0.0;
-%             end
-%         end
-%     end
+    m = size( clipped_leftHalf_phi_lrMat, 1 );
+    n = size( clipped_leftHalf_phi_lrMat, 2 );
+    
+    for i = 1 : m
+        for j = n : -1 : 1
+            if ( clipped_leftHalf_phi_lrMat( i, j ) <= eps + clipVal )
+                clipped_leftHalf_phi_lrMat( i, j ) = 0.0;
+            end
+        end
+    end
     
     
     %[ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
-    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps, fs );
+    [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps, fs, pickUpScale );
     
     if ( LPFflag == 1 )
         env_tauE_Vec_L = filter( df, [ tauE_Vec_L'; zeros(D,1) ] );
