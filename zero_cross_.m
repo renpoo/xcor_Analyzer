@@ -1,6 +1,6 @@
 function [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( x, wholeFlag, skipFlag )
 
-zeroIdxs = find( abs( diff( sign(x) ) ) == 2 )';
+zeroIdxs = find( abs( diff( sign(x) ) ) == 2 );
 
 maxValues = zeros( 1, 1 );
 maxIdxs   = zeros( 1, 1 );

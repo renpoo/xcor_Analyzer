@@ -22,8 +22,7 @@ timeS0 = 0.0;
 %timeE0 = 2.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
-%timeE0 = 30.0;
-timeE0 = 60.0;
+timeE0 = 30.0;
 %timeE0 = 110.0;
 %timeE0 = 240.0;
 
@@ -64,7 +63,7 @@ timeE0 = min( timeE0, duration );
 
 
 TMPtimeS0_Idx = convTime2Index_( timeS0, fs );
-TMPtimeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
+TMPtimeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
 
 x0cut = x0( TMPtimeS0_Idx : TMPtimeE0_Idx );
 y0cut = y0( TMPtimeS0_Idx : TMPtimeE0_Idx );
@@ -132,7 +131,7 @@ bufSize = 10;
 
 timeS0_Idx = convTime2Index_( timeS0, fs );
 %timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
-timeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
+timeE0_Idx = convTime2Index_( timeE0, fs );
 tau_Idx   = convTime2Index_( tau, fs );
 
 %xCut = x0cut( timeS0_Idx : timeE0_Idx )';
@@ -268,7 +267,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     %figure; plot(phi_lr);
     
-%    fprintf( 1, '(%d, %d) = %d [%d]\n', timeS_Idx_now, timeE_Idx_now, timeE_Idx_now - timeS_Idx_now, length(phi_lr) );
+    %fprintf( 1, '(%d, %d) = %d [%d]\n', timeS_Idx_now, timeE_Idx_now, timeE_Idx_now - timeS_Idx_now, length(phi_lr) );
     
     
     
@@ -314,7 +313,6 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr_subtracted, 1, 0 );
         maxIdxs = maxIdxs( 1 : length( maxIdxs ) );
         maxTimes = convIndex2Time_( maxIdxs, fs );
-        zeroIdxs = zeroIdxs';
         
         tauAlphaIdx = zeroIdxs(1);
         tauBetaIdx  = zeroIdxs(2);

@@ -1,11 +1,19 @@
+
+
 clear;
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
-timeS0 = 200.0;
+
+timeS0 = 0.0;
+%timeS0 = 100.0;
+%timeS0 = 200.0;
 %timeE0 = 2.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
-timeE0 = 240.0;
+%timeE0 = 30.0;
+timeE0 = 120.0;
+%timeE0 = 110.0;
+%timeE0 = 240.0;
 
 %tau = 0.001;
 tau = 0.01;
@@ -31,44 +39,30 @@ clipVal = 0.2;
 x0 = s( :, 2 );  % L channel
 y0 = s( :, 1 );  % R channel
 
-x0 = vectorReshape_( x0, length( x0 ) * 2 );
-y0 = vectorReshape_( y0, length( y0 ) * 2 );
+lenX0 = length(x0);
+lenY0 = length(y0);
+
+duration = lenX0 / fs;
+
+x0 = vectorReshape_( x0, lenX0 * 2 );
+y0 = vectorReshape_( y0, lenY0 * 2 );
 
 
-timeS0_Idx = convTime2Index_( timeS0, fs );
-timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
-tau_Idx   = convTime2Index_( tau, fs );
-
-timeAxis = ( timeS0_Idx : tau_Idx : timeE0_Idx ) / fs;
-
-if (LRCflag == 'L')
-    tauAxis  = ( -tau_Idx : 0 );
-    %tauAxis  = ( 0 : +tau_Idx );
-elseif (LRCflag == 'R')
-    tauAxis  = ( 0 : +tau_Idx );
-else
-    tauAxis  = ( -tau_Idx : tau_Idx );
-end
-
-tauAxis = tauAxis / fs * unitScale;
+timeE0 = min( timeE0, duration );
 
 
-lenTimeAxis = length( timeAxis );
-lenTauAxis  = length( tauAxis );
+TMPtimeS0_Idx = convTime2Index_( timeS0, fs );
+TMPtimeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
 
+x0cut = x0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+y0cut = y0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+% x0cut = x0( TMPtimeS0_Idx : length( x0 ) );
+% y0cut = y0( TMPtimeS0_Idx : length( y0 ) );
 
-lenX0 = length( x0 );
-maxTimeE0_Idx = min( lenX0, timeE0_Idx + lenTauAxis );
+sCut = s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
 
-xCut = x0( timeS0_Idx : maxTimeE0_Idx );
-yCut = y0( timeS0_Idx : maxTimeE0_Idx );
-% xCut = vectorReshape_( x0( timeS0_Idx : maxTimeE0_Idx ), lenTauAxis * lenTimeAxis );
-% yCut = vectorReshape_( y0( timeS0_Idx : maxTimeE0_Idx ), lenTauAxis * lenTimeAxis );
+sound( sCut, fs );
 
-
-sCutTmp = s( timeS0_Idx : timeE0_Idx );
-
-sound( sCutTmp, fs );
 
 
 %results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRCflag );
