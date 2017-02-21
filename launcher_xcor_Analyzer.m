@@ -8,8 +8,8 @@ timeS0 = 0.0;
 %timeS0 = 100.0;
 %timeS0 = 200.0;
 
-timeE0 = 6.0;
-%timeE0 = 11.5;
+%timeE0 = 6.0;
+timeE0 = 11.5;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
 %timeE0 = 60.0;
@@ -17,9 +17,19 @@ timeE0 = 6.0;
 %timeE0 = 240.0;
 
 %tau = 0.001;
+
 tau = 0.01;
-%tau = 0.1;
-%tau = 1.0;
+eps = tau * 10;
+cutOffFreq = 10.0 / tau; % Hz
+
+% tau = 0.1;
+% eps = tau * 1;
+% cutOffFreq = 1000.0 / tau; % Hz
+
+% tau = 1.0;
+% eps = tau * 0.1;
+% cutOffFreq = 10000.0 / tau; % Hz
+
 
 unitScale = 1000;
 
@@ -28,8 +38,8 @@ wavFilename = 'Nippon.m4a';
 
 
 %LRCflag = 'L';
-%LRCflag = 'R';
-LRCflag = 'C';
+LRCflag = 'R';
+%LRCflag = 'C';
 
 
 LPFflag = 1;
@@ -45,7 +55,38 @@ clipVal = 0.2;
 %eps = 5.0 * 10^-2;
 %eps = 1.0 * 10^-1;
 
-eps = tau;
+%eps = tau * 0.1;
+%eps = tau * 10;
+%eps = tau;
+
+
+%cutOffFreq = 1; % Hz
+%cutOffFreq = 2; % Hz
+%cutOffFreq = 3; % Hz
+%cutOffFreq = 10; % Hz
+%cutOffFreq = 50; % Hz
+%cutOffFreq = 100; % Hz
+%cutOffFreq = 200; % Hz
+%cutOffFreq = 250; % Hz
+%cutOffFreq = 500; % Hz
+%cutOffFreq = 1000; % Hz
+%cutOffFreq = 5000; % Hz
+%cutOffFreq = 10000; % Hz
+%cutOffFreq = 22000; % Hz
+
+%cutOffFreq = 100.0 / tau; % Hz
+%cutOffFreq = 50.0 / tau; % Hz
+%cutOffFreq = 40.0 / tau; % Hz
+%cutOffFreq = 30.0 / tau; % Hz
+%cutOffFreq = 20.0 / tau; % Hz
+%cutOffFreq = 10.0 / tau; % Hz
+%cutOffFreq = 5.0 / tau; % Hz
+%cutOffFreq = 1.0 / tau; % Hz
+%cutOffFreq = 0.5 / tau; % Hz
+%cutOffFreq = 0.1 / tau; % Hz
+
+
+
 
 [ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
 
@@ -90,23 +131,6 @@ results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale
 %%%%
 
 if ( LPFflag )
-    %cutOffFreq = 1; % Hz
-    %cutOffFreq = 2; % Hz
-    %cutOffFreq = 3; % Hz
-    %cutOffFreq = 10; % Hz
-    %cutOffFreq = 50; % Hz
-    %cutOffFreq = 100; % Hz
-    %cutOffFreq = 200; % Hz
-    %cutOffFreq = 250; % Hz
-    %cutOffFreq = 500; % Hz
-    %cutOffFreq = 1000; % Hz
-    %cutOffFreq = 5000; % Hz
-    %cutOffFreq = 10000; % Hz
-    
-    %cutOffFreq = 10.0 / tau; % Hz
-    cutOffFreq = 1.0 / tau; % Hz
-    %cutOffFreq = 0.1 / tau; % Hz
-    
     fNorm = cutOffFreq / ( fs / 2 );
     df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',fNorm);
     %grpdelay( df, 2048, fs );
@@ -117,7 +141,7 @@ if ( LRCflag == 'R' || LRCflag == 'C' )
     rightHalf_phi_lrMat = results.phi_lrMat( : , floor ( 1 + size( results.phi_lrMat, 2 ) / 2 ) : size( results.phi_lrMat, 2 ) );
     
     [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
-
+    
     if ( LPFflag )
         env_tauE_Vec_R = filter( df, [ tauE_Vec_R'; zeros(D,1) ] );
         env_tauE_Vec_R = env_tauE_Vec_R( D+1 : end );
@@ -170,17 +194,17 @@ ms = 3;
 lc = '-ow';
 
 if ( LRCflag == 'R' || LRCflag == 'C' )
-    lc = '-w';
+    lc = '-ow';
     plot3(  tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-
+    
     lc = '-r';
     plot3(  env_tauE_Vec_R * unitScale, results.timeAxis, clipValVec + 0.1, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
 if ( LRCflag == 'L' || LRCflag == 'C' )
-    lc = '-w';
+    lc = '-ow';
     plot3( -tauE_Vec_L * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-
+    
     lc = '-b';
     plot3( -env_tauE_Vec_L * unitScale, results.timeAxis, clipValVec + 0.1, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end

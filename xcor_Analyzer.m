@@ -11,7 +11,7 @@ function results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, 
 %%%% Temporary Starter
 %%%%
 
-eps = 1.0 * 10^(-2);
+%%eps = 1.0 * 10^(-2);
 
 %{
 clear;
@@ -100,7 +100,8 @@ results = struct(      ...
     'WicccMat',      [],  ...
     'tauAlphaMat',   [],  ...
     'tauBetaMat',    [],  ...
-    'dateTime',       ''  ...
+    'dateTime',      '',  ...
+    'paramsMat',     []   ...
     );
 
 
@@ -208,7 +209,8 @@ WicccMat     = zeros( lenTimeAxis, 1 );
 tauAlphaMat  = zeros( lenTimeAxis, 1 );
 tauBetaMat   = zeros( lenTimeAxis, 1 );
 
-
+paramsMat    = {};
+    
 % xSub         = zeros( lenTauAxis, 1 );
 % ySub         = zeros( lenTauAxis, 1 );
 
@@ -216,7 +218,7 @@ tauBetaMat   = zeros( lenTimeAxis, 1 );
 %detXY = initial_PHI_xy_( xSub, ySub );
 
 
-cnt = 0;
+%%cnt = 0;
 
 k = 0;
 
@@ -232,7 +234,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     timeS_Idx_now = t_Idx;
     timeE_Idx_now = timeS_Idx_now + tau_Idx;
-    %timeE_Idx_now = min( timeS_Idx_now + tau_Idx, timeE0_Idx );
+    %timeE_Idx_now = min( timeS_Idx_now + tau_Idx, timeE0_Idx )
     
     
     %     xSub = zeros( lenTauAxis, 1 );
@@ -299,7 +301,9 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         tauAlpha = NaN;
         tauBeta = NaN;
         
-        params = zeros( length( maxValues ), 7 );
+        %params = zeros( length( maxValues ), 7 );
+        params = zeros( 4, 7 );
+        
         for i = 1 : length( maxValues )
             if ( i > 4 )
                 continue;
@@ -434,7 +438,7 @@ results.WicccMat     = WicccMat;
 results.tauAlphaMat  = tauAlphaMat;
 results.tauBetaMat   = tauBetaMat;
 results.dateTime     = dateTime;
-
+results.paramsMat    = paramsMat;
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
@@ -443,7 +447,7 @@ results.dateTime     = dateTime;
 
 figure;
 
-XYZ = surf( tauAxis, timeAxis, phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
+surf( tauAxis, timeAxis, phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
 colormap 'jet';
 
 
@@ -494,7 +498,7 @@ strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0,
 title( strTitle );
 
 
-clipValVec = ones( 1, lenTimeAxis ) * clipVal;
+% clipValVec = ones( 1, lenTimeAxis ) * clipVal;
 
 % if ( 0 )
 %     lc = '-ow';
@@ -542,18 +546,19 @@ hold off;
 
 
 
-if ( 0 )
-    pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
-    if ( exist( pnameImg, 'dir' ) == 0 )
-        mkdir( pnameImg );
-    end
-    
-    saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
-    
-    fname = strcat( saveImageName, '.fig');
-    outputDataFileName = strcat( pnameImg, '/', fname );
-    saveas( 1, strcat( outputDataFileName ) );
-end
+% if ( 0 )
+%     pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+%     if ( exist( pnameImg, 'dir' ) == 0 )
+%         mkdir( pnameImg );
+%     end
+%     
+%     saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+%     
+%     fname = strcat( saveImageName, '.fig');
+%     outputDataFileName = strcat( pnameImg, '/', fname );
+%     saveas( 1, strcat( outputDataFileName ) );
+% end
+
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
