@@ -1,11 +1,11 @@
 clear;
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
-timeS0 = 200.0;
+timeS0 = 0.0;
 %timeE0 = 2.0;
 %timeE0 = 10.0;
 %timeE0 = 20.0;
-timeE0 = 240.0;
+timeE0 = 30.0;
 
 %tau = 0.001;
 tau = 0.01;
@@ -28,11 +28,9 @@ clipVal = 0.2;
 
 [ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
 
+
 x0 = s( :, 2 );  % L channel
 y0 = s( :, 1 );  % R channel
-
-x0 = vectorReshape_( x0, length( x0 ) * 2 );
-y0 = vectorReshape_( y0, length( y0 ) * 2 );
 
 
 timeS0_Idx = convTime2Index_( timeS0, fs );
@@ -58,13 +56,10 @@ lenTauAxis  = length( tauAxis );
 
 
 lenX0 = length( x0 );
-maxTimeE0_Idx = min( lenX0, timeE0_Idx + lenTauAxis );
+maxtimeE0_Idx
 
-xCut = x0( timeS0_Idx : maxTimeE0_Idx );
-yCut = y0( timeS0_Idx : maxTimeE0_Idx );
-% xCut = vectorReshape_( x0( timeS0_Idx : maxTimeE0_Idx ), lenTauAxis * lenTimeAxis );
-% yCut = vectorReshape_( y0( timeS0_Idx : maxTimeE0_Idx ), lenTauAxis * lenTimeAxis );
-
+xCut = x0( timeS0_Idx : timeE0_Idx + lenTauAxis );
+yCut = y0( timeS0_Idx : timeE0_Idx + lenTauAxis );
 
 sCutTmp = s( timeS0_Idx : timeE0_Idx );
 

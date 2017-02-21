@@ -1,10 +1,10 @@
-function P = PHI_xy_( x, y, LRflag )
+function P = PHI_xy_( x, y, LRCflag )
 
 Nx = length(x);
 Ny = length(y);
 
 
-if ( LRflag == 'L' )
+if ( LRCflag == 'L' )
     P = zeros(1, Nx);
     for m = -Nx+1 : 0
         P(Nx+m) = rowCC_(y, x, -m, Nx);
@@ -12,7 +12,7 @@ if ( LRflag == 'L' )
 %     for m = 0 : Ny-1
 %         P(m+1) = rowCC_(x, y, m, Ny);
 %     end
-elseif ( LRflag == 'R' )
+elseif ( LRCflag == 'R' )
     P = zeros(1, Ny);
     for m = 0 : Ny-1
         P(m+1) = rowCC_(x, y, m, Ny);
@@ -35,5 +35,6 @@ end
 function Rxy = rowCC_(x, y, m, N)
 xSub = x( (m+1) : N );
 ySub = y( 1 : (N-m) );
-Rxy = xSub * ySub';
+%Rxy = xSub * ySub';
+Rxy = xSub' * ySub;
 end

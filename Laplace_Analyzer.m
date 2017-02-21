@@ -1,9 +1,9 @@
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
-%%%% Laplace_Analyzer() : author : TAISO, Renpoo (170205)
+%%%% xcor_Analyzer() : author : TAISO, Renpoo (170205)
 %%%%
 
-%function results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRflag )
+%function results = xcor_Analyzer( wavFilename, x0cut, y0cut, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal )
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
@@ -11,33 +11,69 @@
 %%%% Temporary Starter
 %%%%
 
+
 clear;
 
+%%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
 timeS0 = 0.0;
-timeE0 = 3.0;
+%timeS0 = 100.0;
+%timeS0 = 200.0;
+%timeE0 = 2.0;
+%timeE0 = 10.0;
+%timeE0 = 20.0;
+timeE0 = 30.0;
+%timeE0 = 110.0;
+%timeE0 = 240.0;
 
+%tau = 0.001;
 tau = 0.01;
+%tau = 0.1;
+%tau = 1.0;
 
 unitScale = 1000;
 
+
 wavFilename = 'Nippon.m4a';
 
-%LRflag = 'L';
-LRflag = 'R';
-%LRflag = 'C';
+
+%LRCflag = 'L';
+%LRCflag = 'R';
+LRCflag = 'C';
 
 
 clipVal = 0.2;
 
-eps = 1.0 * 10^(-2);
-%eps = 2.0 * 10^(-3);
-%eps = 1.0 * 10^(-3);
-%eps = 1.0 * 10^(-4);
-%eps = 1.0 * 10^(-5);
-%eps = 6.0 * 10^(-6);
-%eps = 5.0 * 10^(-6);
-%eps = 2.0 * 10^(-6);
+
+[ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
+
+x0 = s( :, 2 );  % L channel
+y0 = s( :, 1 );  % R channel
+
+lenX0 = length(x0);
+lenY0 = length(y0);
+
+duration = lenX0 / fs;
+
+x0 = vectorReshape_( x0, lenX0 * 2 );
+y0 = vectorReshape_( y0, lenY0 * 2 );
+
+
+timeE0 = min( timeE0, duration );
+
+
+TMPtimeS0_Idx = convTime2Index_( timeS0, fs );
+TMPtimeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
+
+x0cut = x0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+y0cut = y0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+% x0cut = x0( TMPtimeS0_Idx : length( x0 ) );
+% y0cut = y0( TMPtimeS0_Idx : length( y0 ) );
+
+sCut = s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
+
+sound( sCut, fs );
+
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
@@ -74,7 +110,7 @@ results = struct(      ...
 dateTime = dateTime( 1 : length( dateTime ) - 1 );
 
 
-if (LRflag == 'C')
+if (LRCflag == 'C')
     funcStr = 'ICCF';
 else
     funcStr = 'ACF';
@@ -84,43 +120,45 @@ end
 bufSize = 10;
 
 
-[ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
+%[ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
 
 
-x0 = s( :, 2 );  % L channel
-y0 = s( :, 1 );  % R channel
+% x0 = s( :, 2 );  % L channel
+% y0 = s( :, 1 );  % R channel
 
 
 %duration = length(x0) / fs;
 
 timeS0_Idx = convTime2Index_( timeS0, fs );
-timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
-%timeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
+%timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
+timeE0_Idx = convTime2Index_( timeE0, fs );
 tau_Idx   = convTime2Index_( tau, fs );
 
-xCut = x0( timeS0_Idx : timeE0_Idx )';
-%yCut = y0( timeS0_Idx : timeE0_Idx )';
+%xCut = x0cut( timeS0_Idx : timeE0_Idx )';
+%yCut = y0cut( timeS0_Idx : timeE0_Idx )';
 
 
-sound( xCut, fs );
+%sound( xCut, fs );
 
 
 %timeS_Idx_now = timeS0_Idx;
 %timeE_Idx_now = timeS_Idx_now + tau_Idx;
 
-%xSub = x0( timeS_Idx_now : timeE_Idx_now )';
-%ySub = y0( timeS_Idx_now : timeE_Idx_now )';
+%xSub = x0cut( timeS_Idx_now : timeE_Idx_now )';
+%ySub = y0cut( timeS_Idx_now : timeE_Idx_now )';
 
 
-k = 0;
+% lenX0cut = lenX0 / 2;
+% lenY0cut = lenY0 / 2;
+
 
 timeAxis = ( timeS0_Idx : tau_Idx : timeE0_Idx ) / fs;
 
 
-if (LRflag == 'L')
+if (LRCflag == 'L')
     tauAxis  = ( -tau_Idx : 0 );
     %tauAxis  = ( 0 : +tau_Idx );
-elseif (LRflag == 'R')
+elseif (LRCflag == 'R')
     tauAxis  = ( 0 : +tau_Idx );
 else
     tauAxis  = ( -tau_Idx : tau_Idx );
@@ -130,6 +168,20 @@ tauAxis = tauAxis / fs * unitScale;
 
 lenTimeAxis = length( timeAxis );
 lenTauAxis  = length( tauAxis );
+
+% tmp1 = floor( lenX0cut / lenTauAxis ) + 1;
+% 
+% disp( tmp1 ); 
+% 
+% tmp2 = lenTauAxis * tmp1;
+% 
+% disp( tmp2 );
+
+%lenPackedX0cut = lenTauAxis * ( ceil( lenX0cut / lenTauAxis ) * 2 );
+% x0filled = vectorReshape_( x0cut, lenPackedX0cut );
+% y0filled = vectorReshape_( y0cut, lenPackedX0cut );
+x0filled = x0cut;
+y0filled = y0cut;
 
 
 %phi_lrMat = [];
@@ -154,33 +206,63 @@ tauAlphaMat  = zeros( lenTimeAxis, 1 );
 tauBetaMat   = zeros( lenTimeAxis, 1 );
 
 
+% xSub         = zeros( lenTauAxis, 1 );
+% ySub         = zeros( lenTauAxis, 1 );
+
+
 %detXY = initial_PHI_xy_( xSub, ySub );
 
 
+cnt = 0;
+
+k = 0;
+
 for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
-    timeS_Idx_now = timeS0_Idx + t_Idx;
+
+    k = k + 1;
+    
+%    cnt = timeS0_Idx + k * lenTauAxis;
+
+%    fprintf( 1, '%d (%d)\n', k, cnt );
+    
+%    disp( t_Idx );
+
+    timeS_Idx_now = t_Idx;
     timeE_Idx_now = timeS_Idx_now + tau_Idx;
+    %timeE_Idx_now = min( timeS_Idx_now + tau_Idx, timeE0_Idx );
+
     
-    xSub = x0( timeS_Idx_now : timeE_Idx_now )';
-    ySub = y0( timeS_Idx_now : timeE_Idx_now )';
+%     xSub = zeros( lenTauAxis, 1 );
+%     ySub = zeros( lenTauAxis, 1 );
+%     xSub = vectorReshape_( x0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
+%     ySub = vectorReshape_( y0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
+%    xSub = x0cut( timeS_Idx_now : timeE_Idx_now );
+%    ySub = y0cut( timeS_Idx_now : timeE_Idx_now );
+    xSub = x0( timeS_Idx_now : timeE_Idx_now );
+    ySub = y0( timeS_Idx_now : timeE_Idx_now );
+%     xSub = x0filled( timeS_Idx_now : timeE_Idx_now );
+%     ySub = y0filled( timeS_Idx_now : timeE_Idx_now );    
+
     
-    
-    if (LRflag == 'L')
+    if (LRCflag == 'L')
         PHI_ll_0 = init_PHI_( xSub );
         PHI_rr_0 = PHI_ll_0;
-        PHI_lr   = PHI_xy_( xSub, xSub, LRflag );
-    elseif (LRflag == 'R')
+        PHI_lr   = PHI_xy_( xSub, xSub, LRCflag );
+    elseif (LRCflag == 'R')
         PHI_ll_0 = init_PHI_( ySub );
         PHI_rr_0 = PHI_ll_0;
-        PHI_lr   = PHI_xy_( ySub, ySub, LRflag );
+        PHI_lr   = PHI_xy_( ySub, ySub, LRCflag );
     else
         PHI_ll_0 = init_PHI_( xSub );
         PHI_rr_0 = init_PHI_( ySub );
-        PHI_lr   = PHI_xy_( xSub, ySub, LRflag );
+        PHI_lr   = PHI_xy_( xSub, ySub, LRCflag );
     end
     
     
-    phi_lr   = PHI_lr / PHI_ll_0 / PHI_rr_0;
+    %phi_lr = zeros( lenTauAxis, 1 );    
+    
+%    phi_lr   = vectorReshape_( PHI_lr / PHI_ll_0 / PHI_rr_0, lenTauAxis );
+    phi_lr = PHI_lr / PHI_ll_0 / PHI_rr_0;
     
     
     %figure; plot(phi_lr);
@@ -190,18 +272,18 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     
     
     [ICCC, pointICCC] = max( phi_lr );
-    tauICCC = tauAxis( pointICCC );
+    tauICCC = tauAxis( min( pointICCC, lenTauAxis ) );
     
     
     phi_lr_subtracted = phi_lr - 0.9 * ICCC;
     
     
-    if (LRflag == 'L' || LRflag == 'R' )
+    if (LRCflag == 'L' || LRCflag == 'R' )
         [ maxValues, maxIdxs, zeroIdxs ] = zero_cross_( phi_lr, 0, 1 );
         maxValues = maxValues( 2 : length( maxValues ) );
         maxIdxs = maxIdxs( 2 : length( maxIdxs ) );
         maxTimes = convIndex2Time_( maxIdxs, fs );
-        if (LRflag == 'L')
+        if (LRCflag == 'L')
             maxTimes = maxTimes - tau;
         end
         maxTimes = maxTimes * unitScale;
@@ -235,8 +317,8 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         tauAlphaIdx = zeroIdxs(1);
         tauBetaIdx  = zeroIdxs(2);
         
-        tauAlpha = tauAxis( tauAlphaIdx );
-        tauBeta  = tauAxis( tauBetaIdx  );
+        tauAlpha = tauAxis( min( tauAlphaIdx, 1 ) );
+        tauBeta  = tauAxis( min( tauBetaIdx, lenTauAxis ) );
         
         Wiccc = tauBeta - tauAlpha;
         
@@ -276,8 +358,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         params( 4, 7 ) = 0;
     end
     
-    
-    k = k + 1;
+        
     phi_lrMat(    k, : ) = vectorReshape_( phi_lr, lenTauAxis );
     PHI_lrMat(    k, : ) = vectorReshape_( PHI_lr, lenTauAxis );
     PHI_ll_0Mat(  k, 1 ) = PHI_ll_0;
@@ -308,7 +389,7 @@ end
 %%%%
 
 
-if ( LRflag == 'R' || LRflag == 'C' )
+if ( LRCflag == 'R' || LRCflag == 'C' )
     rightHalf_phi_lrMat = phi_lrMat( : , floor ( 1 + size( phi_lrMat, 2 ) / 2 ) : size( phi_lrMat, 2 ) );
     
     [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
@@ -316,7 +397,7 @@ if ( LRflag == 'R' || LRflag == 'C' )
     grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
 end
 
-if ( LRflag == 'L' || LRflag == 'C' )
+if ( LRCflag == 'L' || LRCflag == 'C' )
     leftHalf_phi_lrMat = phi_lrMat( : , 1 : floor ( 1 + size( phi_lrMat, 2 ) / 2 ) );
     reverseIdx = ( size( leftHalf_phi_lrMat, 2 ) : -1 : 1 );
     leftHalf_phi_lrMat = leftHalf_phi_lrMat( : , reverseIdx );
@@ -361,10 +442,10 @@ XYZ = surf( tauAxis, timeAxis, phi_lrMat, 'FaceColor','interp', 'LineStyle', 'no
 colormap 'jet';
 
 
-if (LRflag == 'L')
+if (LRCflag == 'L')
     xmax = 0;
     xmin = -max( abs( tauAxis ) );
-elseif (LRflag == 'R')
+elseif (LRCflag == 'R')
     xmax = max( abs( tauAxis ) );
     xmin = 0;
 else
@@ -386,7 +467,7 @@ lw = 2;
 ms = 3;
 
 
-if ( LRflag == 'C' )
+if ( LRCflag == 'C' )
     plot3( tauICCCMat', timeAxis, ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
@@ -396,7 +477,7 @@ yLabelStr = 'time [s]';
 zLabelStr = funcStr;
 
 if ( strcmp( funcStr, 'ACF' ) )
-    zLabelStr = strcat( zLabelStr, ' [', LRflag, '] ' );
+    zLabelStr = strcat( zLabelStr, ' [', LRCflag, '] ' );
 end
 
 xlabel( xLabelStr );
@@ -410,45 +491,45 @@ title( strTitle );
 
 clipValVec = ones( 1, lenTimeAxis ) * clipVal;
 
-if ( 0 )
-    lc = '-ow';
-    
-    if ( LRflag == 'R' || LRflag == 'C' )
-        plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRflag == 'L' || LRflag == 'C' )
-        plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
-
-if ( 1 )
-    if ( LRflag == 'R' || LRflag == 'C' )
-        lc = '-or';
-        lc = '-ow';
-        plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRflag == 'L' || LRflag == 'C' )
-        lc = '-ob';
-        lc = '-ow';
-        plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
-
-if ( 0 )
-    if ( LRflag == 'R' || LRflag == 'C' )
-        lc = '-oy';
-        lc = '-ow';
-        plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-    
-    if ( LRflag == 'L' || LRflag == 'C' )
-        lc = '-og';
-        lc = '-ow';
-        plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-    end
-end
+% if ( 0 )
+%     lc = '-ow';
+%     
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
+% 
+% if ( 1 )
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         lc = '-or';
+%         lc = '-ow';
+%         plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         lc = '-ob';
+%         lc = '-ow';
+%         plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
+% 
+% if ( 0 )
+%     if ( LRCflag == 'R' || LRCflag == 'C' )
+%         lc = '-oy';
+%         lc = '-ow';
+%         plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+%     
+%     if ( LRCflag == 'L' || LRCflag == 'C' )
+%         lc = '-og';
+%         lc = '-ow';
+%         plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+%     end
+% end
 
 
 hold off;
@@ -474,11 +555,11 @@ saveas( 1, strcat( outputDataFileName ) );
 %%%%
 
 
-if ( 0 )
-    for i = 1 : k
-        plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
-    end
-end
+% if ( 0 )
+%     for i = 1 : k
+%         plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
+%     end
+% end
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 
