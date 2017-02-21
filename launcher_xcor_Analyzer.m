@@ -134,7 +134,7 @@ results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale
 %%%%
 %%%%
 
-if ( LPFflag )
+if ( LPFflag == 1 )
     fNorm = cutOffFreq / ( fs / 2 );
     df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',fNorm);
     %grpdelay( df, 2048, fs );
@@ -146,7 +146,7 @@ if ( LRCflag == 'R' || LRCflag == 'C' )
     
     [ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
     
-    if ( LPFflag )
+    if ( LPFflag == 1 )
         env_tauE_Vec_R = filter( df, [ tauE_Vec_R'; zeros(D,1) ] );
         env_tauE_Vec_R = env_tauE_Vec_R( D+1 : end );
     else
@@ -166,7 +166,7 @@ if ( LRCflag == 'L' || LRCflag == 'C' )
     
     [ maxValVec_L, tauE_Vec_L, tauEidx_Vec_L ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
     
-    if ( LPFflag )
+    if ( LPFflag == 1 )
         env_tauE_Vec_L = filter( df, [ tauE_Vec_L'; zeros(D,1) ] );
         env_tauE_Vec_L = env_tauE_Vec_L( D+1 : end );
     else

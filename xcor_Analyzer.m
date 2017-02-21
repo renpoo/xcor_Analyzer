@@ -111,7 +111,7 @@ results = struct(      ...
 %%%% MAIN Procedure
 %%%%
 
-[ temp, dateTime ] = system('date +%y%m%d%H%M%S');
+[ ~, dateTime ] = system('date +%y%m%d%H%M%S');
 dateTime = dateTime( 1 : length( dateTime ) - 1 );
 
 
