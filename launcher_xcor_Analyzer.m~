@@ -8,7 +8,7 @@ timeS0 = 0.0;
 %timeS0 = 100.0;
 %timeS0 = 200.0;
 %timeE0 = 2.0;
-timeE0 = 11.5;
+timeE0 = 10.0;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
 %timeE0 = 60.0;
@@ -26,19 +26,18 @@ unitScale = 1000;
 wavFilename = 'Nippon.m4a';
 
 
-LRCflag = 'L';
-%LRCflag = 'R';
+%LRCflag = 'L';
+LRCflag = 'R';
 %LRCflag = 'C';
 
-LPFflag = 1;
+LPFflag = 0;
 
 clipVal = 0.2;
 
 
 %eps = 1.0 * 10^-4;
-%eps = 1.0 * 10^-3;
+eps = 1.0 * 10^-3;
 %eps = 1.0 * 10^-2;
-eps = 5.0 * 10^-2;
 %eps = 1.0 * 10^-1;
 
 
@@ -85,17 +84,11 @@ results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale
 %%%%
 
 if ( LPFflag )
-    %cutFreq = 2; % Hz
-    cutFreq = 3; % Hz
-    %cutFreq = 10; % Hz
     %cutFreq = 50; % Hz
     %cutFreq = 100; % Hz
-    %cutFreq = 200; % Hz
-    %cutFreq = 250; % Hz
     %cutFreq = 500; % Hz
     %cutFreq = 1000; % Hz
-    %cutFreq = 5000; % Hz
-    %cutFreq = 10000; % Hz
+    cutFreq = 10000; % Hz
 
     fNorm = cutFreq / ( fs / 2 );
     df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',fNorm);

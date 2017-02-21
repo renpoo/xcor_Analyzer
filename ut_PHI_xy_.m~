@@ -17,7 +17,7 @@ classdef ut_PHI_xy_ < matlab.unittest.TestCase
             testCase.tolerance = 'AbsTol';
             %testCase.tolerance = 'RelTol';
             
-            testCase.tolVal = 1.0 * 10^-15;
+            testCase.tolVal = 0.001;
 
             testCase.LRCflag = 'C';
         end
@@ -116,6 +116,7 @@ classdef ut_PHI_xy_ < matlab.unittest.TestCase
                 expSolution = xcorr(x, y, 'coeff');
             end
             actSolution = actSolution';
+            expSolution = expSolution';
             testCase.verifyEqual(actSolution, expSolution, testCase.tolerance, testCase.tolVal);
         end
         
@@ -130,8 +131,9 @@ classdef ut_PHI_xy_ < matlab.unittest.TestCase
             if (strcmp(testCase.comparison, 'xcorr'))
                 expSolution = xcorr(x, y, 'coeff');
             end
-            actSolution = actSolution';
             testCase.verifyEqual(actSolution, expSolution, testCase.tolerance, testCase.tolVal);
+            actSolution = actSolution';
+            expSolution = expSolution';
         end
         
         

@@ -173,11 +173,11 @@ lenTimeAxis = length( timeAxis );
 lenTauAxis  = length( tauAxis );
 
 % tmp1 = floor( lenX0cut / lenTauAxis ) + 1;
-% 
-% disp( tmp1 ); 
-% 
+%
+% disp( tmp1 );
+%
 % tmp2 = lenTauAxis * tmp1;
-% 
+%
 % disp( tmp2 );
 
 %lenPackedX0cut = lenTauAxis * ( ceil( lenX0cut / lenTauAxis ) * 2 );
@@ -221,31 +221,31 @@ cnt = 0;
 k = 0;
 
 for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
-
+    
     k = k + 1;
     
-%    cnt = timeS0_Idx + k * lenTauAxis;
-
-%    fprintf( 1, '%d (%d)\n', k, cnt );
+    %    cnt = timeS0_Idx + k * lenTauAxis;
     
-%    disp( t_Idx );
-
+    %    fprintf( 1, '%d (%d)\n', k, cnt );
+    
+    %    disp( t_Idx );
+    
     timeS_Idx_now = t_Idx;
     timeE_Idx_now = timeS_Idx_now + tau_Idx;
     %timeE_Idx_now = min( timeS_Idx_now + tau_Idx, timeE0_Idx );
-
     
-%     xSub = zeros( lenTauAxis, 1 );
-%     ySub = zeros( lenTauAxis, 1 );
-%     xSub = vectorReshape_( x0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
-%     ySub = vectorReshape_( y0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
-%    xSub = x0cut( timeS_Idx_now : timeE_Idx_now );
-%    ySub = y0cut( timeS_Idx_now : timeE_Idx_now );
+    
+    %     xSub = zeros( lenTauAxis, 1 );
+    %     ySub = zeros( lenTauAxis, 1 );
+    %     xSub = vectorReshape_( x0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
+    %     ySub = vectorReshape_( y0filled( timeS_Idx_now : timeE_Idx_now ), lenTauAxis );
+    %    xSub = x0cut( timeS_Idx_now : timeE_Idx_now );
+    %    ySub = y0cut( timeS_Idx_now : timeE_Idx_now );
     xSub = x0( timeS_Idx_now : timeE_Idx_now );
     ySub = y0( timeS_Idx_now : timeE_Idx_now );
-%     xSub = x0filled( timeS_Idx_now : timeE_Idx_now );
-%     ySub = y0filled( timeS_Idx_now : timeE_Idx_now );    
-
+    %     xSub = x0filled( timeS_Idx_now : timeE_Idx_now );
+    %     ySub = y0filled( timeS_Idx_now : timeE_Idx_now );
+    
     
     if (LRCflag == 'L')
         PHI_ll_0 = init_PHI_( xSub );
@@ -262,15 +262,15 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
     end
     
     
-    %phi_lr = zeros( lenTauAxis, 1 );    
+    %phi_lr = zeros( lenTauAxis, 1 );
     
-%    phi_lr   = vectorReshape_( PHI_lr / PHI_ll_0 / PHI_rr_0, lenTauAxis );
+    %    phi_lr   = vectorReshape_( PHI_lr / PHI_ll_0 / PHI_rr_0, lenTauAxis );
     phi_lr = PHI_lr / PHI_ll_0 / PHI_rr_0;
     
     
     %figure; plot(phi_lr);
     
-%    fprintf( 1, '(%d, %d) = %d [%d]\n', timeS_Idx_now, timeE_Idx_now, timeE_Idx_now - timeS_Idx_now, length(phi_lr) );
+    %    fprintf( 1, '(%d, %d) = %d [%d]\n', timeS_Idx_now, timeE_Idx_now, timeE_Idx_now - timeS_Idx_now, length(phi_lr) );
     
     
     
@@ -290,6 +290,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
             maxTimes = maxTimes - tau;
         end
         maxTimes = maxTimes * unitScale;
+        zeroIdxs = zeroIdxs';
         
         
         ICCC = NaN;
@@ -362,7 +363,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         params( 4, 7 ) = 0;
     end
     
-        
+    
     phi_lrMat(    k, : ) = vectorReshape_( phi_lr, lenTauAxis );
     PHI_lrMat(    k, : ) = vectorReshape_( PHI_lr, lenTauAxis );
     PHI_ll_0Mat(  k, 1 ) = PHI_ll_0;
@@ -541,17 +542,18 @@ hold off;
 
 
 
-pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
-if ( exist( pnameImg, 'dir' ) == 0 )
-    mkdir( pnameImg );
+if ( 0 )
+    pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+    if ( exist( pnameImg, 'dir' ) == 0 )
+        mkdir( pnameImg );
+    end
+    
+    saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+    
+    fname = strcat( saveImageName, '.fig');
+    outputDataFileName = strcat( pnameImg, '/', fname );
+    saveas( 1, strcat( outputDataFileName ) );
 end
-
-saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
-
-fname = strcat( saveImageName, '.fig');
-outputDataFileName = strcat( pnameImg, '/', fname );
-saveas( 1, strcat( outputDataFileName ) );
-
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
