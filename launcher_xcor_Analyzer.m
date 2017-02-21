@@ -8,10 +8,10 @@ timeS0 = 0.0;
 %timeS0 = 100.0;
 %timeS0 = 200.0;
 %timeE0 = 2.0;
-%timeE0 = 10.0;
+timeE0 = 10.0;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
-timeE0 = 60.0;
+%timeE0 = 60.0;
 %timeE0 = 110.0;
 %timeE0 = 240.0;
 
@@ -32,6 +32,9 @@ LRCflag = 'C';
 
 
 clipVal = 0.2;
+
+
+eps = 1.0 * 10^-3;
 
 
 [ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
@@ -68,3 +71,25 @@ sound( sCut, fs );
 %results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRCflag );
 
 results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal );
+
+
+
+
+rightHalf_phi_lrMat = results.phi_lrMat( : , floor ( 1 + size( results.phi_lrMat, 2 ) / 2 ) : size( results.phi_lrMat, 2 ) );
+[ maxValVec_R, tauE_Vec_R, tauEidx_Vec_R ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
+[ env_tauE_Vec_R, env_tauE_Idx_R ] = getEnvelope_( tauE_Vec_R );
+grad_env_tauE_Vec_R = gradient( env_tauE_Vec_R );
+% figure;plot( tauE_Vec_R );
+% figure;plot( env_tauE_Vec_R );
+% figure;plot( grad_env_tauE_Vec_R );
+
+hold on;
+
+clipValVec = ones( 1, length( results.timeAxis ) ) * clipVal;
+
+lw = 2;
+ms = 3;
+lc = '-ow';
+plot3( env_tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+
+hold off;

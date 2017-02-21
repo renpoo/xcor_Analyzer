@@ -11,6 +11,8 @@ function results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, 
 %%%% Temporary Starter
 %%%%
 
+eps = 1.0 * 10^(-2);
+
 %{
 clear;
 
@@ -493,45 +495,45 @@ title( strTitle );
 
 clipValVec = ones( 1, lenTimeAxis ) * clipVal;
 
-% if ( 0 )
-%     lc = '-ow';
-%     
-%     if ( LRCflag == 'R' || LRCflag == 'C' )
-%         plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-%     
-%     if ( LRCflag == 'L' || LRCflag == 'C' )
-%         plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-% end
-% 
-% if ( 1 )
-%     if ( LRCflag == 'R' || LRCflag == 'C' )
-%         lc = '-or';
-%         lc = '-ow';
-%         plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-%     
-%     if ( LRCflag == 'L' || LRCflag == 'C' )
-%         lc = '-ob';
-%         lc = '-ow';
-%         plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-% end
-% 
-% if ( 0 )
-%     if ( LRCflag == 'R' || LRCflag == 'C' )
-%         lc = '-oy';
-%         lc = '-ow';
-%         plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-%     
-%     if ( LRCflag == 'L' || LRCflag == 'C' )
-%         lc = '-og';
-%         lc = '-ow';
-%         plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
-%     end
-% end
+if ( 0 )
+    lc = '-ow';
+    
+    if ( LRCflag == 'R' || LRCflag == 'C' )
+        plot3(  tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRCflag == 'L' || LRCflag == 'C' )
+        plot3( -tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
+
+if ( 0 )
+    if ( LRCflag == 'R' || LRCflag == 'C' )
+        lc = '-or';
+        lc = '-ow';
+        plot3( env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRCflag == 'L' || LRCflag == 'C' )
+        lc = '-ob';
+        lc = '-ow';
+        plot3( -env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
+
+if ( 0 )
+    if ( LRCflag == 'R' || LRCflag == 'C' )
+        lc = '-oy';
+        lc = '-ow';
+        plot3( grad_env_tauE_Vec_R * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+    
+    if ( LRCflag == 'L' || LRCflag == 'C' )
+        lc = '-og';
+        lc = '-ow';
+        plot3( -grad_env_tauE_Vec_L * unitScale, timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    end
+end
 
 
 hold off;
