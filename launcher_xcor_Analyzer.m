@@ -1,4 +1,7 @@
-
+%%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
+%%%%
+%%%% launcher_xcor_Analyzer() : author : TAISO, Renpoo (170221)
+%%%%
 
 clear;
 
@@ -121,7 +124,8 @@ sound( sCut, fs );
 
 %results = Laplace_Analyzer( wavFilename, timeS0, timeE0, tau, unitScale, LRCflag );
 
-results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal );
+%results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal );
+results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag );
 
 
 
