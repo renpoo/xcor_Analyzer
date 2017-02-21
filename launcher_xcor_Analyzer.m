@@ -7,8 +7,9 @@ clear;
 timeS0 = 0.0;
 %timeS0 = 100.0;
 %timeS0 = 200.0;
-%timeE0 = 2.0;
-timeE0 = 11.5;
+
+timeE0 = 6.0;
+%timeE0 = 11.5;
 %timeE0 = 20.0;
 %timeE0 = 30.0;
 %timeE0 = 60.0;
@@ -27,8 +28,8 @@ wavFilename = 'Nippon.m4a';
 
 
 %LRCflag = 'L';
-LRCflag = 'R';
-%LRCflag = 'C';
+%LRCflag = 'R';
+LRCflag = 'C';
 
 
 LPFflag = 1;
@@ -66,8 +67,8 @@ timeE0 = min( timeE0, duration );
 TMPtimeS0_Idx = convTime2Index_( timeS0, fs );
 TMPtimeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
 
-x0cut = x0( TMPtimeS0_Idx : TMPtimeE0_Idx );
-y0cut = y0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+% x0cut = x0( TMPtimeS0_Idx : TMPtimeE0_Idx );
+% y0cut = y0( TMPtimeS0_Idx : TMPtimeE0_Idx );
 % x0cut = x0( TMPtimeS0_Idx : length( x0 ) );
 % y0cut = y0( TMPtimeS0_Idx : length( y0 ) );
 
@@ -102,7 +103,9 @@ if ( LPFflag )
     %cutOffFreq = 5000; % Hz
     %cutOffFreq = 10000; % Hz
     
+    %cutOffFreq = 10.0 / tau; % Hz
     cutOffFreq = 1.0 / tau; % Hz
+    %cutOffFreq = 0.1 / tau; % Hz
     
     fNorm = cutOffFreq / ( fs / 2 );
     df = designfilt('lowpassfir','FilterOrder',70,'CutoffFrequency',fNorm);
@@ -171,7 +174,7 @@ if ( LRCflag == 'R' || LRCflag == 'C' )
     plot3(  tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
 
     lc = '-r';
-    plot3(  env_tauE_Vec_R * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    plot3(  env_tauE_Vec_R * unitScale, results.timeAxis, clipValVec + 0.1, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
 if ( LRCflag == 'L' || LRCflag == 'C' )
@@ -179,7 +182,7 @@ if ( LRCflag == 'L' || LRCflag == 'C' )
     plot3( -tauE_Vec_L * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
 
     lc = '-b';
-    plot3( -env_tauE_Vec_L * unitScale, results.timeAxis, clipValVec, lc, 'LineWidth', lw, 'MarkerSize', ms );
+    plot3( -env_tauE_Vec_L * unitScale, results.timeAxis, clipValVec + 0.1, lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
 hold off;
