@@ -1,5 +1,6 @@
 %function [ maxValVec, envVec, envVecIdx ] = pickUp_peaks_( dataMat, eps, fs, unitScale )
-function [ maxValVec, envVecIdx ] = pickUp_peaks_( dataMat, targetVal, eps )
+%function [ maxValVec, envVecIdx ] = pickUp_peaks_( dataMat, targetVal, eps )
+function [ maxValVec, envVecIdx ] = pickUp_peaks_( dataMat, eps )
 
 m = size( dataMat, 1 );
 n = size( dataMat, 2 );
@@ -18,7 +19,7 @@ for i = 1 : m
         if ( 0 )
             [ maxVal, maxIdx ] = max( dataMat( i, : ) );
         else
-            if ( abs(dataMat( i, j ) - targetVal) < eps )
+            if ( dataMat( i, j ) < eps )
                 maxVal = dataMat( i, j );
                 maxIdx = j;
                 %break;
