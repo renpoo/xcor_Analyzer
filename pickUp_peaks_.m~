@@ -1,5 +1,5 @@
 %function [ maxValVec, envVec, envVecIdx ] = pickUp_peaks_( dataMat, eps, fs, unitScale )
-function [ maxValVec, envVecIdx ] = pickUp_peaks_( dataMat, targetVal, eps )
+function [ maxValVec, envVec, envVecIdx ] = pickUp_peaks_( dataMat, targetVal, eps )
 
 m = size( dataMat, 1 );
 n = size( dataMat, 2 );
