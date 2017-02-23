@@ -116,9 +116,9 @@ dateTime = dateTime( 1 : length( dateTime ) - 1 );
 
 
 if (LRCflag == 'C')
-    funcStr = 'trvICCF';
+    funcStr = 'travel ICCF';
 else
-    funcStr = 'trvACF';
+    funcStr = 'travel ACF';
 end
 
 

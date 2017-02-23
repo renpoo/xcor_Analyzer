@@ -610,6 +610,10 @@ function pushbutton_Exit_Callback(hObject, eventdata, handles)
 
 handles.data.exitFlag = 1;
 
+
+write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
+
+
 guidata(hObject, handles);
 
 close;
