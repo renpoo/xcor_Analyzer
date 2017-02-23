@@ -1,4 +1,17 @@
-function plot_graph_everyMoment_( plotData, tauAxis, graphTitle, dateTime, xLabelStr, yLabelStr, timeS0, timeE0, tau, t, params )
+function plot_graph_everyMoment_( handles, i )
+
+plotData   = handles.results.phi_lrMat( i, : );
+tauAxis    = handles.results.tauAxis;
+graphTitle = handles.data.graphTitle;
+dateTime   = handles.results.dateTime;
+xLabelStr  = handles.data.xLabelStr;
+yLabelStr  = handles.data.yLabelStr;
+timeS0     = handles.data.timeS0;
+timeE0     = handles.data.timeE0;
+tau        = handles.data.timeT;
+t          = handles.results.timeAxis( i );
+params     = handles.results.paramsMat{ i };
+
 
 tauStart = tauAxis( 1 );
 tauStop  = tauAxis( length( tauAxis ) );

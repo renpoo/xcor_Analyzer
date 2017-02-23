@@ -136,7 +136,7 @@ guidata( hObject, handles );
 
 % --------------------------------------------------------------------
 function data = resetData_()
-% Core Procedure to reset GUI to the default parameters
+% Core Procedure to reset GUI parameters to the default
 
 data.LRCflag          = 'R';
 data.calcTauE_VecFlag = 0;
@@ -500,6 +500,9 @@ function checkbox_PlaySoundOnCalc_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_PlaySoundOnCalc
 
+handles.data.playSoundFlag = get( hObject, 'value' );
+
+guidata(hObject, handles);
 
 % --- Executes on button press in checkbox_DumpData.
 function checkbox_DumpData_Callback(hObject, eventdata, handles)
@@ -685,6 +688,12 @@ function pushbutton_PlotEachTimeSlices_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_PlotEachTimeSlices (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+for i = 1 : size( handles.results.phi_lrMat, 1 )
+    plot_graph_everyMoment_( handles, i );
+end
+
+guidata(hObject, handles);
 
 
 

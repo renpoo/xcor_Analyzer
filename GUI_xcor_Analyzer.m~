@@ -136,7 +136,7 @@ guidata( hObject, handles );
 
 % --------------------------------------------------------------------
 function data = resetData_()
-% Core Procedure to reset GUI to the default parameters
+% Core Procedure to reset GUI parameters to the default
 
 data.LRCflag          = 'R';
 data.calcTauE_VecFlag = 0;
@@ -404,6 +404,13 @@ function pushbutton_Play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+[handles.soundSignals handles.data ] = readSound( handles );
+
+playSound( handles );
+
+guidata(hObject, handles);
+
+
 
 % --- Executes on button press in checkbox_PlotTauE_Vector.
 function checkbox_PlotTauE_Vector_Callback(hObject, eventdata, handles)
@@ -511,15 +518,15 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-readSound( handles );
+[handles.soundSignals handles.data ] = readSound( handles );
 
 if ( handles.data.playSoundFlag )
     playSound( handles );
 end
 
 
-
-handles.results = xcor_Analyzer( handles.data.graphTitle, x0, y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
+%handles.results = xcor_Analyzer( handles.data.graphTitle, handles.soundSignals.x0, handles.soundSignals.y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
+handles.results = xcor_Analyzer( handles );
 plotSurface_phi_lr_( handles.results );
 
 
@@ -535,28 +542,30 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function readSound( handles )
-% Core Procedure to read sound
+function [soundSignals data] = readSound( handles )
+% Core Procedure to read sound.
+
+data = handles.data;
 
 [ s, ~ ] = audioread( strcat( handles.data.pname, handles.data.fname ) );
-handles.soundSignals.s = s;
+soundSignals.s = s;
 
-x0 = handles.soundSignals.s( :, 2 );  % L channel
-y0 = handles.soundSignals.s( :, 1 );  % R channel
+x0 = soundSignals.s( :, 2 );  % L channel
+y0 = soundSignals.s( :, 1 );  % R channel
 
 duration = length(x0) / handles.data.fs;
 
-handles.soundSignals.x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
-handles.soundSignals.y0 = [ y0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
+soundSignals.x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
+soundSignals.y0 = [ y0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
 
-handles.data.timeS0 = max( handles.data.timeS0, 0.0 );
-handles.data.timeE0 = min( handles.data.timeE0, duration );
+data.timeS0 = max( handles.data.timeS0, 0.0 );
+data.timeE0 = min( handles.data.timeE0, duration );
 
 
 
 % --------------------------------------------------------------------
 function playSound( handles )
-% Core Procedure to read sound
+% Core Procedure to play sound for defined interval.
 
 TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
 TMPtimeE0_Idx = convTime2Index_( handles.data.timeE0, handles.data.fs ) - 1;
@@ -677,6 +686,11 @@ function pushbutton_PlotEachTimeSlices_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
+
+for i = 1 : size( phi_lrMat, 1 )
+    plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, graphTitle, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
+end
 
 
 function edit_GraphTitle_Callback(hObject, eventdata, handles)

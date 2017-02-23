@@ -6,7 +6,7 @@
 %function results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal )
 function results = xcor_Analyzer( handles )
 
-wavFilename = handles.data.graphTitle;
+graphTitle = handles.data.graphTitle;
 x0 = handles.soundSignals.x0;
 y0 = handles.soundSignals.y0;
 fs = handles.data.fs;
@@ -48,7 +48,7 @@ tau = 0.01;
 unitScale = 1000;
 
 
-wavFilename = 'Nippon.m4a';
+graphTitle = 'Nippon.m4a';
 
 
 %LRCflag = 'L';
@@ -59,7 +59,7 @@ LRCflag = 'C';
 clipVal = 0.2;
 
 
-[ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
+[ s, fs ] = audioread( strcat( './_Sounds/', graphTitle ) );
 
 x0 = s( :, 2 );  % L channel
 y0 = s( :, 1 );  % R channel
@@ -141,7 +141,7 @@ end
 bufSize = 10;
 
 
-%[ s, fs ] = audioread( strcat( './_Sounds/', wavFilename ) );
+%[ s, fs ] = audioread( strcat( './_Sounds/', graphTitle ) );
 
 
 % x0 = s( :, 2 );  % L channel
@@ -343,7 +343,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         tauAlphaIdx = zeroIdxs(1);
         tauBetaIdx  = zeroIdxs(2);
         
-        tauAlpha = tauAxis( min( tauAlphaIdx, 1 ) );
+        tauAlpha = tauAxis( max( tauAlphaIdx, 1 ) );
         tauBeta  = tauAxis( min( tauBetaIdx, lenTauAxis ) );
         
         Wiccc = tauBeta - tauAlpha;
@@ -462,7 +462,7 @@ results.LRCflag      = LRCflag;
 results.xLabelStr    = 'tau [ms]';
 results.yLabelStr    = 'time [s]';
 results.zLabelStr    = funcStr;
-results.graphTitle   = wavFilename;
+results.graphTitle   = graphTitle;
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
@@ -518,7 +518,7 @@ results.graphTitle   = wavFilename;
 % ylabel( yLabelStr );
 % zlabel( zLabelStr );
 % 
-% strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0, '%04.2f'), ' - ', num2str(timeE0, '%04.2f'), ']' );
+% strTitle = strcat( '(', graphTitle, '),', zLabelStr, ',', 't[', num2str(timeS0, '%04.2f'), ' - ', num2str(timeE0, '%04.2f'), ']' );
 % 
 % title( strTitle );
 
@@ -572,12 +572,12 @@ results.graphTitle   = wavFilename;
 
 
 % if ( 0 )
-%     pnameImg = strcat( '_Output Images', '/', '(', wavFilename, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+%     pnameImg = strcat( '_Output Images', '/', '(', graphTitle, '),', zLabelStr, ',', dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
 %     if ( exist( pnameImg, 'dir' ) == 0 )
 %         mkdir( pnameImg );
 %     end
 %     
-%     saveImageName = strcat( '(', wavFilename, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
+%     saveImageName = strcat( '(', graphTitle, '),', zLabelStr, ',timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
 %     
 %     fname = strcat( saveImageName, '.fig');
 %     outputDataFileName = strcat( pnameImg, '/', fname );
@@ -593,7 +593,7 @@ results.graphTitle   = wavFilename;
 
 % if ( 0 )
 %     for i = 1 : k
-%         plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, wavFilename, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
+%         plot_graph_everyMoment_( phi_lrMat( i, : ), tauAxis, graphTitle, dateTime, xLabelStr, zLabelStr, timeS0, timeE0, tau, timeAxis( i ), paramsMat{ i } );
 %     end
 % end
 
