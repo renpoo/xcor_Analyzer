@@ -102,7 +102,13 @@ results = struct(      ...
     'tauAlphaMat',   [],  ...
     'tauBetaMat',    [],  ...
     'dateTime',      '',  ...
-    'paramsMat',     []   ...
+    'paramsMat',     [],  ...
+    'timeS0',         0,  ...
+    'timeE0',         0,  ...    
+    'xLabelStr',     '',  ...
+    'yLabelStr',     '',  ...
+    'zLabelStr',     '',  ...
+    'graphTitle',    ''   ...
     );
 
 
@@ -440,63 +446,71 @@ results.tauAlphaMat  = tauAlphaMat;
 results.tauBetaMat   = tauBetaMat;
 results.dateTime     = dateTime;
 results.paramsMat    = paramsMat;
+results.timeS0       = timeS0;
+results.timeE0       = timeE0;
+results.LRCflag      = LRCflag;
+results.xLabelStr    = 'tau [ms]';
+results.yLabelStr    = 'time [s]';
+results.zLabelStr    = funcStr;
+results.graphTitle   = wavFilename;
+
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
 %%%%
 %%%% Plot Each time dependent ACF or ICCF surface for entire results
 %%%%
 
-figure;
-
-surf( tauAxis, timeAxis, phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
-colormap 'jet';
-
-
-if (LRCflag == 'L')
-    xmax = 0;
-    xmin = -max( abs( tauAxis ) );
-elseif (LRCflag == 'R')
-    xmax = max( abs( tauAxis ) );
-    xmin = 0;
-else
-    xmax = max( abs( tauAxis ) );
-    xmin = -xmax;
-end
-
-xlim([xmin xmax]);
-
-
-grid on;
-
-
-hold on;
-
-
-lc = 'ow';
-lw = 2;
-ms = 3;
-
-
-if ( LRCflag == 'C' )
-    plot3( tauICCCMat', timeAxis, ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
-end
-
-
-xLabelStr = 'tau [ms]';
-yLabelStr = 'time [s]';
-zLabelStr = funcStr;
-
-if ( strcmp( funcStr, 'ACF' ) )
-    zLabelStr = strcat( zLabelStr, ' [', LRCflag, '] ' );
-end
-
-xlabel( xLabelStr );
-ylabel( yLabelStr );
-zlabel( zLabelStr );
-
-strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0, '%04.2f'), ' - ', num2str(timeE0, '%04.2f'), ']' );
-
-title( strTitle );
+% figure;
+% 
+% surf( tauAxis, timeAxis, phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
+% colormap 'jet';
+% 
+% 
+% if (LRCflag == 'L')
+%     xmax = 0;
+%     xmin = -max( abs( tauAxis ) );
+% elseif (LRCflag == 'R')
+%     xmax = max( abs( tauAxis ) );
+%     xmin = 0;
+% else
+%     xmax = max( abs( tauAxis ) );
+%     xmin = -xmax;
+% end
+% 
+% xlim([xmin xmax]);
+% 
+% 
+% grid on;
+% 
+% 
+% hold on;
+% 
+% 
+% lc = 'ow';
+% lw = 2;
+% ms = 3;
+% 
+% 
+% if ( LRCflag == 'C' )
+%     plot3( tauICCCMat', timeAxis, ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
+% end
+% 
+% 
+% xLabelStr = 'tau [ms]';
+% yLabelStr = 'time [s]';
+% zLabelStr = funcStr;
+% 
+% if ( strcmp( funcStr, 'ACF' ) )
+%     zLabelStr = strcat( zLabelStr, ' [', LRCflag, '] ' );
+% end
+% 
+% xlabel( xLabelStr );
+% ylabel( yLabelStr );
+% zlabel( zLabelStr );
+% 
+% strTitle = strcat( '(', wavFilename, '),', zLabelStr, ',', 't[', num2str(timeS0, '%04.2f'), ' - ', num2str(timeE0, '%04.2f'), ']' );
+% 
+% title( strTitle );
 
 
 % clipValVec = ones( 1, lenTimeAxis ) * clipVal;
@@ -542,7 +556,7 @@ title( strTitle );
 % end
 
 
-hold off;
+% hold off;
 
 
 

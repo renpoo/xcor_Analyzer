@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 23-Feb-2017 18:27:19
+% Last Modified by GUIDE v2.5 23-Feb-2017 21:45:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -68,14 +68,14 @@ uiwait(handles.figure1);
 
 
 % --------------------------------------------------------------------
-function initialize_gui(fig_handle, handles, isreset)
+function initialize_gui( hObject, handles, isreset )
 % If the metricdata field is present and the reset flag is false, it means
 % we are we are just re-initializing a GUI by calling it from the cmd line
 % while it is up. So, bail out as we dont want to reset the data.
 
 if isfield(handles, 'data') && ~isreset
     return;
-end;
+end
 
 
 try
@@ -83,54 +83,34 @@ try
 
     %handles.data.playSoundFlag    = 0;
 catch err
-    handles.data.LRCflag          = 'R';
-    handles.data.calcTauE_VecFlag = 0;
-    handles.data.dumpResultFlag   = 0;
-    handles.data.playSoundFlag    = 1;
-    handles.data.SaveTheGraphPlotsIntoFilesFlag = 0;
-    
-    handles.data.exitFlag         = 0;
-    
-    handles.data.graphTitle       = 'Graph Title';
-    handles.data.timeT            = 0.01;
-    handles.data.timeS0           = 0.0;
-    handles.data.timeE0           = 3.0;
-    handles.data.clipVal          = 0.2;
-    handles.data.fs               = 44100;
-    
-    handles.data.xLabelStr        = 'Tau';
-    handles.data.yLabelStr        = 'Time';
-    handles.data.xUnitStr         = 'ms';
-    handles.data.yUnitStr         = 'sec';
-    handles.data.xUnitScale       = 1000.0;
-    handles.data.yUnitScale       = 1.0;
-    
-    handles.data.pname            = '';
-    handles.data.fname            = 'INPUT Sound File';
-    handles.data.graphTitle       = '';
-    handles.data.defCsvFileName   = '';
+    handles.data = resetData_();
         
     write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
 
 
-%disp( handles.data );
+if (isreset)
+    handles.data = resetData_();
+end
 
 
-set( handles.edit_InputSoundFile, 'String', strcat( handles.data.pname, handles.data.fname ) );
-set( handles.edit_GraphTitle,     'String', handles.data.graphTitle );
-set( handles.edit_StartTime,      'String', handles.data.timeS0 );
-set( handles.edit_EndTime,        'String', handles.data.timeE0 );
-set( handles.edit_T,              'String', handles.data.timeT );
-set( handles.edit_SamplingFreq,   'String', handles.data.fs );
-set( handles.edit_ClipValue,      'String', handles.data.clipVal );
+set( handles.edit_InputSoundFile, 'String',  strcat( handles.data.pname, handles.data.fname ) );
+set( handles.edit_GraphTitle,     'String',  handles.data.graphTitle );
+set( handles.edit_StartTime,      'String',  handles.data.timeS0 );
+set( handles.edit_EndTime,        'String',  handles.data.timeE0 );
+set( handles.edit_T,              'String',  handles.data.timeT );
+set( handles.edit_SamplingFreq,   'String',  handles.data.fs );
+set( handles.edit_ClipValue,      'String',  handles.data.clipVal );
 
-set( handles.edit_TauUnitLabel,   'String', handles.data.xUnitStr );
+set( handles.edit_TauUnitLabel,   'String',  handles.data.xUnitStr );
 
 
 set( handles.checkbox_PlaySoundOnCalc, 'value',  handles.data.playSoundFlag );
 set( handles.checkbox_DumpData,        'value',  handles.data.dumpResultFlag );
 set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveTheGraphPlotsIntoFilesFlag );
+
+
+set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag );
 
 
 % set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
@@ -139,7 +119,38 @@ set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveThe
 
 
 % Update handles structure
-guidata( handles.figure1, handles );
+guidata( hObject, handles );
+
+
+% --------------------------------------------------------------------
+function data = resetData_()
+
+data.LRCflag          = 'R';
+data.calcTauE_VecFlag = 0;
+data.dumpResultFlag   = 0;
+data.playSoundFlag    = 1;
+data.SaveTheGraphPlotsIntoFilesFlag = 0;
+
+data.exitFlag         = 0;
+
+data.graphTitle       = 'Graph Title';
+data.timeT            = 0.01;
+data.timeS0           = 0.0;
+data.timeE0           = 3.0;
+data.clipVal          = 0.2;
+data.fs               = 44100;
+
+data.xLabelStr        = 'Tau';
+data.yLabelStr        = 'Time';
+data.xUnitStr         = 'ms';
+data.yUnitStr         = 'sec';
+data.xUnitScale       = 1000.0;
+data.yUnitScale       = 1.0;
+
+data.pname            = '';
+data.fname            = 'INPUT Sound File';
+data.defCsvFileName   = '';
+
 
 
 
@@ -388,6 +399,10 @@ function checkbox_PlotTauE_Vector_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_PlotTauE_Vector
 
+handles.data.calcTauE_VecFlag = get( hObject, 'value' );
+
+guidata(hObject, handles);
+
 
 % --- Executes on selection change in popupmenu_CalcMode.
 function popupmenu_CalcMode_Callback(hObject, eventdata, handles)
@@ -482,6 +497,8 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+[ s, ~ ] = audioread( strcat( handles.data.pname, handles.data.fname ) );
+handles.soundSignals.s = s;
 
 x0 = handles.soundSignals.s( :, 2 );  % L channel
 y0 = handles.soundSignals.s( :, 1 );  % R channel
@@ -498,9 +515,6 @@ y0 = [ y0; zeros( handles.data.fs, 1 ) ];
 
 handles.data.timeE0 = min( handles.data.timeE0, duration );
 
-
-
-
 TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
 TMPtimeE0_Idx = convTime2Index_( handles.data.timeE0, handles.data.fs ) - 1;
 
@@ -510,8 +524,15 @@ sound( sCut, handles.data.fs );
 
 
 
-handles.results = xcor_Analyzer( handles.data.graphTitle, x0, y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
 
+handles.results = xcor_Analyzer( handles.data.graphTitle, x0, y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
+plotSurface_phi_lr_( handles.results );
+
+
+if ( handles.data.calcTauE_VecFlag )
+    handles.results = calc_tauE_Vec_( handles.data, handles.results );
+    plotOVERRIDE_tauE_Vec_( handles.data, handles.results );
+end
 
 
 guidata(hObject, handles);
@@ -525,6 +546,9 @@ function pushbutton_Reset_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+initialize_gui( hObject, handles, true );
+
+guidata(hObject, handles);
 
 
 function edit_DefinitionCsvFile_Callback(hObject, eventdata, handles)
@@ -674,3 +698,12 @@ function edit_TauUnitLabel_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in checkbox_ApplyStardardization.
+function checkbox_ApplyStardardization_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_ApplyStardardization (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox_ApplyStardardization
