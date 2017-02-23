@@ -4,7 +4,17 @@
 %%%%
 
 %function results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag, clipVal )
-function results = xcor_Analyzer( wavFilename, x0, y0, fs, timeS0, timeE0, tau, unitScale, LRCflag )
+function results = xcor_Analyzer( handles )
+
+wavFilename = handles.data.graphTitle;
+x0 = handles.soundSignals.x0;
+y0 = handles.soundSignals.y0;
+fs = handles.data.fs;
+timeS0 = handles.data.timeS0;
+timeE0 = handles.data.timeE0;
+tau = handles.data.timeT;
+unitScale = handles.data.xUnitScale;
+LRCflag = handles.data.LRCflag;
 
 
 %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%% %%%%
@@ -122,9 +132,9 @@ dateTime = dateTime( 1 : length( dateTime ) - 1 );
 
 
 if (LRCflag == 'C')
-    funcStr = 'travel ICCF';
+    funcStr = 'ICCF';
 else
-    funcStr = 'travel ACF';
+    funcStr = 'ACF';
 end
 
 
@@ -143,7 +153,7 @@ bufSize = 10;
 timeS0_Idx = convTime2Index_( timeS0, fs );
 %timeE0_Idx = convTime2Index_( timeE0, fs ) + 1;
 timeE0_Idx = convTime2Index_( timeE0, fs ) - 1;
-tau_Idx   = convTime2Index_( tau, fs );
+tau_Idx    = convTime2Index_( tau, fs );
 
 %xCut = x0cut( timeS0_Idx : timeE0_Idx )';
 %yCut = y0cut( timeS0_Idx : timeE0_Idx )';

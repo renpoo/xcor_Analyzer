@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 23-Feb-2017 21:45:49
+% Last Modified by GUIDE v2.5 24-Feb-2017 00:42:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -103,6 +103,7 @@ set( handles.edit_SamplingFreq,   'String',  handles.data.fs );
 set( handles.edit_ClipValue,      'String',  handles.data.clipVal );
 
 set( handles.edit_TauUnitLabel,   'String',  handles.data.xUnitStr );
+%set( handles.edit_TimeUnitLabel,  'String',  handles.data.yUnitStr );
 
 
 set( handles.checkbox_PlaySoundOnCalc, 'value',  handles.data.playSoundFlag );
@@ -111,6 +112,17 @@ set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveThe
 
 
 set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag );
+
+
+if ( handles.data.LRCflag == 'L' )
+    LRCvalue = 1;
+elseif ( handles.data.LRCflag == 'R' )
+    LRCvalue = 2;
+else
+    LRCvalue = 3;
+end
+
+set( handles.popupmenu_CalcMode, 'value',  LRCvalue );
 
 
 % set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
@@ -124,6 +136,7 @@ guidata( hObject, handles );
 
 % --------------------------------------------------------------------
 function data = resetData_()
+% Core Procedure to reset GUI to the default parameters
 
 data.LRCflag          = 'R';
 data.calcTauE_VecFlag = 0;
@@ -298,6 +311,7 @@ handles.data.clipVal = castNum_( get( hObject, 'String' ) );
 
 guidata(hObject, handles);
 
+
 % --- Executes during object creation, after setting all properties.
 function edit_ClipValue_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit_ClipValue (see GCBO)
@@ -389,6 +403,13 @@ function pushbutton_Play_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_Play (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+[handles.soundSignals handles.data ] = readSound( handles );
+
+playSound( handles );
+
+guidata(hObject, handles);
+
 
 
 % --- Executes on button press in checkbox_PlotTauE_Vector.
@@ -497,35 +518,15 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[ s, ~ ] = audioread( strcat( handles.data.pname, handles.data.fname ) );
-handles.soundSignals.s = s;
+[handles.soundSignals handles.data ] = readSound( handles );
 
-x0 = handles.soundSignals.s( :, 2 );  % L channel
-y0 = handles.soundSignals.s( :, 1 );  % R channel
-
-lenX0 = length(x0);
-lenY0 = length(y0);
-
-duration = lenX0 / handles.data.fs;
-
-% x0 = [ x0; zeros( lenX0, 1 ) ];
-% y0 = [ y0; zeros( lenY0, 1 ) ];
-x0 = [ x0; zeros( handles.data.fs, 1 ) ];
-y0 = [ y0; zeros( handles.data.fs, 1 ) ];
-
-handles.data.timeE0 = min( handles.data.timeE0, duration );
-
-TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
-TMPtimeE0_Idx = convTime2Index_( handles.data.timeE0, handles.data.fs ) - 1;
-
-sCut = handles.soundSignals.s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
-
-sound( sCut, handles.data.fs );
+if ( handles.data.playSoundFlag )
+    playSound( handles );
+end
 
 
-
-
-handles.results = xcor_Analyzer( handles.data.graphTitle, x0, y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
+%handles.results = xcor_Analyzer( handles.data.graphTitle, handles.soundSignals.x0, handles.soundSignals.y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
+handles.results = xcor_Analyzer( handles );
 plotSurface_phi_lr_( handles.results );
 
 
@@ -536,6 +537,42 @@ end
 
 
 guidata(hObject, handles);
+
+
+
+
+% --------------------------------------------------------------------
+function [soundSignals data] = readSound( handles )
+% Core Procedure to read sound.
+
+data = handles.data;
+
+[ s, ~ ] = audioread( strcat( handles.data.pname, handles.data.fname ) );
+soundSignals.s = s;
+
+x0 = soundSignals.s( :, 2 );  % L channel
+y0 = soundSignals.s( :, 1 );  % R channel
+
+duration = length(x0) / handles.data.fs;
+
+soundSignals.x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
+soundSignals.y0 = [ y0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
+
+data.timeS0 = max( handles.data.timeS0, 0.0 );
+data.timeE0 = min( handles.data.timeE0, duration );
+
+
+
+% --------------------------------------------------------------------
+function playSound( handles )
+% Core Procedure to play sound for defined interval.
+
+TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
+TMPtimeE0_Idx = convTime2Index_( handles.data.timeE0, handles.data.fs ) - 1;
+    
+sCut = handles.soundSignals.s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
+    
+sound( sCut, handles.data.fs );
 
 
 
@@ -643,9 +680,9 @@ guidata(hObject, handles);
 close;
 
 
-% --- Executes on button press in pushbutton_PlotEachTimeSlice.
-function pushbutton_PlotEachTimeSlice_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_PlotEachTimeSlice (see GCBO)
+% --- Executes on button press in pushbutton_PlotEachTimeSlices.
+function pushbutton_PlotEachTimeSlices_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_PlotEachTimeSlices (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
