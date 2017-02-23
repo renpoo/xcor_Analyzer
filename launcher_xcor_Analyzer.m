@@ -222,7 +222,7 @@ if ( LRCflag == 'L' || LRCflag == 'C' )
     %[ maxValVec_L, tauE_Vec_L, tauE_Vec_L_Idx ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps, fs, pickUpScale );
     [ maxValVec_L, tauE_Vec_L_Idx ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps );
     
-    tauE_Vec_L = ( tauE_Vec_L_Idx ) / n * tau;
+    tauE_Vec_L = ( tauE_Vec_L_Idx - 1 ) / n * tau;
         
     if ( LPFflag == 1 )
         env_tauE_Vec_L = filter( df, [ tauE_Vec_L'; zeros(D,1) ] );
