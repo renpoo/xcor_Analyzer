@@ -27,11 +27,11 @@ function varargout = GUI_xcor_Analyzer(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @GUI_xcor_Analyzer_OpeningFcn, ...
-                   'gui_OutputFcn',  @GUI_xcor_Analyzer_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @GUI_xcor_Analyzer_OpeningFcn, ...
+    'gui_OutputFcn',  @GUI_xcor_Analyzer_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -80,12 +80,12 @@ end
 
 try
     handles.data = open_history_( 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: open_history_() : No Command History File.' );
-
+    
     handles.data.exitFlag         = 0;
     %handles.data.playSoundFlag    = 0;
 catch err
     handles.data = resetData_();
-        
+    
     write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
 
@@ -182,7 +182,7 @@ data.chDefs           = {};
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = GUI_xcor_Analyzer_OutputFcn(hObject, eventdata, handles) 
+function varargout = GUI_xcor_Analyzer_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -196,6 +196,10 @@ varargout{1} = handles.output;
 
 if nargout
     [varargout{1:nargout}] = handles;
+    
+    % FORCE RESET for chDefs{}
+    % handles.data.chDefs = {};
+    
     write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
 else
     %gui_mainfcn(gui_State, varargin{:});
@@ -371,7 +375,13 @@ function pushbutton_ReadSoundFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[ fname, pname ] = uigetfile( '_Sounds/*.wav', 'WAV Sound File' );
+
+if ( handles.data.fileSuffixValue == 1 )
+    [ fname, pname ] = uigetfile( '_Sounds/*.wav', 'WAV Sound File' );
+else
+    [ fname, pname ] = uigetfile( '_Sounds/*.m4a', 'm4a Sound File' );
+end
+
 handles.data.wavFileName = strcat( pname, fname );
 
 handles.data.graphTitle = fname;
@@ -455,8 +465,8 @@ elseif ( LRCvalue == 2 )
     handles.data.LRCflag = 'R';
 else
     handles.data.LRCflag = 'C';
-end    
-    
+end
+
 guidata(hObject, handles);
 
 
@@ -545,14 +555,23 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[handles.soundSignals handles.data ] = readSound( handles );
+
+if ( handles.data.fileSuffixValue == 1 )
+    [handles.soundSignals handles.data ] = readSound( handles );
+elseif ( handles.data.fileSuffixValue == 2 )
+    [handles.soundSignals handles.data ] = readSound( handles );
+else
+    %[handles.soundSignals handles.data ] = readDataSignals( handles );
+    handles.data.playSoundFlag = 0;
+    return;
+end
+
 
 if ( handles.data.playSoundFlag )
     playSound( handles );
 end
 
 
-%handles.results = xcor_Analyzer( handles.data.graphTitle, handles.soundSignals.x0, handles.soundSignals.y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
 handles.results = xcor_Analyzer( handles );
 plotSurface_phi_lr_( handles );
 
@@ -585,6 +604,34 @@ end
 guidata(hObject, handles);
 
 
+% --------------------------------------------------------------------
+function [ dataSignals data ] = readDataSignals( handles )
+% Core Procedure to read a set of data signals.
+
+data = handles.data;
+
+
+% L channel
+[ lPathstr, lName, lExt ] = fileparts( handles.data.lCsvFileName );
+if ( strcmp( lExt, 'csv' ) || strcmp( lExt, 'CSV' ) )
+    fileID = fopen( handles.data.lCsvFileName );
+    x0 = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
+    fclose(fileID);
+end
+
+% R channel
+[ rPathstr, rName, rExt ] = fileparts( handles.data.rCsvFileName );
+if ( strcmp( rExt, 'csv' ) || strcmp( rExt, 'CSV' ) )
+    fileID = fopen( handles.data.rCsvFileName );
+    y0 = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
+    fclose(fileID);
+end
+
+dataSignals.x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
+dataSignals.y0 = [ y0; zeros( length(y0), 1 ) ]; % with Zero post-padding
+
+data.timeS0 = max( handles.data.timeS0, 0.0 );
+data.timeE0 = min( handles.data.timeE0, length(x0) );
 
 
 % --------------------------------------------------------------------
@@ -615,9 +662,9 @@ function playSound( handles )
 
 TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
 TMPtimeE0_Idx = convTime2Index_( handles.data.timeE0, handles.data.fs ) - 1;
-    
+
 sCut = handles.soundSignals.s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
-    
+
 sound( sCut, handles.data.fs );
 
 
@@ -732,7 +779,7 @@ end;
 
 handles.data.chDefs = chDefs;
 
-handles.data.wavFileName = strrep( handles.data.chB{ 7 }, '"', '' );
+handles.data.wavFileName = strrep( chB{ 7 }, '"', '' );
 
 
 set( handles.edit_InputSoundFile, 'String',  handles.data.wavFileName );
@@ -829,7 +876,7 @@ function pushbutton_PlotEachTimeSlices_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 for i = 1 : size( handles.results.phi_lrMat, 1 )
-
+    
     plot_graph_everyMoment_( handles, i );
     
     if ( handles.data.SaveTheGraphPlotsIntoFilesFlag )
@@ -992,10 +1039,10 @@ elseif ( handles.data.fileSuffixValue == 2 )
     [ fname, pname ] = uigetfile( '_Sounds/*.m4a', 'm4a Sound File' );
 else
     [ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Data File' );
-end    
-    
-    
+end
+
 handles.data.wavFileName = strcat( pname, fname );
+
 
 handles.data.chDefs{ end + 1, 1 } = 'NEW';
 handles.data.chDefs{ end,     2 } = strcat( '"', handles.data.wavFileName, '"' );
@@ -1011,27 +1058,67 @@ function pushbutton_DeleteFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-prompt = { 'Input the INDEX NUMBER to delete' };
-dlg_title = 'Delete File:';
-num_lines = 1;
-defaultans = { 'INDEX NUMBER' };
-answer = inputdlg( prompt, dlg_title, num_lines, defaultans );
 
-chDefs = {};
-for i = 1 : size( handles.data.chDefs, 1 )
-    if ( i == castNum_( answer ) )
-        continue;
-    end
-    
-    chDefs{ end + 1, 1 } = handles.data.chDefs{ i, 1 };
-    chDefs{ end,     2 } = handles.data.chDefs{ i, 2 };    
-end
+choice = choosedialog( handles );
+
+% prompt = { 'Input the INDEX NUMBER to delete' };
+% dlg_title = 'Delete File:';
+% num_lines = 1;
+% defaultans = { 'INDEX NUMBER' };
+% choice = inputdlg( prompt, dlg_title, num_lines, defaultans );
+
+chDefs = handles.data.chDefs;
+
+chDefs{ choice, 1 } = [];
+chDefs{ choice, 2 } = [];
 
 handles.data.chDefs = chDefs;
 
 set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
 
 guidata( hObject, handles );
+
+
+function choice = choosedialog( handles )
+
+indexList = {};
+for i = 1 : size( handles.data.chDefs, 1 )
+    indexList{ i } = i;
+end
+
+d = dialog('Position',[300 300 250 150],'Name','Select One');
+
+txt = uicontrol('Parent',d,...
+    'Style','text',...
+    'Position',[20 80 210 40],...
+    'String','Select A INDEX NUMBER');
+
+popup = uicontrol('Parent',d,...
+    'Style','popup',...
+    'Position',[75 70 100 25],...
+    'String', indexList,...
+    'Callback',@popup_callback);
+
+btn = uicontrol('Parent',d,...
+    'Position',[89 20 70 25],...
+    'String','DELETE',...
+    'Callback','delete(gcf)');
+
+choice = 1;
+
+% Wait for d to close before running to completion
+uiwait(d);
+
+function popup_callback(popup,callbackdata)
+idx = popup.Value;
+popup_items = popup.String;
+% This code uses dot notation to get properties.
+% Dot notation runs in R2014b and later.
+% For R2014a and earlier:
+% idx = get(popup,'Value');
+% popup_items = get(popup,'String');
+choice = castNum_( popup_items( idx, : ) );
+
 
 
 % --- Executes when entered data in editable cell(s) in uitable_Filenames_w_Channel.
@@ -1075,7 +1162,7 @@ c = indices( :, 2 );
 linear_index = sub2ind( size(data), r, c );
 selected_vals = data( linear_index );
 
-disp( [ r c ] );
+%disp( [ r c ] );
 
 
 % --- Executes on selection change in popupmenu_FileSuffix.
