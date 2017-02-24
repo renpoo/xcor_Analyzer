@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 24-Feb-2017 10:37:59
+% Last Modified by GUIDE v2.5 24-Feb-2017 12:36:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -112,7 +112,7 @@ set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveThe
 
 set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag );
 
-set( handles.edit_tauUnitScale, 'value', handles.data.tauUnitScale );
+set( handles.edit_TauUnitScale, 'value', handles.data.tauUnitScale );
 
 
 if ( handles.data.LRCflag == 'L' )
@@ -686,11 +686,9 @@ defCsvFileName = strcat( pname, fname );
 
 handles.data.fname = fname;
 handles.data.pname = pname;
-%handles.data.pname = strrep( pname, '_CSVs/', '_Sounds/' );
 
 
 handles.data.defCsvFileName = defCsvFileName;
-handles.data.graphTitle = '';
 
 
 fileID = fopen( defCsvFileName );
@@ -699,7 +697,7 @@ fclose(fileID);
 
 
 handles.data.chA = scanData{ 1, 1 };
-handles.data.chB  = scanData{ 1, 2 };
+handles.data.chB = scanData{ 1, 2 };
 
 handles.data.graphTitle    = castStr_( handles.data.chA{ 1 } );
 handles.data.fs            = castNum_( handles.data.chB{ 1 } );
@@ -747,26 +745,33 @@ set( handles.edit_SamplingFreq,   'String',  handles.data.fs );
 set( handles.edit_TauUnitLabel,   'String',  handles.data.xUnitStr );
 set( handles.edit_TimeUnitLabel,  'String',  handles.data.yUnitStr );
 
-set( handles.edit_tauUnitScale,   'value', handles.data.tauUnitScale );
+set( handles.edit_TauUnitScale,   'value',   handles.data.tauUnitScale );
 
-set( handles.edit_SettingCsvFile, 'value', handles.data.tauUnitScale );
+set( handles.edit_SettingCsvFile, 'String',  handles.data.defCsvFileName );
+
+
+packedTexts = {};
+for i = handles.data.numberOfHeaders + 1 : length( handles.data.chA )
+    packedTexts{ i - handles.data.numberOfHeaders } = strcat( handles.data.chA{ i }, ' , ', handles.data.chB{ i } );
+end;
+set( handles.text_SoundFilesToRead, 'String', packedTexts ); 
 
 
 guidata( hObject, handles );
 
 
 function edit_SoundFilesToRead_Callback(hObject, eventdata, handles)
-% hObject    handle to edit_SoundFilesToRead (see GCBO)
+% hObject    handle to text_SoundFilesToRead (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit_SoundFilesToRead as text
-%        str2double(get(hObject,'String')) returns contents of edit_SoundFilesToRead as a double
+% Hints: get(hObject,'String') returns contents of text_SoundFilesToRead as text
+%        str2double(get(hObject,'String')) returns contents of text_SoundFilesToRead as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_SoundFilesToRead_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit_SoundFilesToRead (see GCBO)
+function text_SoundFilesToRead_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text_SoundFilesToRead (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -783,21 +788,22 @@ function pushbutton_SaveSettingFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+');
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+' );
+
+
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( '' ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xLabelStr ),  castStr_( handles.data.yLabelStr ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitStr ),   castStr_( handles.data.yUnitStr ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
+fprintf( fileID, '%s,%s\n', castStr_( 'Right' ),                 castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
+fprintf( fileID, '%s,%s\n', castStr_( 'Left' ),                  castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
 
 % if ( ~isempty( handles.data.ch ) )
 %     for m = 1 : handles.data.nCsvFileNames
 %         fprintf( fileID, '%s,%s\n', char( handles.data.chA( m ) ), char( handles.data.chB( m ) ) );
-%     end;
-% else
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( '' ) );
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.xLabelStr ),  castStr_( handles.data.yLabelStr ) );
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitStr ),   castStr_( handles.data.yUnitStr ) );
-    fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
-    fprintf( fileID, '%s,%s\n', castStr_( 'Right' ),                 castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
-    fprintf( fileID, '%s,%s\n', castStr_( 'Left' ),                  castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
+%     end
 % end
 
 fclose( fileID );
@@ -917,13 +923,13 @@ function checkbox_ApplyStardardization_Callback(hObject, eventdata, handles)
 
 
 
-function edit_tauUnitScale_Callback(hObject, eventdata, handles)
-% hObject    handle to edit_tauUnitScale (see GCBO)
+function edit_TauUnitScale_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_TauUnitScale (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit_tauUnitScale as text
-%        str2double(get(hObject,'String')) returns contents of edit_tauUnitScale as a double
+% Hints: get(hObject,'String') returns contents of edit_TauUnitScale as text
+%        str2double(get(hObject,'String')) returns contents of edit_TauUnitScale as a double
 
 handles.data.tauUnitScale = castNum_( get( hObject, 'String' ) );
 
@@ -933,8 +939,8 @@ guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_tauUnitScale_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit_tauUnitScale (see GCBO)
+function edit_TauUnitScale_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_TauUnitScale (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -969,4 +975,78 @@ function edit_TimeUnitLabel_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton_BatchCalculate.
+function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_BatchCalculate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_AddSoundFile.
+function pushbutton_AddSoundFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_AddSoundFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_DeleteSoundFile.
+function pushbutton_DeleteSoundFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_DeleteSoundFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes when entered data in editable cell(s) in uitable_Filenames_w_Channel.
+function uitable_Filenames_w_Channel_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to uitable_Filenames_w_Channel (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+
+t.CellEditCallback = @ChannelLabel_CheckCB;
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function uitable_Filenames_w_Channel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uitable_Filenames_w_Channel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+guidata(hObject, handles);
+
+end
+
+
+function ChannelLabel_CheckCB( src, eventdata )
+    
+if (eventdata.Indices(2) == 1 && ...                  % check if column 1
+      isstring( eventdata.NewData ) )
+   tableData = src.Data;
+   tableData{ eventdata.Indices(1), eventdata.Indices(2) } = eventdata.PreviousData;
+   src.Data = tableData;                              % set the data back to its original value
+   %warning('Age must be between 0 and 120.')          % warn the user
+end
+
+end
+
+
+function Filename_CheckCB( src, eventdata )
+    
+if (eventdata.Indices(2) == 2 && ...                  % check if column 2
+      isstring( eventdata.NewData ) )
+   tableData = src.Data;
+   tableData{ eventdata.Indices(1), eventdata.Indices(2) } = eventdata.PreviousData;
+   src.Data = tableData;                              % set the data back to its original value
+   %warning('Age must be between 0 and 120.')          % warn the user
+end
+
 end

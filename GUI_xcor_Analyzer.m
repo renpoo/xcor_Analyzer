@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 24-Feb-2017 10:45:14
+% Last Modified by GUIDE v2.5 24-Feb-2017 13:10:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -750,21 +750,28 @@ set( handles.edit_TauUnitScale,   'value',   handles.data.tauUnitScale );
 set( handles.edit_SettingCsvFile, 'String',  handles.data.defCsvFileName );
 
 
+packedTexts = {};
+for i = handles.data.numberOfHeaders + 1 : length( handles.data.chA )
+    packedTexts{ i - handles.data.numberOfHeaders } = strcat( handles.data.chA{ i }, ' , ', handles.data.chB{ i } );
+end;
+set( handles.text_SoundFilesToRead, 'String', packedTexts ); 
+
+
 guidata( hObject, handles );
 
 
 function edit_SoundFilesToRead_Callback(hObject, eventdata, handles)
-% hObject    handle to edit_SoundFilesToRead (see GCBO)
+% hObject    handle to text_SoundFilesToRead (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit_SoundFilesToRead as text
-%        str2double(get(hObject,'String')) returns contents of edit_SoundFilesToRead as a double
+% Hints: get(hObject,'String') returns contents of text_SoundFilesToRead as text
+%        str2double(get(hObject,'String')) returns contents of text_SoundFilesToRead as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_SoundFilesToRead_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit_SoundFilesToRead (see GCBO)
+function text_SoundFilesToRead_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to text_SoundFilesToRead (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -969,3 +976,51 @@ function edit_TimeUnitLabel_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton_BatchCalculate.
+function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_BatchCalculate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_AddSoundFile.
+function pushbutton_AddSoundFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_AddSoundFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton_DeleteSoundFile.
+function pushbutton_DeleteSoundFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_DeleteSoundFile (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes when entered data in editable cell(s) in uitable_Filenames_w_Channel.
+function uitable_Filenames_w_Channel_CellEditCallback(hObject, eventdata, handles)
+% hObject    handle to uitable_Filenames_w_Channel (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) edited
+%	PreviousData: previous data for the cell(s) edited
+%	EditData: string(s) entered by the user
+%	NewData: EditData or its converted form set on the Data property. Empty if Data was not changed
+%	Error: error string when failed to convert EditData to appropriate value for Data
+% handles    structure with handles and user data (see GUIDATA)
+
+d = get( hObject, 'Data' );
+
+disp( d );
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function uitable_Filenames_w_Channel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uitable_Filenames_w_Channel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+guidata(hObject, handles);
