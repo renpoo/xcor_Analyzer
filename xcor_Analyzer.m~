@@ -121,14 +121,13 @@ paramsMat    = {};
 
 if ( handles.data.applyWindowFuncFlag )
     if ( handles.data.windowFuncMode == 1 )
-        windowFunc = hann( tau_Idx + 1 );
+        windowFunc = hann( lenTauAxis );
     elseif ( handles.data.windowFuncMode == 2 )
-        windowFunc = hamming( tau_Idx + 1 );        
+        windowFunc = hamming( lenTauAxis );        
     elseif ( handles.data.windowFuncMode == 3 )
-        windowFunc = blackman( tau_Idx + 1 );
+        windowFunc = blackman( lenTauAxis );
     else
-        windowFunc = rectwin( tau_Idx + 1 );
-    end
+        windowFunc = rectwin( lenTauAxis );
 end
 
 
@@ -151,8 +150,7 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         xSub = xSub .* windowFunc;
         ySub = ySub .* windowFunc;
     end
-
-    
+        
     if (LRCflag == 'L')
         PHI_ll_0 = init_PHI_( xSub );
         PHI_rr_0 = PHI_ll_0;

@@ -1,24 +1,24 @@
-function plotSurface_phi_lr_( results )
+function plotSurface_phi_lr_( handles )
 
 
 figure;
 
-surf( results.tauAxis, results.timeAxis, results.phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
+surf( handles.results.tauAxis, handles.results.timeAxis, handles.results.phi_lrMat, 'FaceColor','interp', 'LineStyle', 'none' );
 colormap 'jet';
 
 
-if (results.LRCflag == 'L')
+if (handles.data.LRCflag == 'L')
     xmax = 0;
-    xmin = -max( abs( results.tauAxis ) );
-elseif (results.LRCflag == 'R')
-    xmax = max( abs( results.tauAxis ) );
+    xmin = -max( abs( handles.results.tauAxis ) );
+elseif (handles.data.LRCflag == 'R')
+    xmax = max( abs( handles.results.tauAxis ) );
     xmin = 0;
 else
-    xmax = max( abs( results.tauAxis ) );
+    xmax = max( abs( handles.results.tauAxis ) );
     xmin = -xmax;
 end
 
-xlim([xmin xmax]);
+xlim( [xmin xmax] );
 
 
 grid on;
@@ -32,26 +32,27 @@ lw = 2;
 ms = 3;
 
 
-if ( results.LRCflag == 'C' )
-    plot3( results.tauICCCMat', results.timeAxis, results.ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
+if ( handles.data.LRCflag == 'C' )
+    plot3( handles.results.tauICCCMat', handles.results.timeAxis, handles.results.ICCCMat', lc, 'LineWidth', lw, 'MarkerSize', ms );
 end
 
 
-zLabelStr = results.zLabelStr;
+zLabelStr = handles.results.zLabelStr;
 
 if ( strcmp( zLabelStr, 'ACF' ) )
-    zLabelStr = strcat( zLabelStr, ' [', results.LRCflag, '] ' );
+    zLabelStr = strcat( zLabelStr, ' [', handles.results.LRCflag, '] ' );
 end
 
-xlabel( results.xLabelStr );
-ylabel( results.yLabelStr );
+xlabel( handles.results.xLabelStr );
+ylabel( handles.results.yLabelStr );
 zlabel( zLabelStr );
 
 
-strTitle = strcat( '(', results.graphTitle, '), travel- ', zLabelStr, ',', 't[', num2str(results.timeS0, '%04.2f'), ' - ', num2str(results.timeE0, '%04.2f'), ']' );
+strTitle = strcat( '(', handles.results.graphTitle, '), travel- ', zLabelStr, ',', 't[', num2str(handles.results.timeS0, '%04.2f'), ' - ', num2str(handles.results.timeE0, '%04.2f'), ']' );
 
 
 title( strTitle );
 
 
 hold off;
+

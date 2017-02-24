@@ -8,7 +8,7 @@ results_new = results;
 %%%% Custom OVERRIDE Setting
 %%%%
 
-LPFflag = 1; % MATLAB default Low-Pass-Filter
+LPFflag = 1; % 1 : MATLAB default Low-Pass-Filter
 cutOffFreq = 1000;
 eps = 0.01;
 minPeakDist = 1;
@@ -31,17 +31,7 @@ if ( data.LRCflag == 'R' || data.LRCflag == 'C' )
     
      m = size( clipped_rightHalf_phi_lrMat, 1 );
      n = size( clipped_rightHalf_phi_lrMat, 2 );
-%     
-%     for i = 1 : m
-%         for j = n : -1 : 1
-%             if ( clipped_rightHalf_phi_lrMat( i, j ) <= clipVal )
-%                 clipped_rightHalf_phi_lrMat( i, j ) = 0.0;
-%             end
-%         end
-%     end
     
-    %[ maxValVec_R, tauE_Vec_R, tauE_Vec_R_Idx ] = pickUp_peaks_( abs( rightHalf_phi_lrMat - clipVal ), eps, fs );
-    %[ maxValVec_R, tauE_Vec_R, tauE_Vec_R_Idx ] = pickUp_peaks_( clipped_rightHalf_phi_lrMat, eps, fs, pickUpScale );
     [ results_new.maxValVec_R, results_new.tauE_Vec_R_Idx ] = pickUp_peaks_( clipped_rightHalf_phi_lrMat, eps );
     
     results_new.tauE_Vec_R = ( results_new.tauE_Vec_R_Idx - 1 ) / n * data.timeT;   
@@ -66,17 +56,6 @@ if ( data.LRCflag == 'L' || data.LRCflag == 'C' )
     m = size( clipped_leftHalf_phi_lrMat, 1 );
     n = size( clipped_leftHalf_phi_lrMat, 2 );
     
-%     for i = 1 : m
-%         for j = n : -1 : 1
-%             if ( clipped_leftHalf_phi_lrMat( i, j ) <= clipVal )
-%                 clipped_leftHalf_phi_lrMat( i, j ) = 0.0;
-%             end
-%         end
-%     end
-    
-    
-    %[ maxValVec_L, tauE_Vec_L, tauE_Vec_L_Idx ] = pickUp_peaks_( abs( leftHalf_phi_lrMat - clipVal ), eps, fs );
-    %[ maxValVec_L, tauE_Vec_L, tauE_Vec_L_Idx ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps, fs, pickUpScale );
     [ results_new.maxValVec_L, results_new.tauE_Vec_L_Idx ] = pickUp_peaks_( clipped_leftHalf_phi_lrMat, eps );
     
     results_new.tauE_Vec_L = ( results_new.tauE_Vec_L_Idx - 1 ) / n * data.timeT;

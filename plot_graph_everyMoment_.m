@@ -54,7 +54,14 @@ if (lastI >= 1)
 end
 
 
-graphTitle = strcat( '(', graphTitle, '),', yLabelStr , ',' );
+zLabelStr = handles.results.zLabelStr;
+
+if ( strcmp( zLabelStr, 'ACF' ) )
+    zLabelStr = strcat( zLabelStr, ' [', handles.results.LRCflag, '] ' );
+end
+
+
+graphTitle = strcat( '(', graphTitle, '),', zLabelStr , ',' );
 
 
 title( strcat( graphTitle, 't[', num2str(t, '%04.2f'), ' - ', num2str(t + tau, '%04.2f'), ']' ) );
@@ -62,21 +69,4 @@ title( strcat( graphTitle, 't[', num2str(t, '%04.2f'), ' - ', num2str(t + tau, '
 
 hold off;
 
-
-
-
-
-pnameImg = strcat( '_Output Images', '/', graphTitle, dateTime, ',', 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 'tau,', num2str(tau, '%04.3f') );
-if ( exist( pnameImg, 'dir' ) == 0 )
-    mkdir( pnameImg );
-end
-
-saveImageName = strcat( graphTitle, 'timeS0,', num2str(timeS0, '%04.2f'), ',', 'timeE0,', num2str(timeE0, '%04.2f'), ',', 't,', num2str(t, '%04.3f') );
-
-fname = strcat( saveImageName, '.jpg');
-outputDataFileName = strcat( pnameImg, '/', fname );
-saveas( 1, strcat( outputDataFileName ) );
-
-
-end
 

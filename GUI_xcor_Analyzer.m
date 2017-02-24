@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 24-Feb-2017 00:42:33
+% Last Modified by GUIDE v2.5 24-Feb-2017 08:30:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -81,6 +81,7 @@ end
 try
     handles.data = open_history_( 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: open_history_() : No Command History File.' );
 
+    handles.data.exitFlag         = 0;
     %handles.data.playSoundFlag    = 0;
 catch err
     handles.data = resetData_();
@@ -103,15 +104,15 @@ set( handles.edit_SamplingFreq,   'String',  handles.data.fs );
 set( handles.edit_ClipValue,      'String',  handles.data.clipVal );
 
 set( handles.edit_TauUnitLabel,   'String',  handles.data.xUnitStr );
-%set( handles.edit_TimeUnitLabel,  'String',  handles.data.yUnitStr );
-
+set( handles.edit_TimeUnitLabel,  'String',  handles.data.yUnitStr );
 
 set( handles.checkbox_PlaySoundOnCalc, 'value',  handles.data.playSoundFlag );
 set( handles.checkbox_DumpData,        'value',  handles.data.dumpResultFlag );
 set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveTheGraphPlotsIntoFilesFlag );
 
-
 set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag );
+
+set( handles.edit_tauUnitScale, 'value', handles.data.tauUnitScale );
 
 
 if ( handles.data.LRCflag == 'L' )
@@ -123,6 +124,11 @@ else
 end
 
 set( handles.popupmenu_CalcMode, 'value',  LRCvalue );
+
+
+set( handles.checkbox_ApplyWindowFunc, 'value', handles.data.applyWindowFuncFlag );
+set( handles.popupmenu_WindowFunc,     'value', handles.data.windowFuncMode );
+
 
 
 % set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
@@ -160,10 +166,14 @@ data.yUnitStr         = 'sec';
 data.xUnitScale       = 1000.0;
 data.yUnitScale       = 1.0;
 
+data.tauUnitScale     = 1.0 / data.xUnitScale;
+
+data.applyWindowFuncFlag = 0;
+data.windowFuncMode   = 1;
+
 data.pname            = '';
 data.fname            = 'INPUT Sound File';
 data.defCsvFileName   = '';
-
 
 
 
@@ -468,6 +478,10 @@ function checkbox_ApplyWindowFunc_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_ApplyWindowFunc
 
+handles.data.applyWindowFuncFlag = get( hObject, 'value' );
+
+guidata(hObject, handles);
+
 
 % --- Executes on selection change in popupmenu_WindowFunc.
 function popupmenu_WindowFunc_Callback(hObject, eventdata, handles)
@@ -477,6 +491,10 @@ function popupmenu_WindowFunc_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_WindowFunc contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu_WindowFunc
+
+handles.data.windowFuncMode = get( hObject, 'value' );
+
+guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -504,6 +522,7 @@ handles.data.playSoundFlag = get( hObject, 'value' );
 
 guidata(hObject, handles);
 
+
 % --- Executes on button press in checkbox_DumpData.
 function checkbox_DumpData_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox_DumpData (see GCBO)
@@ -512,7 +531,9 @@ function checkbox_DumpData_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_DumpData
 
+handles.data.dumpResultFlag = get( hObject, 'value' );
 
+guidata(hObject, handles);
 
 
 % --- Executes on button press in pushbutton_Calculate.
@@ -530,7 +551,7 @@ end
 
 %handles.results = xcor_Analyzer( handles.data.graphTitle, handles.soundSignals.x0, handles.soundSignals.y0, handles.data.fs, handles.data.timeS0, handles.data.timeE0, handles.data.timeT, handles.data.xUnitScale, handles.data.LRCflag );
 handles.results = xcor_Analyzer( handles );
-plotSurface_phi_lr_( handles.results );
+plotSurface_phi_lr_( handles );
 
 
 if ( handles.data.calcTauE_VecFlag )
@@ -538,6 +559,25 @@ if ( handles.data.calcTauE_VecFlag )
     plotOVERRIDE_tauE_Vec_( handles.data, handles.results );
 end
 
+
+if ( handles.data.SaveTheGraphPlotsIntoFilesFlag )
+    pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+    if ( exist( pnameImg, 'dir' ) == 0 )
+        mkdir( pnameImg );
+    end
+    
+    saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+    
+    fname = strcat( saveImageName, '.fig');
+    outputDataFileName = strcat( pnameImg, '/', fname );
+    saveas( 1, strcat( outputDataFileName ) );
+    
+end
+
+
+if ( handles.data.dumpResultFlag )
+    batch_dump_data_( handles );
+end
 
 guidata(hObject, handles);
 
@@ -628,10 +668,14 @@ function checkbox_SaveTheGraphPlotsIntoFiles_Callback(hObject, eventdata, handle
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_SaveTheGraphPlotsIntoFiles
 
+handles.data.SaveTheGraphPlotsIntoFilesFlag = get( hObject, 'value' );
 
-% --- Executes on button press in pushbutton_ReadDefinitionFile.
-function pushbutton_ReadDefinitionFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_ReadDefinitionFile (see GCBO)
+guidata(hObject, handles);
+
+
+% --- Executes on button press in pushbutton_ReadSettingFile.
+function pushbutton_ReadSettingFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_ReadSettingFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -659,9 +703,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton_SaveDefinitionFile.
-function pushbutton_SaveDefinitionFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_SaveDefinitionFile (see GCBO)
+% --- Executes on button press in pushbutton_SaveSettingFile.
+function pushbutton_SaveSettingFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_SaveSettingFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -690,7 +734,25 @@ function pushbutton_PlotEachTimeSlices_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 for i = 1 : size( handles.results.phi_lrMat, 1 )
+
     plot_graph_everyMoment_( handles, i );
+    
+    if ( handles.data.SaveTheGraphPlotsIntoFilesFlag )
+        
+        pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+        if ( exist( pnameImg, 'dir' ) == 0 )
+            mkdir( pnameImg );
+        end
+        
+        saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 't,', num2str(handles.results.timeAxis( i ), '%04.3f') );
+        
+        fname = strcat( saveImageName, '.jpg');
+        outputDataFileName = strcat( pnameImg, '/', fname );
+        saveas( 1, strcat( outputDataFileName ) );
+    else
+        pause( 0.01 );
+    end
+    
 end
 
 guidata(hObject, handles);
@@ -732,6 +794,9 @@ function edit_TauUnitLabel_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of edit_TauUnitLabel as text
 %        str2double(get(hObject,'String')) returns contents of edit_TauUnitLabel as a double
 
+handles.data.xUnitStr = get( hObject, 'String' );
+
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function edit_TauUnitLabel_CreateFcn(hObject, eventdata, handles)
@@ -753,3 +818,59 @@ function checkbox_ApplyStardardization_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox_ApplyStardardization
+
+
+
+function edit_tauUnitScale_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_tauUnitScale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_tauUnitScale as text
+%        str2double(get(hObject,'String')) returns contents of edit_tauUnitScale as a double
+
+handles.data.tauUnitScale = castNum_( get( hObject, 'String' ) );
+
+handles.data.xUnitScale = 1.0 / handles.data.tauUnitScale;
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_tauUnitScale_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_tauUnitScale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_TimeUnitLabel_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_TimeUnitLabel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_TimeUnitLabel as text
+%        str2double(get(hObject,'String')) returns contents of edit_TimeUnitLabel as a double
+
+handles.data.yUnitStr = get( hObject, 'String' );
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_TimeUnitLabel_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_TimeUnitLabel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
