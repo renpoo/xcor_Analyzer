@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 24-Feb-2017 13:10:33
+% Last Modified by GUIDE v2.5 24-Feb-2017 16:27:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -130,6 +130,8 @@ set( handles.checkbox_ApplyWindowFunc, 'value', handles.data.applyWindowFuncFlag
 set( handles.popupmenu_WindowFunc,     'value', handles.data.windowFuncMode );
 
 
+set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
+
 
 % set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
 % set( handles.text16,     'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
@@ -175,6 +177,7 @@ data.pname            = '';
 data.fname            = 'INPUT Sound File';
 data.defCsvFileName   = '';
 
+data.chDefs           = {};
 
 
 
@@ -368,7 +371,7 @@ function pushbutton_ReadSoundFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[ fname, pname ] = uigetfile( 'Sounds/*.wav', 'WAV Sound File' );
+[ fname, pname ] = uigetfile( '_Sounds/*.wav', 'WAV Sound File' );
 handles.data.wavFileName = strcat( pname, fname );
 
 handles.data.graphTitle = fname;
@@ -696,41 +699,38 @@ fileID = fopen( defCsvFileName );
 fclose(fileID);
 
 
-handles.data.chA = scanData{ 1, 1 };
-handles.data.chB = scanData{ 1, 2 };
+chA = scanData{ 1, 1 };
+chB = scanData{ 1, 2 };
 
-handles.data.graphTitle    = castStr_( handles.data.chA{ 1 } );
-handles.data.fs            = castNum_( handles.data.chB{ 1 } );
-handles.data.timeS0        = castNum_( handles.data.chA{ 2 } );
-handles.data.timeE0        = castNum_( handles.data.chB{ 2 } );
-handles.data.timeT         = castNum_( handles.data.chA{ 3 } );
+handles.data.graphTitle    = castStr_( chA{ 1 } );
+handles.data.fs            = castNum_( chB{ 1 } );
+handles.data.timeS0        = castNum_( chA{ 2 } );
+handles.data.timeE0        = castNum_( chB{ 2 } );
+handles.data.timeT         = castNum_( chA{ 3 } );
 
-handles.data.xLabelStr     = castStr_( handles.data.chA{ 4 } );
-handles.data.yLabelStr     = castStr_( handles.data.chB{ 4 } );
-handles.data.xUnitStr      = castStr_( handles.data.chA{ 5 } );
-handles.data.yUnitStr      = castStr_( handles.data.chB{ 5 } );
+handles.data.xLabelStr     = castStr_( chA{ 4 } );
+handles.data.yLabelStr     = castStr_( chB{ 4 } );
+handles.data.xUnitStr      = castStr_( chA{ 5 } );
+handles.data.yUnitStr      = castStr_( chB{ 5 } );
 
-handles.data.xUnitScale    = castNum_( handles.data.chA{ 6 } );
-handles.data.yUnitScale    = castNum_( handles.data.chB{ 6 } );
+handles.data.xUnitScale    = castNum_( chA{ 6 } );
+handles.data.yUnitScale    = castNum_( chB{ 6 } );
 
 handles.data.tauMinus      = -handles.data.timeT;
 handles.data.tauPlus       = +handles.data.timeT;
 
 
-handles.data.nCsvFileNames = length( handles.data.chA );
+handles.data.nCsvFileNames = length( chA );
 
 
 chDefs = {};
-tmpText_chDefs = {};
 
-for i = handles.data.numberOfHeaders + 1 : length( handles.data.chA )
-    chDefs{ i - handles.data.numberOfHeaders, 1 } = handles.data.chA{ i };
-    chDefs{ i - handles.data.numberOfHeaders, 2 } = handles.data.chB{ i };
-    tmpText_chDefs{ i } = strcat( handles.data.chA{ i }, ' , ', handles.data.chB{ i } );
+for i = handles.data.numberOfHeaders + 1 : length( chA )
+    chDefs{ i - handles.data.numberOfHeaders, 1 } = chA{ i };
+    chDefs{ i - handles.data.numberOfHeaders, 2 } = chB{ i };
 end;
 
 handles.data.chDefs = chDefs;
-handles.data.tmpText_chDefs = tmpText_chDefs;
 
 handles.data.wavFileName = strrep( handles.data.chB{ 7 }, '"', '' );
 
@@ -749,12 +749,7 @@ set( handles.edit_TauUnitScale,   'value',   handles.data.tauUnitScale );
 
 set( handles.edit_SettingCsvFile, 'String',  handles.data.defCsvFileName );
 
-
-packedTexts = {};
-for i = handles.data.numberOfHeaders + 1 : length( handles.data.chA )
-    packedTexts{ i - handles.data.numberOfHeaders } = strcat( handles.data.chA{ i }, ' , ', handles.data.chB{ i } );
-end;
-set( handles.text_SoundFilesToRead, 'String', packedTexts ); 
+set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
 
 
 guidata( hObject, handles );
@@ -789,7 +784,6 @@ function pushbutton_SaveSettingFile_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+' );
-
 
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
@@ -985,18 +979,59 @@ function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton_AddSoundFile.
-function pushbutton_AddSoundFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_AddSoundFile (see GCBO)
+% --- Executes on button press in pushbutton_AddFile.
+function pushbutton_AddFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_AddFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton_DeleteSoundFile.
-function pushbutton_DeleteSoundFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_DeleteSoundFile (see GCBO)
+if ( handles.data.fileSuffixValue == 1 )
+    [ fname, pname ] = uigetfile( '_Sounds/*.wav', 'WAV Sound File' );
+elseif ( handles.data.fileSuffixValue == 2 )
+    [ fname, pname ] = uigetfile( '_Sounds/*.m4a', 'm4a Sound File' );
+else
+    [ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Data File' );
+end    
+    
+    
+handles.data.wavFileName = strcat( pname, fname );
+
+handles.data.chDefs{ end + 1, 1 } = 'NEW';
+handles.data.chDefs{ end,     2 } = strcat( '"', handles.data.wavFileName, '"' );
+
+set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
+
+guidata( hObject, handles );
+
+
+% --- Executes on button press in pushbutton_DeleteFile.
+function pushbutton_DeleteFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_DeleteFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+prompt = { 'Input the INDEX NUMBER to delete' };
+dlg_title = 'Delete File:';
+num_lines = 1;
+defaultans = { 'INDEX NUMBER' };
+answer = inputdlg( prompt, dlg_title, num_lines, defaultans );
+
+chDefs = {};
+for i = 1 : size( handles.data.chDefs, 1 )
+    if ( i == castNum_( answer ) )
+        continue;
+    end
+    
+    chDefs{ end + 1, 1 } = handles.data.chDefs{ i, 1 };
+    chDefs{ end,     2 } = handles.data.chDefs{ i, 2 };    
+end
+
+handles.data.chDefs = chDefs;
+
+set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
+
+guidata( hObject, handles );
 
 
 % --- Executes when entered data in editable cell(s) in uitable_Filenames_w_Channel.
@@ -1010,11 +1045,11 @@ function uitable_Filenames_w_Channel_CellEditCallback(hObject, eventdata, handle
 %	Error: error string when failed to convert EditData to appropriate value for Data
 % handles    structure with handles and user data (see GUIDATA)
 
-d = get( hObject, 'Data' );
+handles.data.chDefs = get( hObject, 'Data' );
 
-disp( d );
+set( hObject, 'Data', handles.data.chDefs );
 
-guidata(hObject, handles);
+guidata( hObject, handles );
 
 
 % --- Executes during object creation, after setting all properties.
@@ -1024,3 +1059,47 @@ function uitable_Filenames_w_Channel_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 guidata(hObject, handles);
+
+
+% --- Executes when selected cell(s) is changed in uitable_Filenames_w_Channel.
+function uitable_Filenames_w_Channel_CellSelectionCallback(hObject, eventdata, handles)
+% hObject    handle to uitable_Filenames_w_Channel (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) currently selecteds
+% handles    structure with handles and user data (see GUIDATA)
+
+data = get( hObject, 'Data' );
+indices = eventdata.Indices;
+r = indices( :, 1 );
+c = indices( :, 2 );
+linear_index = sub2ind( size(data), r, c );
+selected_vals = data( linear_index );
+
+disp( [ r c ] );
+
+
+% --- Executes on selection change in popupmenu_FileSuffix.
+function popupmenu_FileSuffix_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu_FileSuffix (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_FileSuffix contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu_FileSuffix
+
+handles.data.fileSuffixValue = get( hObject, 'value' );
+
+guidata(hObject, handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu_FileSuffix_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu_FileSuffix (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

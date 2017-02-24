@@ -1,8 +1,8 @@
-NIPPON.m4a,
-0,17.6
+Nippon.m4a,44100
+0,11.5
 0.01,
 Tau,Time
 ms,sec
 1000,1
-Right,../_Sounds/NIPPON.m4a
-Left,../_Sounds/NIPPON.m4a
+Right,"/Users/renpoo/Documents/MATLAB/ITOKEN.proj/_Sounds/Nippon.m4a"
+Left,"/Users/renpoo/Documents/MATLAB/ITOKEN.proj/_Sounds/Nippon.m4a"
