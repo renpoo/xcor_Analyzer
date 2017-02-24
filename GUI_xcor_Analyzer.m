@@ -22,7 +22,7 @@ function varargout = GUI_xcor_Analyzer(varargin)
 
 % Edit the above text to modify the response to help GUI_xcor_Analyzer
 
-% Last Modified by GUIDE v2.5 24-Feb-2017 08:30:07
+% Last Modified by GUIDE v2.5 24-Feb-2017 10:45:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -112,7 +112,7 @@ set( handles.checkbox_SaveTheGraphPlotsIntoFiles, 'value',  handles.data.SaveThe
 
 set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag );
 
-set( handles.edit_tauUnitScale, 'value', handles.data.tauUnitScale );
+set( handles.edit_TauUnitScale, 'value', handles.data.tauUnitScale );
 
 
 if ( handles.data.LRCflag == 'L' )
@@ -369,7 +369,7 @@ function pushbutton_ReadSoundFile_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 [ fname, pname ] = uigetfile( 'Sounds/*.wav', 'WAV Sound File' );
-wavFileName = strcat( pname, fname );
+handles.data.wavFileName = strcat( pname, fname );
 
 handles.data.graphTitle = fname;
 
@@ -377,7 +377,7 @@ handles.data.fname = fname;
 handles.data.pname = pname;
 
 
-[ s, fs ] = audioread( wavFileName );
+[ s, fs ] = audioread( handles.data.wavFileName );
 handles.soundSignals.s = s;
 
 
@@ -590,7 +590,7 @@ function [soundSignals data] = readSound( handles )
 
 data = handles.data;
 
-[ s, ~ ] = audioread( strcat( handles.data.pname, handles.data.fname ) );
+[ s, ~ ] = audioread( handles.data.wavFileName );
 soundSignals.s = s;
 
 x0 = soundSignals.s( :, 2 );  % L channel
@@ -631,18 +631,18 @@ initialize_gui( hObject, handles, true );
 guidata(hObject, handles);
 
 
-function edit_DefinitionCsvFile_Callback(hObject, eventdata, handles)
-% hObject    handle to edit_DefinitionCsvFile (see GCBO)
+function edit_SettingCsvFile_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_SettingCsvFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit_DefinitionCsvFile as text
-%        str2double(get(hObject,'String')) returns contents of edit_DefinitionCsvFile as a double
+% Hints: get(hObject,'String') returns contents of edit_SettingCsvFile as text
+%        str2double(get(hObject,'String')) returns contents of edit_SettingCsvFile as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_DefinitionCsvFile_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit_DefinitionCsvFile (see GCBO)
+function edit_SettingCsvFile_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_SettingCsvFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -673,12 +673,84 @@ handles.data.SaveTheGraphPlotsIntoFilesFlag = get( hObject, 'value' );
 guidata(hObject, handles);
 
 
-% --- Executes on button press in pushbutton_ReadSettingFile.
-function pushbutton_ReadSettingFile_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton_ReadSettingFile (see GCBO)
+% --- Executes on button press in pushbutton_LoadSettingFile.
+function pushbutton_LoadSettingFile_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_LoadSettingFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles.data.numberOfHeaders = 6;
+
+[ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Definition File' );
+defCsvFileName = strcat( pname, fname );
+
+handles.data.fname = fname;
+handles.data.pname = pname;
+
+
+handles.data.defCsvFileName = defCsvFileName;
+
+
+fileID = fopen( defCsvFileName );
+[ scanData ] = textscan( fileID, '%s %s', 'delimiter', ',' );
+fclose(fileID);
+
+
+handles.data.chA = scanData{ 1, 1 };
+handles.data.chB = scanData{ 1, 2 };
+
+handles.data.graphTitle    = castStr_( handles.data.chA{ 1 } );
+handles.data.fs            = castNum_( handles.data.chB{ 1 } );
+handles.data.timeS0        = castNum_( handles.data.chA{ 2 } );
+handles.data.timeE0        = castNum_( handles.data.chB{ 2 } );
+handles.data.timeT         = castNum_( handles.data.chA{ 3 } );
+
+handles.data.xLabelStr     = castStr_( handles.data.chA{ 4 } );
+handles.data.yLabelStr     = castStr_( handles.data.chB{ 4 } );
+handles.data.xUnitStr      = castStr_( handles.data.chA{ 5 } );
+handles.data.yUnitStr      = castStr_( handles.data.chB{ 5 } );
+
+handles.data.xUnitScale    = castNum_( handles.data.chA{ 6 } );
+handles.data.yUnitScale    = castNum_( handles.data.chB{ 6 } );
+
+handles.data.tauMinus      = -handles.data.timeT;
+handles.data.tauPlus       = +handles.data.timeT;
+
+
+handles.data.nCsvFileNames = length( handles.data.chA );
+
+
+chDefs = {};
+tmpText_chDefs = {};
+
+for i = handles.data.numberOfHeaders + 1 : length( handles.data.chA )
+    chDefs{ i - handles.data.numberOfHeaders, 1 } = handles.data.chA{ i };
+    chDefs{ i - handles.data.numberOfHeaders, 2 } = handles.data.chB{ i };
+    tmpText_chDefs{ i } = strcat( handles.data.chA{ i }, ' , ', handles.data.chB{ i } );
+end;
+
+handles.data.chDefs = chDefs;
+handles.data.tmpText_chDefs = tmpText_chDefs;
+
+handles.data.wavFileName = strrep( handles.data.chB{ 7 }, '"', '' );
+
+
+set( handles.edit_InputSoundFile, 'String',  handles.data.wavFileName );
+set( handles.edit_GraphTitle,     'String',  handles.data.graphTitle );
+set( handles.edit_StartTime,      'String',  handles.data.timeS0 );
+set( handles.edit_EndTime,        'String',  handles.data.timeE0 );
+set( handles.edit_T,              'String',  handles.data.timeT );
+set( handles.edit_SamplingFreq,   'String',  handles.data.fs );
+
+set( handles.edit_TauUnitLabel,   'String',  handles.data.xUnitStr );
+set( handles.edit_TimeUnitLabel,  'String',  handles.data.yUnitStr );
+
+set( handles.edit_TauUnitScale,   'value',   handles.data.tauUnitScale );
+
+set( handles.edit_SettingCsvFile, 'String',  handles.data.defCsvFileName );
+
+
+guidata( hObject, handles );
 
 
 function edit_SoundFilesToRead_Callback(hObject, eventdata, handles)
@@ -708,6 +780,28 @@ function pushbutton_SaveSettingFile_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_SaveSettingFile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+' );
+
+
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( '' ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xLabelStr ),  castStr_( handles.data.yLabelStr ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitStr ),   castStr_( handles.data.yUnitStr ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
+fprintf( fileID, '%s,%s\n', castStr_( 'Right' ),                 castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
+fprintf( fileID, '%s,%s\n', castStr_( 'Left' ),                  castStr_( strcat( '"', handles.data.pname, handles.data.graphTitle, '"' ) ) );
+
+% if ( ~isempty( handles.data.ch ) )
+%     for m = 1 : handles.data.nCsvFileNames
+%         fprintf( fileID, '%s,%s\n', char( handles.data.chA( m ) ), char( handles.data.chB( m ) ) );
+%     end
+% end
+
+fclose( fileID );
+
+guidata(hObject,handles);
 
 
 % --- Executes on button press in pushbutton_Exit.
@@ -798,6 +892,7 @@ handles.data.xUnitStr = get( hObject, 'String' );
 
 guidata(hObject, handles);
 
+
 % --- Executes during object creation, after setting all properties.
 function edit_TauUnitLabel_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to edit_TauUnitLabel (see GCBO)
@@ -821,13 +916,13 @@ function checkbox_ApplyStardardization_Callback(hObject, eventdata, handles)
 
 
 
-function edit_tauUnitScale_Callback(hObject, eventdata, handles)
-% hObject    handle to edit_tauUnitScale (see GCBO)
+function edit_TauUnitScale_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_TauUnitScale (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit_tauUnitScale as text
-%        str2double(get(hObject,'String')) returns contents of edit_tauUnitScale as a double
+% Hints: get(hObject,'String') returns contents of edit_TauUnitScale as text
+%        str2double(get(hObject,'String')) returns contents of edit_TauUnitScale as a double
 
 handles.data.tauUnitScale = castNum_( get( hObject, 'String' ) );
 
@@ -837,8 +932,8 @@ guidata(hObject, handles);
 
 
 % --- Executes during object creation, after setting all properties.
-function edit_tauUnitScale_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit_tauUnitScale (see GCBO)
+function edit_TauUnitScale_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_TauUnitScale (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
