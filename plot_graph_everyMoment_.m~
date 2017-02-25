@@ -59,20 +59,17 @@ if (lastI >= 1)
         elseif (handles.data.LRCflag == 'R')
             text( 0.7 * tauWidth, -0.5 - i * 0.1, strcat( 'Max(', castStr_( i ), '): ', castStr_( params( i, 4 ) ) ), 'Color', [colR colG colB]);
         else
-            switch i
-                case 1
-                    text( -0.4 * tauWidth, -0.8, strcat( 'ICCC: ',     castStr_( params( 1, 4 ) ) ), 'Color', [colR colG colB]);
-                case 2
-                    text(  0.2 * tauWidth, -0.8, strcat( 'Wiccc: ',    castStr_( params( 2, 4 ) ) ), 'Color', [colR colG colB]);
-                case 3
-                    text( -0.4 * tauWidth, -0.9, strcat( 'tauAlpha: ', castStr_( params( 3, 1 ) ) ), 'Color', [colR colG colB]);
-                case 4
-                    text(  0.2 * tauWidth, -0.9, strcat( 'tauBeta: ',  castStr_( params( 4, 1 ) ) ), 'Color', [colR colG colB]);
-                otherwise
-                    % do nothing
-            end
+            % do nothing;
         end
-    end    
+    end
+    
+    if (handles.data.LRCflag == 'C')
+        text( -0.3 * tauWidth, -0.7, strcat( 'ICCC: ',         castStr_( params( 1, 4 ) ) ), 'Color', [colR colG colB]);
+        text( -0.3 * tauWidth, -0.9, strcat( 'Wiccc: ',        castStr_( params( 2, 4 ) ) ), 'Color', [colR colG colB]);
+        text(  0.5 * tauWidth, -0.7, strcat( 'tauAlpha: ',     castStr_( params( 3, 1 ) ) ), 'Color', [colR colG colB]);
+        text(  0.5 * tauWidth, -0.9, strcat( 'tauBeta: ',      castStr_( params( 4, 1 ) ) ), 'Color', [colR colG colB]);
+    end
+    
 end
 
 

@@ -135,11 +135,6 @@ set( handles.popupmenu_WindowFunc,     'value', handles.data.windowFuncMode );
 set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
 
 
-% set( handles.text15,     'String', [ 'Start ' handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-% set( handles.text16,     'String', [ 'End '   handles.data.yLabelStr ' [' handles.data.yUnitStr ']' ] );
-% set( handles.text19,     'String', [ 'T' ' [' handles.data.yUnitStr ']' ] );
-
-
 % Update handles structure
 guidata( hObject, handles );
 
@@ -184,6 +179,16 @@ data.chDefs           = {};
 data.currentCellPosition = [ 0, 0 ];
 
 data.fileSuffixValue  = 1;
+
+data.batchModeFlag    = 0;
+
+data.wavFileName      = '';
+
+data.rWavFileName     = '';
+data.lWavFileName     = '';
+data.rWavChLabel      = '';
+data.lWavChLabel      = '';
+
 
 soundSignals.s        = [];
 soundSignals.x0       = [];
@@ -393,6 +398,9 @@ end
 
 handles.data.wavFileName = strcat( pname, fname );
 
+handles.data.rWavFileName = handles.data.wavFileName;
+handles.data.lWavFileName = handles.data.wavFileName;
+
 handles.data.graphTitle = fname;
 
 handles.data.fname = fname;
@@ -573,11 +581,16 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ( ~handles.data.batchModeFlag )
+    handles.data.rWavChLabel = handles.data.chDefs{ 1, 1 };
+    handles.data.lWavChLabel = handles.data.chDefs{ 2, 1 };
+    
+    handles.data.rWavFileName = strrep( handles.data.chDefs{ 1, 2 }, '"', '' );
+    handles.data.lWavFileName = strrep( handles.data.chDefs{ 2, 2 }, '"', '' );
+end
 
-if ( handles.data.fileSuffixValue == 1 )    
-    [ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.lWavFileName, 2 );
-    [ handles.soundSignals.s, handles.soundSignals.y0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 1 );
-elseif ( handles.data.fileSuffixValue == 2 )
+
+if ( handles.data.fileSuffixValue == 1 || handles.data.fileSuffixValue == 2 )        
     [ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.lWavFileName, 2 );
     [ handles.soundSignals.s, handles.soundSignals.y0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 1 );
 else
@@ -631,16 +644,19 @@ function [ s, x0 ] = readDataSignals( hObject, eventdata, handles, CsvFileName )
 s = [];
 
 [ Pathstr, Name, Ext ] = fileparts( CsvFileName );
-if ( strcmp( Ext, 'csv' ) || strcmp( Ext, 'CSV' ) )
+if ( strcmp( Ext, '.csv' ) || strcmp( Ext, '.CSV' ) )
     fileID = fopen( CsvFileName );
-    x0 = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
+    cells = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
     fclose(fileID);
 end
 
-handles.dataSignals.x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
+x0 = str2double( table2array( cell2table( cells{ 1, 1 } ) ) );
+
+x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
 
 handles.data.timeS0 = 0.0;
 handles.data.timeE0 = length(x0);
+handles.data.timeT  = 1.0;
 
 guidata(hObject, handles);
 
@@ -841,7 +857,13 @@ function pushbutton_SaveSettingFile_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, '.csv' ), 'w+' );
+
+if ( ~exist('handles.results.dateTime', 'var') )
+    [ ~, dateTime ] = system('date +%y%m%d%H%M%S');
+    handles.results.dateTime = dateTime( 1 : length( dateTime ) - 1 );
+end
+
+fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle, ',', handles.results.dateTime, '.csv' ), 'w+' );
 
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
@@ -849,7 +871,7 @@ fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( '' ) 
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xLabelStr ),  castStr_( handles.data.yLabelStr ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitStr ),   castStr_( handles.data.yUnitStr ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
-for m = 1 : handles.data.nCsvFileNames
+for m = 1 : size( handles.data.chDefs, 1 )
     fprintf( fileID, '%s,%s\n', char( handles.data.chDefs( m, 1 ) ), char( handles.data.chDefs( m, 2 ) ) );
 end
 
@@ -1033,6 +1055,8 @@ function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+handles.data.batchModeFlag = 1;
+
 for i = 1 : size( handles.data.chDefs, 1 )
     if (handles.data.LRCflag == 'C' )
         for j = i+1 : size( handles.data.chDefs, 1 )
@@ -1055,6 +1079,8 @@ for i = 1 : size( handles.data.chDefs, 1 )
     end
 end
 
+handles.data.batchModeFlag = 0;
+
 guidata(hObject, handles);
 
 
@@ -1071,6 +1097,20 @@ elseif ( handles.data.fileSuffixValue == 2 )
     [ fname, pname ] = uigetfile( '_Sounds/*.m4a', 'm4a Sound File' );
 else
     [ fname, pname ] = uigetfile( '_CSVs/*.csv', 'CSV Data File' );
+
+    handles.data.fs = 1;
+    handles.data.timeS0 = 0.0;
+    handles.data.timeE0 = 1;
+    handles.data.timeT  = 1;
+    
+    handles.data.graphTitle = fname;
+    
+    handles.data.xLabelStr  = 'Tau';
+    handles.data.yLabelStr  = 'Time';
+    handles.data.xUnitStr   = 'ms';
+    handles.data.yUnitStr   = 'sec';
+    handles.data.xUnitScale = 1.0;
+    handles.data.yUnitScale = 1.0;
 end
 
 handles.data.wavFileName = strcat( pname, fname );
@@ -1079,7 +1119,20 @@ handles.data.wavFileName = strcat( pname, fname );
 handles.data.chDefs{ end + 1, 1 } = 'NEW';
 handles.data.chDefs{ end,     2 } = strcat( '"', handles.data.wavFileName, '"' );
 
+handles.data.rWavChLabel      = handles.data.chDefs{ 1, 1 };
+handles.data.lWavChLabel      = handles.data.chDefs{ 1, 2 };
+
+handles.data.rWavFileName     = handles.data.chDefs{ 1, 1 };
+handles.data.lWavFileName     = handles.data.chDefs{ 2, 2 };
+
+set( handles.edit_InputSoundFile, 'String', handles.data.graphTitle );
+set( handles.edit_StartTime,      'String', handles.data.timeS0 );
+set( handles.edit_EndTime,        'String', handles.data.timeE0 );
+set( handles.edit_T,              'String', handles.data.timeT );
+set( handles.edit_GraphTitle,     'String', handles.data.graphTitle );
+set( handles.edit_SamplingFreq,   'String', handles.data.fs );
 set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
+
 
 guidata( hObject, handles );
 
