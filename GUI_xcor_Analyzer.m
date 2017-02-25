@@ -84,14 +84,14 @@ try
     handles.data.exitFlag         = 0;
     %handles.data.playSoundFlag    = 0;
 catch err
-    handles.data = resetData_();
+    [ handles.soundSignals, handles.data ] = resetData_();
     
     write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
 end;
 
 
 if (isreset)
-    handles.data = resetData_();
+    [ handles.soundSignals, handles.data ] = resetData_();
 end
 
 
@@ -145,7 +145,7 @@ guidata( hObject, handles );
 
 
 % --------------------------------------------------------------------
-function data = resetData_()
+function [ soundSignals, data ] = resetData_()
 % Core Procedure to reset GUI parameters to the default
 
 data.LRCflag          = 'R';
@@ -183,7 +183,11 @@ data.chDefs           = {};
 
 data.currentCellPosition = [ 0, 0 ];
 
-data.fileSuffixValue = 1;
+data.fileSuffixValue  = 1;
+
+soundSignals.s        = [];
+soundSignals.x0       = [];
+soundSignals.y0       = [];
 
 
 % --- Outputs from this function are returned to the command line.
@@ -398,8 +402,8 @@ handles.data.pname = pname;
 chDefs = {};
 chDefs{ 1, 1 } = 'Right';
 chDefs{ 1, 2 } = strcat( '"', handles.data.wavFileName, '"' );
-chDefs{ 1, 1 } = 'Left';
-chDefs{ 1, 2 } = strcat( '"', handles.data.wavFileName, '"' );
+chDefs{ 2, 1 } = 'Left';
+chDefs{ 2, 2 } = strcat( '"', handles.data.wavFileName, '"' );
 handles.data.chDefs = chDefs;
 
 
@@ -428,6 +432,7 @@ set( handles.edit_EndTime,        'String', handles.data.timeE0 );
 set( handles.edit_T,              'String', handles.data.timeT );
 set( handles.edit_GraphTitle,     'String', handles.data.graphTitle );
 set( handles.edit_SamplingFreq,   'String', handles.data.fs );
+set( handles.uitable_Filenames_w_Channel, 'Data', handles.data.chDefs );
 
 
 guidata(hObject, handles);
@@ -440,9 +445,9 @@ function pushbutton_Play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[handles.soundSignals handles.data ] = readSound( handles );
+readSoundSignals( hObject, eventdata, handles );
 
-playSound( handles );
+playSoundSignals( hObject, eventdata, handles );
 
 guidata(hObject, handles);
 
@@ -570,18 +575,20 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 
 
 if ( handles.data.fileSuffixValue == 1 )
-    [handles.soundSignals handles.data ] = readSound( handles );
+    %[handles.soundSignals handles.data ] = readSoundSignals( hObject, eventdata, handles );
+    handles.soundSignals = readSoundSignals( hObject, eventdata, handles );
 elseif ( handles.data.fileSuffixValue == 2 )
-    [handles.soundSignals handles.data ] = readSound( handles );
+    %[handles.soundSignals handles.data ] = readSoundSignals( hObject, eventdata, handles );
+    handles.soundSignals = readSoundSignals( hObject, eventdata, handles );
 else
-    %[handles.soundSignals handles.data ] = readDataSignals( handles );
+    %[handles.soundSignals handles.data ] = readDataSignals( hObject, eventdata, handles );
     handles.data.playSoundFlag = 0;
     return;
 end
 
 
 if ( handles.data.playSoundFlag )
-    playSound( handles );
+    playSoundSignals( hObject, eventdata, handles );
 end
 
 
@@ -618,10 +625,10 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function [ dataSignals data ] = readDataSignals( handles )
+function dataSignals = readDataSignals( hObject, eventdata, handles )
 % Core Procedure to read a set of data signals.
 
-data = handles.data;
+%data = handles.data;
 
 
 % L channel
@@ -640,37 +647,41 @@ if ( strcmp( rExt, 'csv' ) || strcmp( rExt, 'CSV' ) )
     fclose(fileID);
 end
 
-dataSignals.x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
-dataSignals.y0 = [ y0; zeros( length(y0), 1 ) ]; % with Zero post-padding
+handles.dataSignals.x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
+handles.dataSignals.y0 = [ y0; zeros( length(y0), 1 ) ]; % with Zero post-padding
 
-data.timeS0 = max( handles.data.timeS0, 0.0 );
-data.timeE0 = min( handles.data.timeE0, length(x0) );
+handles.data.timeS0 = max( handles.data.timeS0, 0.0 );
+handles.data.timeE0 = min( handles.data.timeE0, length(x0) );
+
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function [soundSignals data] = readSound( handles )
+%function [soundSignals data] = readSoundSignals( handles )
+function soundSignals = readSoundSignals( hObject, eventdata, handles )
 % Core Procedure to read sound.
 
-data = handles.data;
+%data = handles.data;
 
 [ s, ~ ] = audioread( handles.data.wavFileName );
 soundSignals.s = s;
 
-x0 = soundSignals.s( :, 2 );  % L channel
-y0 = soundSignals.s( :, 1 );  % R channel
+x0 = s( :, 2 );  % L channel
+y0 = s( :, 1 );  % R channel
 
 duration = length(x0) / handles.data.fs;
 
 soundSignals.x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
 soundSignals.y0 = [ y0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
 
-data.timeS0 = max( handles.data.timeS0, 0.0 );
-data.timeE0 = min( handles.data.timeE0, duration );
+handles.data.timeS0 = max( handles.data.timeS0, 0.0 );
+handles.data.timeE0 = min( handles.data.timeE0, duration );
 
+guidata( hObject, handles );
 
 
 % --------------------------------------------------------------------
-function playSound( handles )
+function playSoundSignals( hObject, eventdata, handles )
 % Core Procedure to play sound for defined interval.
 
 TMPtimeS0_Idx = convTime2Index_( handles.data.timeS0, handles.data.fs );
@@ -680,7 +691,7 @@ sCut = handles.soundSignals.s( TMPtimeS0_Idx : TMPtimeE0_Idx, : );
 
 sound( sCut, handles.data.fs );
 
-
+guidata( hObject, handles );
 
 
 % --- Executes on button press in pushbutton_Reset.
@@ -1034,6 +1045,16 @@ function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton_BatchCalculate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+for i = 1 : size( handles.data.chDefs, 1 )
+    for j = i+1 : size( handles.data.chDefs, 1 )
+
+        
+        
+    end
+end
+
+guidata(hObject, handles);
 
 
 % --- Executes on button press in pushbutton_AddFile.
