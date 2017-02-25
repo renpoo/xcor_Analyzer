@@ -10,16 +10,20 @@ colormap 'jet';
 if (handles.data.LRCflag == 'L')
     xmax = 0;
     xmin = -max( abs( handles.results.tauAxis ) );
-    tmpLabelStr = handles.data.lWavChLabel;
+    tmpLabel = 'Left';
 elseif (handles.data.LRCflag == 'R')
     xmax = max( abs( handles.results.tauAxis ) );
     xmin = 0;
-    tmpLabelStr = handles.data.rWavChLabel;
+    tmpLabel = 'Right';
 else
     xmax = max( abs( handles.results.tauAxis ) );
     xmin = -xmax;
-    tmpLabelStr = strcat( handles.data.lWavChLabel, ' <-> ', handles.data.rWavChLabel );
+    tmpLabel = 'Left <-> Right';
 end
+
+
+
+
 
 xlim( [xmin xmax] );
 
@@ -42,7 +46,9 @@ end
 
 zLabelStr = handles.results.zLabelStr;
 
-zLabelStr = strcat( zLabelStr, ' [', tmpLabelStr, '] ' );
+if ( strcmp( zLabelStr, 'ACF' ) )
+    zLabelStr = strcat( zLabelStr, ' [', tmpLabel, '] ' );
+end
 
 xlabel( handles.results.xLabelStr );
 ylabel( handles.results.yLabelStr );

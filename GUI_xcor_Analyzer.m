@@ -445,7 +445,7 @@ function pushbutton_Play_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-readSoundSignals( hObject, eventdata, handles );
+[ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 2 );
 
 playSoundSignals( hObject, eventdata, handles );
 
@@ -574,16 +574,16 @@ function pushbutton_Calculate_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-if ( handles.data.fileSuffixValue == 1 )
-    %[handles.soundSignals handles.data ] = readSoundSignals( hObject, eventdata, handles );
-    handles.soundSignals = readSoundSignals( hObject, eventdata, handles );
+if ( handles.data.fileSuffixValue == 1 )    
+    [ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.lWavFileName, 2 );
+    [ handles.soundSignals.s, handles.soundSignals.y0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 1 );
 elseif ( handles.data.fileSuffixValue == 2 )
-    %[handles.soundSignals handles.data ] = readSoundSignals( hObject, eventdata, handles );
-    handles.soundSignals = readSoundSignals( hObject, eventdata, handles );
+    [ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.lWavFileName, 2 );
+    [ handles.soundSignals.s, handles.soundSignals.y0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 1 );
 else
-    %[handles.soundSignals handles.data ] = readDataSignals( hObject, eventdata, handles );
+    [ handles.soundSignals.s, handles.soundSignals.x0 ] = readDataSignals( hObject, eventdata, handles, handles.data.lWavFileName );
+    [ handles.soundSignals.s, handles.soundSignals.y0 ] = readDataSignals( hObject, eventdata, handles, handles.data.rWavFileName );
     handles.data.playSoundFlag = 0;
-    return;
 end
 
 
@@ -625,54 +625,41 @@ guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
-function dataSignals = readDataSignals( hObject, eventdata, handles )
+function [ s, x0 ] = readDataSignals( hObject, eventdata, handles, CsvFileName )
 % Core Procedure to read a set of data signals.
 
-%data = handles.data;
+s = [];
 
-
-% L channel
-[ lPathstr, lName, lExt ] = fileparts( handles.data.lCsvFileName );
-if ( strcmp( lExt, 'csv' ) || strcmp( lExt, 'CSV' ) )
-    fileID = fopen( handles.data.lCsvFileName );
+[ Pathstr, Name, Ext ] = fileparts( CsvFileName );
+if ( strcmp( Ext, 'csv' ) || strcmp( Ext, 'CSV' ) )
+    fileID = fopen( CsvFileName );
     x0 = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
     fclose(fileID);
 end
 
-% R channel
-[ rPathstr, rName, rExt ] = fileparts( handles.data.rCsvFileName );
-if ( strcmp( rExt, 'csv' ) || strcmp( rExt, 'CSV' ) )
-    fileID = fopen( handles.data.rCsvFileName );
-    y0 = textscan( fileID, '%s', 'Delimiter', ',', 'TreatAsEmpty', {'NA','na'}, 'CommentStyle', '//' );
-    fclose(fileID);
-end
-
 handles.dataSignals.x0 = [ x0; zeros( length(x0), 1 ) ]; % with Zero post-padding
-handles.dataSignals.y0 = [ y0; zeros( length(y0), 1 ) ]; % with Zero post-padding
 
-handles.data.timeS0 = max( handles.data.timeS0, 0.0 );
-handles.data.timeE0 = min( handles.data.timeE0, length(x0) );
+handles.data.timeS0 = 0.0;
+handles.data.timeE0 = length(x0);
 
 guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
 %function [soundSignals data] = readSoundSignals( handles )
-function soundSignals = readSoundSignals( hObject, eventdata, handles )
+function [ s, x0 ] = readSoundSignals( hObject, eventdata, handles, wavFileName, channel )
 % Core Procedure to read sound.
 
 %data = handles.data;
 
-[ s, ~ ] = audioread( handles.data.wavFileName );
+[ s, ~ ] = audioread( wavFileName );
 soundSignals.s = s;
 
-x0 = s( :, 2 );  % L channel
-y0 = s( :, 1 );  % R channel
+x0 = s( :, channel );  % L/R channel
 
 duration = length(x0) / handles.data.fs;
 
-soundSignals.x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
-soundSignals.y0 = [ y0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
+x0 = [ x0; zeros( handles.data.fs, 1 ) ]; % with Zero post-padding
 
 handles.data.timeS0 = max( handles.data.timeS0, 0.0 );
 handles.data.timeE0 = min( handles.data.timeE0, duration );
@@ -1047,10 +1034,24 @@ function pushbutton_BatchCalculate_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 for i = 1 : size( handles.data.chDefs, 1 )
-    for j = i+1 : size( handles.data.chDefs, 1 )
-
+    if (handles.data.LRCflag == 'C' )
+        for j = i+1 : size( handles.data.chDefs, 1 )
+            handles.data.rWavChLabel = handles.data.chDefs{ i, 1 };
+            handles.data.lWavChLabel = handles.data.chDefs{ j, 1 };
+            
+            handles.data.rWavFileName = strrep( handles.data.chDefs{ i, 2 }, '"', '' );
+            handles.data.lWavFileName = strrep( handles.data.chDefs{ j, 2 }, '"', '' );
+            
+            pushbutton_Calculate_Callback(hObject, eventdata, handles);
+        end
+    else
+        handles.data.rWavChLabel = handles.data.chDefs{ i, 1 };
+        handles.data.lWavChLabel = handles.data.rWavChLabel;
         
+        handles.data.rWavFileName = strrep( handles.data.chDefs{ i, 2 }, '"', '' );
+        handles.data.lWavFileName = handles.data.rWavFileName;
         
+        pushbutton_Calculate_Callback(hObject, eventdata, handles);
     end
 end
 
