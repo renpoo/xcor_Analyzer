@@ -114,8 +114,6 @@ set( handles.checkbox_PlotTauE_Vector, 'value',  handles.data.calcTauE_VecFlag )
 
 set( handles.edit_TauUnitScale, 'value', handles.data.tauUnitScale );
 
-set( handles.popupmenu_FileSuffix, 'value', handles.data.fileSuffixValue );
-
 
 if ( handles.data.LRCflag == 'L' )
     LRCvalue = 1;
@@ -182,8 +180,6 @@ data.defCsvFileName   = '';
 data.chDefs           = {};
 
 data.currentCellPosition = [ 0, 0 ];
-
-data.fileSuffixValue = 1;
 
 
 % --- Outputs from this function are returned to the command line.
@@ -393,14 +389,6 @@ handles.data.graphTitle = fname;
 
 handles.data.fname = fname;
 handles.data.pname = pname;
-
-
-chDefs = {};
-chDefs{ 1, 1 } = 'Right';
-chDefs{ 1, 2 } = strcat( '"', handles.data.wavFileName, '"' );
-chDefs{ 1, 1 } = 'Left';
-chDefs{ 1, 2 } = strcat( '"', handles.data.wavFileName, '"' );
-handles.data.chDefs = chDefs;
 
 
 [ s, fs ] = audioread( handles.data.wavFileName );
