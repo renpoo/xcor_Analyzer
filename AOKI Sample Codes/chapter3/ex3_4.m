@@ -1,9 +1,0 @@
-clear;
-fs=44100;
-fc=2000;
-[b,a]=IirLpf_(fs,fc);
-x=wavread('guitar.wav');
-y=filter(b,a,x);
-sound(x,fs);
-pause(2);
-sound(y,fs);
