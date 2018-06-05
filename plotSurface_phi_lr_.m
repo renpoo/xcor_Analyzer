@@ -48,7 +48,7 @@ ylabel( handles.results.yLabelStr );
 zlabel( zLabelStr );
 
 
-strTitle = strcat( '(', handles.results.graphTitle, '), travel- ', tmpLabelStr, ', t[', num2str(handles.results.timeS0, '%04.2f'), ' - ', num2str(handles.results.timeE0, '%04.2f'), ']' );
+strTitle = strcat( '(', handles.results.graphTitle, '), travel- ', tmpLabelStr, ', t[', num2str(handles.results.timeS0, '%04.2f'), ' - ', num2str(handles.results.timeE0, '%04.2f'), ']', ',', ' tau[', num2str(handles.data.timeT, '%04.3f'), ']'  );
 
 
 title( strTitle );

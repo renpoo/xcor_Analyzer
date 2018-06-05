@@ -87,7 +87,7 @@ catch err
     [ handles.soundSignals, handles.data ] = resetData_();
     
     write_history_( handles.data, 'commandHistory_GUI_xcor_Analyzer.mat', 'ERROR: write_history_() : No Command History File.' );
-end;
+end
 
 
 if (isreset)
@@ -594,9 +594,17 @@ if ( handles.data.fileSuffixValue == 1 || handles.data.fileSuffixValue == 2 )
     [ handles.soundSignals.s, handles.soundSignals.x0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.lWavFileName, 2 );
     [ handles.soundSignals.s, handles.soundSignals.y0 ] = readSoundSignals( hObject, eventdata, handles, handles.data.rWavFileName, 1 );
 else
+%     disp(handles.data.lWavFileName);
+%     disp(handles.data.rWavFileName);
+    
     [ handles.soundSignals.s, handles.soundSignals.x0 ] = readDataSignals( hObject, eventdata, handles, handles.data.lWavFileName );
     [ handles.soundSignals.s, handles.soundSignals.y0 ] = readDataSignals( hObject, eventdata, handles, handles.data.rWavFileName );
     handles.data.playSoundFlag = 0;
+
+%     disp(handles.soundSignals.x0);
+%     disp("");
+%     disp(handles.soundSignals.y0);
+%     disp("");
 end
 
 
@@ -604,6 +612,8 @@ if ( handles.data.playSoundFlag )
     playSoundSignals( hObject, eventdata, handles );
 end
 
+
+clear handles.results;
 
 handles.results = xcor_Analyzer( handles );
 plotSurface_phi_lr_( handles );
@@ -616,16 +626,18 @@ end
 
 
 if ( handles.data.SaveTheGraphPlotsIntoFilesFlag )
-    pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+    handles.results.tmpLabelStr = strcat( handles.results.zLabelStr, ' [', handles.data.lWavChLabel, ' <-> ', handles.data.rWavChLabel, '] ' );
+    pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.tmpLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+
     if ( exist( pnameImg, 'dir' ) == 0 )
         mkdir( pnameImg );
     end
     
-    saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+    saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.tmpLabelStr, ',timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
     
     fname = strcat( saveImageName, '.fig');
     outputDataFileName = strcat( pnameImg, '/', fname );
-    saveas( 1, strcat( outputDataFileName ) );
+    saveas( gcf, strcat( outputDataFileName ) );
     
 end
 
@@ -633,6 +645,11 @@ end
 if ( handles.data.dumpResultFlag )
     batch_dump_data_( handles );
 end
+
+
+% To save each graphs independently
+%pause(5);
+
 
 guidata(hObject, handles);
 
@@ -642,6 +659,10 @@ function [ s, x0 ] = readDataSignals( hObject, eventdata, handles, CsvFileName )
 % Core Procedure to read a set of data signals.
 
 s = [];
+
+
+%disp(CsvFileName);
+
 
 [ Pathstr, Name, Ext ] = fileparts( CsvFileName );
 if ( strcmp( Ext, '.csv' ) || strcmp( Ext, '.CSV' ) )
@@ -781,6 +802,7 @@ handles.data.fs            = castNum_( chB{ 1 } );
 handles.data.timeS0        = castNum_( chA{ 2 } );
 handles.data.timeE0        = castNum_( chB{ 2 } );
 handles.data.timeT         = castNum_( chA{ 3 } );
+handles.data.tauUnitScale  = castNum_( chB{ 3 } );
 
 handles.data.xLabelStr     = castStr_( chA{ 4 } );
 handles.data.yLabelStr     = castStr_( chB{ 4 } );
@@ -867,7 +889,7 @@ fileID = fopen( strcat( handles.data.pname, '../_CSVs/', handles.data.graphTitle
 
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.graphTitle ), castStr_( handles.data.fs ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeS0 ),     castStr_( handles.data.timeE0 ) );
-fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( '' ) );
+fprintf( fileID, '%s,%s\n', castStr_( handles.data.timeT ),      castStr_( handles.data.tauUnitScale ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xLabelStr ),  castStr_( handles.data.yLabelStr ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitStr ),   castStr_( handles.data.yUnitStr ) );
 fprintf( fileID, '%s,%s\n', castStr_( handles.data.xUnitScale ), castStr_( handles.data.yUnitScale ) );
@@ -911,16 +933,18 @@ for i = 1 : size( handles.results.phi_lrMat, 1 )
     
     if ( handles.data.SaveTheGraphPlotsIntoFilesFlag )
         
-        pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+        handles.results.tmpLabelStr = strcat( handles.results.zLabelStr, ' [', handles.data.lWavChLabel, ' <-> ', handles.data.rWavChLabel, '] ' );
+        pnameImg = strcat( '_Output Images', '/', '(', handles.data.graphTitle, '),', handles.results.tmpLabelStr, ',', handles.results.dateTime, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 'tau,', num2str(handles.data.timeT, '%04.3f') );
+        
         if ( exist( pnameImg, 'dir' ) == 0 )
             mkdir( pnameImg );
         end
         
-        saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.zLabelStr, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 't,', num2str(handles.results.timeAxis( i ), '%04.3f') );
+        saveImageName = strcat( '(', handles.data.graphTitle, '),', handles.results.tmpLabelStr, ',', 'timeS0,', num2str(handles.data.timeS0, '%04.2f'), ',', 'timeE0,', num2str(handles.data.timeE0, '%04.2f'), ',', 't,', num2str(handles.results.timeAxis( i ), '%04.3f') );
         
         fname = strcat( saveImageName, '.jpg');
         outputDataFileName = strcat( pnameImg, '/', fname );
-        saveas( 1, strcat( outputDataFileName ) );
+        saveas( gcf, strcat( outputDataFileName ) );
     else
         pause( 0.01 );
     end

@@ -5,7 +5,7 @@ pname = strcat( '_Output Data', '/(', handles.data.graphTitle, '),', handles.res
 
 if ( exist( pname, 'dir' ) == 0 )
   mkdir( pname );
-end;
+end
 fname = strcat( '(', handles.data.graphTitle, '),', varName, '.csv');
 outputDataFileName = strcat( pname, '/', fname );
 
