@@ -1,4 +1,3 @@
-ITOKEN.proj
+xcor_Analyzer
 ===========
 
-To share the tools developments for prof. ITOKEN composing
