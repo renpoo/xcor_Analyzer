@@ -39,7 +39,7 @@ Each time slices are like below, and the composite pakcage of these slices are t
 
 
 What we are looking at (above) is "overtones" as each peaks.
-This analyzer can caluculate the exact form of Correlation Function for each time slice in quantitative view.
+This analyzer can caluculate the exact form of Correlation Function for each time slices in quantitative view.
 
 
 This "ACF" graph from vartical top view is almost equivalent to the Spectrogram of the sound.
