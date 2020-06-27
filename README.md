@@ -74,6 +74,14 @@ You can also see the white dots in the maximum peak of red hills, which are maxi
 
 Those white dots are in a transition from right to left.  It is the same behaviour of your listening experience of "Ah.wav".
 
+The time lag difference in "tau" is about 2 ms.
+
+The sonic speed is about 340 m/s.
+
+340 m/s x 2 ms = 0.68 m = 68 cm.
+
+This transition of white dots shows the speaker of "Ah.wav" (me) is moving the distance of almost 68cm.
+
 
 This graph is the composition of these time slices below.
 
