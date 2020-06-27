@@ -7,6 +7,9 @@ This xcor_Analyzer is based on an idea of Prof. K. ITO (Univ. of Tokyo), and imp
 
 Let us see the power of this xcor_Analyzer by examples.
 
+
+### Auto Correlation Function to view the periodicity of the time-dependent data
+
 First of all, here is a sample sound file.
 
 Let us listen to the voice.
@@ -50,4 +53,4 @@ Let me cite the snapshot with Adobe Audition.
 Thus, we can see the overtones of the sound in 3D view, with each tone lengths.
 
 
-
+### Cross Correlation Function to view the time-space of the time-dependent data
