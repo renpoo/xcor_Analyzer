@@ -14,4 +14,7 @@ https://github.com/renpoo/xcor_Analyzer/blob/master/_Sounds/TooBad.wav
 
 
 This voice is mine, saying "Too Bad!", and recorded by the "binaural" stereo microphone like below.
-!()
+![Binaural Microphone](https://github.com/renpoo/xcor_Analyzer/blob/master/images/BinauralMic.jpeg)
+
+Analyzing this "Too Bad!" by xcor_Analyzer, we can see the resulting image like this.
+![Too Bad (ACF)](https://github.com/renpoo/xcor_Analyzer/blob/master/images/BinauralMic.jpeg)
