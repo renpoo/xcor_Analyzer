@@ -15,6 +15,8 @@ Let us see the power of this xcor_Analyzer by examples.
 
 ### Auto Correlation Function to view the periodicity of the time-dependent data
 
+#### ACF can see the overtones
+
 First of all, here is a sample sound file.
 
 Let us listen to the voice.
@@ -60,6 +62,8 @@ Thus, we can see the overtones of the sound in 3D view, with each tone durations
 ---
 
 ### Cross Correlation Function to view the time-space of the time-dependent data
+
+#### ICCF can see the echos
 
 Next, let us listen to this sound.
 
