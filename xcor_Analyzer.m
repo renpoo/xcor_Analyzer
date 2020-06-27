@@ -173,8 +173,6 @@ for t_Idx = timeS0_Idx : tau_Idx : timeE0_Idx
         
     phi_lr = PHI_lr / PHI_ll_0 / PHI_rr_0;
 
-    % phi_lr = xcorr( xSub, ySub );
-
 
     [ICCC, pointICCC] = max( phi_lr );
     tauICCC = tauAxis( min( pointICCC, lenTauAxis ) );
