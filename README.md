@@ -65,3 +65,20 @@ Analyzing this "Ah" by xcor_Analyzer, we can see the resulting image like this.
 
 This is the image of "echo(s)" in "a room (sound environment)".
 You can see the direct sound to the microphone, 1st. reflection, 2nd., 3rd., and so forth, visually and quantitatively.
+You can also see the white dots in the maximum peak of red hills, which are maximum correlation point in the each time moment.
+
+
+This graph is the composition of these time slices below.
+
+![Ah (ICCF) 01](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.160.jpg)
+
+![Ah (ICCF) 02](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.170.jpg)
+
+![Ah (ICCF) 03](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.180.jpg)
+
+![Ah (ICCF) 04](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.190.jpg)
+
+![Ah (ICCF) 05](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.200.jpg)
+
+![Ah (ICCF) 06](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.210.jpg)
+
