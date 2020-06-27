@@ -55,7 +55,7 @@ Let me cite the snapshot with Adobe Audition.
 
 ![Too Bad (ACF) Screen Shot](https://github.com/renpoo/xcor_Analyzer/blob/master/images/Screen%20Shot%20(ACF)%20Too%20Bad.png)
 
-Thus, we can see the overtones of the sound in 3D view, with each tone lengths.
+Thus, we can see the overtones of the sound in 3D view, with each tone durations.
 
 ---
 
