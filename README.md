@@ -70,6 +70,8 @@ You can see the direct sound to the microphone, 1st. reflection, 2nd., 3rd., and
 
 You can also see the white dots in the maximum peak of red hills, which are maximum correlation point in the each time moment.
 
+Those white dots are in a transition from right to left.  It is the same behaviour of your listening experience of "Ah.wav".
+
 
 This graph is the composition of these time slices below.
 
