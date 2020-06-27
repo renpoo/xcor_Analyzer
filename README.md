@@ -54,3 +54,14 @@ Thus, we can see the overtones of the sound in 3D view, with each tone lengths.
 
 
 ### Cross Correlation Function to view the time-space of the time-dependent data
+
+Next, let us listen to this sound.
+If you listen to this by headphone, you can easily find the voice is coming from right channel, moving to left channel.
+https://github.com/renpoo/xcor_Analyzer/blob/master/_Sounds/Ah.wav
+
+Analyzing this "Ah" by xcor_Analyzer, we can see the resulting image like this.
+
+![Ah (ICCF)](https://github.com/renpoo/xcor_Analyzer/blob/master/images/03%20(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ctau%2C0.010.png)
+
+This is the image of "echo(s)" in "a room (sound environment)".
+You can see the direct sound to the microphone, 1st. reflection, 2nd., 3rd., and so forth, visually and quantitatively.
