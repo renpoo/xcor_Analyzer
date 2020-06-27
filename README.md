@@ -38,8 +38,16 @@ Each time slices are like below, and the composite pakcage of these slices are t
 ![Too Bad (ACF) 06](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(TooBad.wav)%2CACF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.40%2Ct%2C0.381.jpg)
 
 
+What we are looking at (above) is "overtones" as each peaks.
+This analyzer can caluculate the exact form of Correlation Function for each time slice in quantitative view.
+
+
 This "ACF" graph from vartical top view is almost equivalent to the Spectrogram of the sound.
-Let me cite the snapshot of Adobe Audition.
+Let me cite the snapshot with Adobe Audition.
 
 ![Too Bad (ACF) Screen Shot](https://github.com/renpoo/xcor_Analyzer/blob/master/images/Screen%20Shot%20(ACF)%20Too%20Bad.png)
+
+Thus, we can see the overtones of the sound in 3D view, with each tone lengths.
+
+
 
