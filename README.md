@@ -11,6 +11,11 @@ This xcor_Analyzer is based on an idea of Prof. K. ITO (Univ. of Tokyo), and imp
 
 Let us see the power of this xcor_Analyzer by examples.
 
+
+[Video Introduction:]
+https://www.youtube.com/watch?v=CSud9qpW9to
+
+
 ---
 
 ### Auto Correlation Function to view the periodicity of the time-dependent data
