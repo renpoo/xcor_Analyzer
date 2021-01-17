@@ -110,3 +110,8 @@ This graph is the composition of these time slices below.
 
 ![Ah (ICCF) 06](https://github.com/renpoo/xcor_Analyzer/blob/master/images/(Ah.wav)%2CICCF%20%5BLeft%20%3C-%3ERight%5D%2CtimeS0%2C0.00%2CtimeE0%2C1.75%2Ct%2C0.210.jpg)
 
+
+## License
+
+This project is licensed under the GPL3 or later - see the [GPL-LICENSE.md](GPL-LICENSE.md) file for details
+
